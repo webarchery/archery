@@ -23,9 +23,6 @@ It reimagines the foundations of backend development with a modular, Laravel-ins
 | `core`    | IoC container, providers, config repository      |
 | `http`    | Routing, middleware, responses, request handling |
 | `support` | Small utilities used across modules              |
-
-Each directory is intentionally minimal — reflecting the framework’s belief in **progressive construction**.
-Every layer (Core → HTTP → App) can be used independently or as part of the full stack.
 ---
 
 ## 🚀 Getting Started
