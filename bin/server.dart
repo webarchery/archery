@@ -22,6 +22,7 @@ Future<void> main(List<String> args) async {
   final staticFilesServer = app.make<StaticFilesServer>();
 
   try {
+    
 
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {
 
