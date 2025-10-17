@@ -207,14 +207,14 @@ class LogFileTransport implements LogTransport {
   final int maxFileSize;
   final int maxFiles;
   final IOSink? _sink;
-  final bool _manageSink;
+  // final bool _manageSink;
 
   LogFileTransport({
     required this.filePath,
     this.maxFileSize = 10 * 1024 * 1024, // 10MB
     this.maxFiles = 5,
     IOSink? sink,
-  }) : _sink = sink, _manageSink = sink == null;
+  }) : _sink = sink;
 
 
   IOSink _createSink() {

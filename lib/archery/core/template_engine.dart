@@ -188,7 +188,7 @@ class TemplateEngine {
 
     final sections = _extractSections(content);
 
-    final contentWithoutLayout = content.replaceAll(layoutRegex, '');
+    // final contentWithoutLayout = content.replaceAll(layoutRegex, '');
 
     // Render the layout with sections
     return _renderLayout(layoutName, sections, data);
@@ -432,7 +432,7 @@ extension NotFound on HttpRequest {
         ..statusCode = HttpStatus.notFound
         ..write(html)
         ..close();
-    } catch(e, stack) {
+    } catch(e) {
       return response
         ..statusCode = HttpStatus.notFound
         ..write("404 Not Found")
