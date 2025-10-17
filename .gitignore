@@ -3,5 +3,5 @@
 .idea/
 .dart_tool/
 env.json
-lib/src/config/app.json
+#lib/src/config/app.json
 #pubspec.lock
