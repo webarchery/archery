@@ -171,8 +171,6 @@ For HTTP tests, spin up the `HttpKernel` on an ephemeral port and call it with `
 * [x] Template engine (Stitch)
 * [x] ORM (Archer)
 * [ ] CLI (`archery new <app>`)
-* [ ] Documentation site & guides
-
 
 ---
 
