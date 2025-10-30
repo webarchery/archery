@@ -37,46 +37,41 @@ Version 1.0.0 Early Release.
 ```bash
 git clone https://github.com/webarchery/archery.git
 cd archery
-dart run bin/dev.dart    # or: dart run
+dart run bin/server.dart
 ```
+Now visit [http://localhost:5501](http://localhost:5501) → *Hello, Archery!*
 
 > Tip: if you just want to try it inside another project, add `archery` as a path dependency in your `pubspec.yaml` while experimenting.
 
 ### 2) Hello World route
 
-Create `lib/http/routes.dart` (or use your existing routing file):
+Create `lib/http/routes/web.dart` (or use your existing routing file):
 
 ```dart
 import 'dart:io';
 import 'package:archery/archery.dart';
 
-void registerRoutes(Router r) {
-  r.get('/', (HttpRequest req) async {
-    return req.text('Hello, Archery!');
+void webRoutes(Router router) {
+
+
+  router.get('/', (request) async {
+    return request.view("welcome", {});
+  });
+  
+  router.get('/hello-world', (request) async {
+    return request.text("Hello world!", {});
+  });
+
+  router.group(prefix: 'blog', routes: () {
+    router.get('/', BlogPagesController.index);
+    router.get('/{slug:string}',BlogPagesController.show);
   });
 }
 ```
 
 Wire routes in your app entry (`bin/server.dart`):
 
-```dart
-import 'package:archery/archery.dart';
-import 'http/routes.dart';
 
-void main() async {
-  final app = App();
-
-  // Register providers
-  app.registerGroup('core', [
-    RouterProvider(configure: registerRoutes),
-  ]);
-
-  await app.boot();
-  await HttpKernel(app).listen(port: 5501);
-}
-```
-
-Now visit [http://localhost:5501](http://localhost:5501) → *Hello, Archery!*
 
 ---
 
@@ -153,12 +148,6 @@ final port = cfg.get<int>('server.port', defaultValue: 5501);
 Bring your own loader (env, JSON/YAML, secrets manager). A default file/env loader is on the roadmap.
 
 ---
-
-## Testing
-
-```bash
-dart test
-```
 
 For HTTP tests, spin up the `HttpKernel` on an ephemeral port and call it with `HttpClient`.
 
