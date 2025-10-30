@@ -1,22 +1,103 @@
+
+
+// SPDX-FileCopyrightText: 2025 Kwame, III <webarcherydev@gmail.com>
+// SPDX-License-Identifier: BSD-3-Clause
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+// https://webarchery.dev
 import 'package:archery/archery/archery.dart';
 
+/// Exception thrown by [TemplateEngine] during rendering.
+///
+/// Covers:
+/// - Template file not found
+/// - Variable not found in data
+/// - Invalid syntax (future)
+class TemplateEngineException implements Exception {
+  /// Error message.
+  String? message;
+  /// Generic constructor.
+  TemplateEngineException(this.message);
+  /// Thrown when a variable is referenced but not present in data.
+  TemplateEngineException.variableNotFound(String? errorMessage) : message = errorMessage;
+  /// Thrown when a template file cannot be located.
+  TemplateEngineException.templateNotFound(String? errorMessage) : message = errorMessage;
+
+  @override
+  String toString() {
+    return "Template Error: $message";
+  }
+}
+
+/// Lightweight, file-based template engine with:
+/// - Dot-notation template paths (`admin.users.index`)
+/// - Layouts (`@layout('base')`)
+/// - Sections (`@section('title')...@endsection`)
+/// - Includes (`@include('partials.nav', {'active': 'home'})`)
+/// - Loops (`@foreach(items as item)`)
+/// - Conditionals (`@if(user.isAdmin)`)
+/// - Safe & raw interpolation (`{{ name }}`, `{!! html !!}`)
+/// - Caching
+///
+/// **Template Path Resolution:**
+/// ```text
+/// viewsDirectory + templateName.replace('.', '/') + '.html'
+/// ```
+/// Example: `users.profile` → `lib/src/http/views/users/profile.html`
 class TemplateEngine {
+  /// Directory containing `.html` view templates.
   final String viewsDirectory;
+  /// Public assets directory (not used directly by engine).
   final String publicDirectory;
+  /// In-memory cache of compiled template content.
   final Map<String, String> _cache = {};
 
-  TemplateEngine({
-    required this.viewsDirectory,
-    required this.publicDirectory,
-  });
+  /// Creates a new template engine.
+  ///
+  /// - [viewsDirectory]: Required. Base path for templates.
+  /// - [publicDirectory]: Required. Not used by engine (for static assets).
+  TemplateEngine({required this.viewsDirectory, required this.publicDirectory});
 
+  /// Renders a [templateName] with optional [data].
+  ///
+  /// Example:
+  /// ```dart
+  /// engine.render('users.profile', {'user': user, 'title': 'Profile'});
+  /// ```
   String render(String templateName, [Map<String, dynamic>? data]) {
     final templateContent = _loadTemplate(templateName);
     return _compile(templateContent, data ?? {});
   }
 
+  /// Loads template content from disk with caching.
+  ///
+  /// Converts `dot.notation` → `path/to/file.html`.
   String _loadTemplate(String templateName) {
-    // Check cache first
     if (_cache.containsKey(templateName)) {
       return _cache[templateName]!;
     }
@@ -26,9 +107,7 @@ class TemplateEngine {
     final file = File(templatePath);
 
     if (!file.existsSync()) {
-
-      throw Exception('Template not found: $templatePath');
-      // return _loadTemplate('errors.template404');
+      throw TemplateEngineException.templateNotFound("html view for '$templateName' was not found.");
     }
 
     final content = file.readAsStringSync();
@@ -36,94 +115,22 @@ class TemplateEngine {
     return content;
   }
 
+  /// Compiles template with all features: layouts, includes, loops, etc.
   String _compile(String content, Map<String, dynamic> data) {
     String result = content;
-
     result = _processLayouts(result, data);
-
-    result = _processStaticAssets(result);
 
     result = _processIncludes(result, data);
 
     result = _processControlStructures(result, data);
 
     result = _processInterpolations(result, data);
-
     return result;
   }
 
-  String _processStaticAssets(String content) {
-    String result = content;
-
-    // Process CSS assets
-    result = result.replaceAllMapped(RegExp(r'''@css\(\s*['"]([^'"]+)['"]\s*\)'''), (match) {
-      final filename = match.group(1)!;
-      return _loadCssAsset(filename);
-    });
-
-    // Process JavaScript assets
-    result = result.replaceAllMapped(RegExp(r'''@script\(\s*['"]([^'"]+)['"]\s*\)'''), (match) {
-      final filename = match.group(1)!;
-      return _loadScriptAsset(filename);
-    });
-
-    return result;
-  }
-
-  String _loadCssAsset(String filename) {
-    _validateFilename(filename);
-    _validateFileExtension(filename, '.css');
-
-    final cssPath = '${publicDirectory.replaceAll(RegExp(r'/+$'), '')}/css/$filename';
-    final file = File(cssPath);
-
-    if (!file.existsSync()) {
-      throw Exception('CSS asset not found: $cssPath');
-    }
-
-    final cssContent = file.readAsStringSync();
-    return '<style>\n$cssContent\n</style>';
-  }
-
-  String _loadScriptAsset(String filename) {
-    _validateFilename(filename);
-    _validateFileExtension(filename, '.js');
-
-    final jsPath = '${publicDirectory.replaceAll(RegExp(r'/+$'), '')}/js/$filename';
-    final file = File(jsPath);
-
-    if (!file.existsSync()) {
-      throw Exception('Script asset not found: $jsPath');
-    }
-
-    final jsContent = file.readAsStringSync();
-    return '<script>\n$jsContent\n</script>';
-  }
-
-  void _validateFilename(String filename) {
-    if (filename.contains('..') || filename.contains('/') || filename.contains('\\')) {
-      throw Exception('Security violation: Filename cannot contain path traversal characters: $filename');
-    }
-
-    if (filename.contains('\x00')) {
-      throw Exception('Security violation: Filename contains null byte: $filename');
-    }
-
-    if (filename.startsWith('/') || RegExp(r'^[a-zA-Z]:\\').hasMatch(filename)) {
-      throw Exception('Security violation: Filename cannot be an absolute path: $filename');
-    }
-
-    if (!RegExp(r'^[a-zA-Z0-9_.-]+$').hasMatch(filename)) {
-      throw Exception('Security violation: Invalid filename characters: $filename');
-    }
-  }
-
-  void _validateFileExtension(String filename, String expectedExtension) {
-    if (!filename.toLowerCase().endsWith(expectedExtension)) {
-      throw Exception('File $filename must have $expectedExtension extension');
-    }
-  }
-
+  /// Replaces `{{ expr }}` (escaped) and `{!! expr !!}` (raw).
+  ///
+  /// Supports nested access: `user.profile.name`
   String _processInterpolations(String content, Map<String, dynamic> data) {
     String result = content;
 
@@ -141,6 +148,7 @@ class TemplateEngine {
     return result;
   }
 
+  /// Escapes HTML special characters to prevent XSS.
   String _escapeHtml(String text) {
     return text
         .replaceAll('&', '&amp;')
@@ -151,12 +159,20 @@ class TemplateEngine {
         .replaceAll('/', '&#x2F;');
   }
 
+  /// Evaluates dot-notation expressions against [data].
+  ///
+  /// Supports:
+  /// - Map access: `user.name`
+  /// - List indexing: `items.0`
   dynamic _evaluateExpression(String expression, Map<String, dynamic> data) {
     final parts = expression.split('.');
     dynamic current = data;
 
     for (final part in parts) {
       if (current is Map<String, dynamic>) {
+        if (current[part] == null) {
+          throw TemplateEngineException.variableNotFound("variable($part) was not found");
+        }
         current = current[part];
       } else if (current is List && int.tryParse(part) != null) {
         final index = int.parse(part);
@@ -173,11 +189,9 @@ class TemplateEngine {
     return current ?? '';
   }
 
+  /// Processes `@layout('name')` and `@yield('section')`.
   String _processLayouts(String content, Map<String, dynamic> data) {
-    final layoutRegex = RegExp(
-      r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''',
-      dotAll: true,
-    );
+    final layoutRegex = RegExp(r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true);
 
     final match = layoutRegex.firstMatch(content);
     if (match == null) {
@@ -188,17 +202,13 @@ class TemplateEngine {
 
     final sections = _extractSections(content);
 
-    // final contentWithoutLayout = content.replaceAll(layoutRegex, '');
-
     // Render the layout with sections
     return _renderLayout(layoutName, sections, data);
   }
 
+  /// Extracts `@section('name')...@endsection` blocks.
   Map<String, String> _extractSections(String content) {
-    final sectionRegex = RegExp(
-      r'''@section\(\s*['"]([^'"]+)['"]\s*\)(.*?)@endsection''',
-      dotAll: true,
-    );
+    final sectionRegex = RegExp(r'''@section\(\s*['"]([^'"]+)['"]\s*\)(.*?)@endsection''', dotAll: true);
 
     final sections = <String, String>{};
 
@@ -211,24 +221,20 @@ class TemplateEngine {
     return sections;
   }
 
+  /// Renders layout with injected sections.
   String _renderLayout(String layoutName, Map<String, String> sections, Map<String, dynamic> data) {
     final layoutContent = _loadTemplate(layoutName);
 
     // Process yields in the layout
-    return layoutContent.replaceAllMapped(RegExp(
-      r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''',
-      dotAll: true,
-    ), (match) {
+    return layoutContent.replaceAllMapped(RegExp(r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true), (match) {
       final yieldName = match.group(1)!;
       return sections[yieldName] ?? '';
     });
   }
 
+  /// Processes recursive `@include('template', {data})`.
   String _processIncludes(String content, Map<String, dynamic> data) {
-    final includeRegex = RegExp(
-      r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''',
-      dotAll: true,
-    );
+    final includeRegex = RegExp(r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''', dotAll: true);
 
     String process(String text) {
       return text.replaceAllMapped(includeRegex, (match) {
@@ -250,7 +256,7 @@ class TemplateEngine {
       });
     }
 
-    // Process includes recursively
+    /// Recursively resolve nested includes
     String result = content;
     String previousResult;
     do {
@@ -260,7 +266,7 @@ class TemplateEngine {
 
     return result;
   }
-
+  /// Processes control structures: `@foreach`, `@if`, `@else`, `@endif`.
   String _processControlStructures(String content, Map<String, dynamic> data) {
     String result = content;
 
@@ -269,7 +275,7 @@ class TemplateEngine {
 
     return result;
   }
-
+  /// Implements `@foreach(collection as item)`.
   String _processForeach(String content, Map<String, dynamic> data) {
     final regex = RegExp(r'@foreach\s*\(\s*(\w+)\s+as\s+(\w+)\s*\)(.*?)@endforeach', dotAll: true);
 
@@ -296,6 +302,7 @@ class TemplateEngine {
     });
   }
 
+  /// Implements `@if(condition)...@else...@endif`.
   String _processIfStatements(String content, Map<String, dynamic> data) {
     final regex = RegExp(r'@if\s*\((.*?)\)(.*?)(?:@else(.*?))?@endif', dotAll: true);
 
@@ -316,6 +323,11 @@ class TemplateEngine {
     });
   }
 
+  /// Evaluates condition in `@if(...)`.
+  ///
+  /// Supports:
+  /// - `==`, `!=`
+  /// - Truthy checks
   bool _evaluateCondition(String condition, Map<String, dynamic> data) {
     condition = condition.trim();
 
@@ -339,59 +351,84 @@ class TemplateEngine {
     return value != null && value != false && value != '' && value != 0;
   }
 
+  /// Clears template cache (useful in development).
   void clearCache() {
     _cache.clear();
   }
 }
 
-
+/// Type alias for view data.
 typedef ViewData = Map<String, dynamic>;
-extension View on HttpRequest {
 
+/// Extension on [HttpRequest] to render HTML views.
+extension View on HttpRequest {
+  /// Renders a template and sends HTML response.
+  ///
+  /// - Sets `Content-Type: text/html`
+  /// - Adds caching and security headers
+  /// - Sets XSRF token cookie
+  /// - Handles errors gracefully in debug mode
   HttpResponse view(String template, [ViewData? data]) {
     final engine = App().container.make<TemplateEngine>();
-    final html = engine.render(template, data ?? {});
-
-    final res = response;
     final config = App().container.make<AppConfig>();
 
-    // --- Performance headers ---
-    res.headers.contentType = ContentType.html;
-    res.headers.set(HttpHeaders.cacheControlHeader,
-        'public, max-age=300, must-revalidate');
-    res.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-    //
-    // // --- Security headers ---
-    res.headers.set('X-Content-Type-Options', 'nosniff');
-    res.headers.set('X-Frame-Options', 'SAMEORIGIN');
-    res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.headers.set('X-XSS-Protection', '1; mode=block');
+    try {
+      final html = engine.render(template, data ?? {});
 
+      // --- Performance headers ---
+      response.headers.contentType = ContentType.html;
+      response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+      response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+      //
+      // // --- Security headers ---
+      response.headers.set('X-Content-Type-Options', 'nosniff');
+      response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final cookie = Cookie(
-      'xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
-      "${config.get('app.id')}",
-    )
-      ..httpOnly = true
-      ..secure = true // only over HTTPS
-      ..sameSite = SameSite.lax;
+      final cookie = Cookie('xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
+        ..httpOnly = true
+        ..secure =
+            true // only over HTTPS
+        ..sameSite = SameSite.lax;
 
-    return res
-      ..cookies.add(cookie)
-      ..write(html)
-      ..close();
+      return response
+        ..cookies.add(cookie)
+        ..write(html)
+        ..close();
+    } catch (e, stack) {
+      if (config.get('app.debug')) {
+        return response
+          ..statusCode = HttpStatus.internalServerError
+          ..write("$e\n\n$stack")
+          ..close();
+      }
+      return response
+        ..statusCode = HttpStatus.internalServerError
+        ..write(e)
+        ..close();
+    }
   }
 }
 
-
+/// Extension on [HttpRequest] to send JSON responses.
 extension Json on HttpRequest {
+  /// Sends JSON response with security headers and XSRF cookie.
   HttpResponse json([dynamic data]) {
     final config = App().container.make<AppConfig>();
 
-    final cookie = Cookie(
-      'xsrf-api-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
-      "${config.get('app.id')}",
-    )
+    // --- Performance headers ---
+    response.headers.contentType = ContentType.html;
+    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+    //
+    // // --- Security headers ---
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+
+    final cookie = Cookie('xsrf-json-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
       ..httpOnly = true
       ..secure = true
       ..sameSite = SameSite.lax;
@@ -405,24 +442,39 @@ extension Json on HttpRequest {
   }
 }
 
+/// Extension on [HttpRequest] to send plain text.
 extension Text on HttpRequest {
-
+  /// Sends plain text response.
   HttpResponse text([dynamic data]) {
+    final config = App().container.make<AppConfig>();
+    response.headers.contentType = ContentType.html;
+    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+
+    // --- Security headers ---
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+
+    final cookie = Cookie('xsrf-text-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
 
     response.headers.contentType = ContentType.text;
     return response
       ..statusCode = HttpStatus.ok
+      ..cookies.add(cookie)
       ..write(data)
       ..close();
   }
 }
 
-
-
+/// Extension on [HttpRequest] to send 404 with fallback template.
 extension NotFound on HttpRequest {
-
+  /// Renders `errors.404` template or plain 404.
   HttpResponse notFound() {
-
     final engine = App().container.make<TemplateEngine>();
 
     try {
@@ -432,19 +484,11 @@ extension NotFound on HttpRequest {
         ..statusCode = HttpStatus.notFound
         ..write(html)
         ..close();
-    } catch(e) {
+    } catch (e) {
       return response
         ..statusCode = HttpStatus.notFound
         ..write("404 Not Found")
         ..close();
-
     }
-
   }
 }
-
-
-
-
-
-
