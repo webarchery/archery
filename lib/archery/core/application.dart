@@ -137,7 +137,11 @@ class App {
     // container.singleton<TemplateEngine>(factory: (_,[_]) => TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!), eager: true);
 
     final settings = { "viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
+
     final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory:  settings['publicPath']!);
+
+    // Todo -move to config level
+    // engine.shouldCache = true;
 
     container.bindInstance<TemplateEngine>(engine);
 

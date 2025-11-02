@@ -77,6 +77,8 @@ class TemplateEngine {
   /// In-memory cache of compiled template content.
   final Map<String, String> _cache = {};
 
+  bool shouldCache = false;
+
   /// Creates a new template engine.
   ///
   /// - [viewsDirectory]: Required. Base path for templates.
@@ -98,9 +100,15 @@ class TemplateEngine {
   ///
   /// Converts `dot.notation` → `path/to/file.html`.
   String _loadTemplate(String templateName) {
-    if (_cache.containsKey(templateName)) {
-      return _cache[templateName]!;
+
+    if(shouldCache) {
+      if (_cache.containsKey(templateName)) {
+        return _cache[templateName]!;
+      }
     }
+
+
+
 
     // Convert dot syntax to file path
     final templatePath = '${viewsDirectory.replaceAll(RegExp(r'/+$'), '')}/${templateName.replaceAll('.', '/')}.html';
@@ -357,138 +365,3 @@ class TemplateEngine {
   }
 }
 
-/// Type alias for view data.
-typedef ViewData = Map<String, dynamic>;
-
-/// Extension on [HttpRequest] to render HTML views.
-extension View on HttpRequest {
-  /// Renders a template and sends HTML response.
-  ///
-  /// - Sets `Content-Type: text/html`
-  /// - Adds caching and security headers
-  /// - Sets XSRF token cookie
-  /// - Handles errors gracefully in debug mode
-  HttpResponse view(String template, [ViewData? data]) {
-    final engine = App().container.make<TemplateEngine>();
-    final config = App().container.make<AppConfig>();
-
-    try {
-      final html = engine.render(template, data ?? {});
-
-      // --- Performance headers ---
-      response.headers.contentType = ContentType.html;
-      response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
-      response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-      //
-      // // --- Security headers ---
-      response.headers.set('X-Content-Type-Options', 'nosniff');
-      response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      response.headers.set('X-XSS-Protection', '1; mode=block');
-
-      final cookie = Cookie('xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-        ..httpOnly = true
-        ..secure =
-            true // only over HTTPS
-        ..sameSite = SameSite.lax;
-
-      return response
-        ..cookies.add(cookie)
-        ..write(html)
-        ..close();
-    } catch (e, stack) {
-      if (config.get('app.debug')) {
-        return response
-          ..statusCode = HttpStatus.internalServerError
-          ..write("$e\n\n$stack")
-          ..close();
-      }
-      return response
-        ..statusCode = HttpStatus.internalServerError
-        ..write(e)
-        ..close();
-    }
-  }
-}
-
-/// Extension on [HttpRequest] to send JSON responses.
-extension Json on HttpRequest {
-  /// Sends JSON response with security headers and XSRF cookie.
-  HttpResponse json([dynamic data]) {
-    final config = App().container.make<AppConfig>();
-
-    // --- Performance headers ---
-    response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
-    response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-    //
-    // // --- Security headers ---
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-
-    final cookie = Cookie('xsrf-json-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax;
-
-    response.headers.contentType = ContentType.json;
-
-    return response
-      ..cookies.add(cookie)
-      ..write(jsonEncode(data))
-      ..close();
-  }
-}
-
-/// Extension on [HttpRequest] to send plain text.
-extension Text on HttpRequest {
-  /// Sends plain text response.
-  HttpResponse text([dynamic data]) {
-    final config = App().container.make<AppConfig>();
-    response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
-    response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-
-    // --- Security headers ---
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-
-    final cookie = Cookie('xsrf-text-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax;
-
-    response.headers.contentType = ContentType.text;
-    return response
-      ..statusCode = HttpStatus.ok
-      ..cookies.add(cookie)
-      ..write(data)
-      ..close();
-  }
-}
-
-/// Extension on [HttpRequest] to send 404 with fallback template.
-extension NotFound on HttpRequest {
-  /// Renders `errors.404` template or plain 404.
-  HttpResponse notFound() {
-    final engine = App().container.make<TemplateEngine>();
-
-    try {
-      final html = engine.render("errors.404");
-      response.headers.contentType = ContentType.html;
-      return response
-        ..statusCode = HttpStatus.notFound
-        ..write(html)
-        ..close();
-    } catch (e) {
-      return response
-        ..statusCode = HttpStatus.notFound
-        ..write("404 Not Found")
-        ..close();
-    }
-  }
-}

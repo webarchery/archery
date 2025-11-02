@@ -29,79 +29,35 @@
 
 // https://webarchery.dev
 
+import 'package:archery/archery/archery.dart';
+export 'extensions.dart';
+export 'router.dart';
+export 'body_parser.dart';
+/// Signature for HTTP route handlers.
+///
+/// Receives an [HttpRequest] and returns a [Future<dynamic>].
+typedef Handler = Future<dynamic> Function(HttpRequest request);
 
-library;
-export 'dart:io';
-export 'dart:convert';
-export 'dart:math';
-export 'dart:async';
+/// Signature for HTTP middleware functions.
+///
+/// Receives an [HttpRequest] and a [next] callback to continue the chain.
+typedef HttpMiddleware = Future<dynamic> Function(HttpRequest request, void Function() next);
 
-export 'package:uuid/uuid.dart';
-export 'package:crypto/crypto.dart';
-export 'package:collection/collection.dart';
-export 'package:sqflite_common_ffi/sqflite_ffi.dart';
-export 'package:intl/intl.dart';
-export 'dart:typed_data';
-export 'package:mime/mime.dart';
+/// HTTP methods supported by the router.
+enum HttpMethod {
+  /// GET request
+  get,
 
+  /// POST request
+  post,
 
+  /// PUT request
+  put,
 
+  /// DELETE request
+  delete,
 
-//**********************************
-export './core/container.dart'
-    show
-    ServiceContainer,
-    Container,
-    ServiceContainerException;
+  /// PATCH request
+  patch,
+}
 
-//***********************************
-export './core/provider.dart'
-    show
-    Provider,
-    ProviderException;
-//***********************************
-export './core/application.dart'
-    show
-    ContainerOperations,
-    AppStatus,
-    App;
-
-//***********************************
-export './core/config.dart'
-    show
-    ConfigRepository,
-    AppConfig;
-
-//***********************************
-export './core/kernel.dart';
-
-
-
-//***********************************
-export './core/template_engine.dart';
-
-//***********************************
-export './core/logger.dart';
-
-//***********************************
-export './core/static_files_server.dart';
-
-//***********************************
-
-export '../src/database/models/user.dart';
-
-//***********************************
-export './core/orm/hasher.dart';
-//***********************************
-
-export './core/orm/model.dart';
-//***********************************
-
-export './core/orm/json_file_model.dart';
-//***********************************
-
-export './core/orm/sqlite_model.dart';
-
-
-//***********************************
-export 'core/http/http.dart';

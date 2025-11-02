@@ -29,6 +29,7 @@
 
 // https://webarchery.dev
 
+
 import 'package:archery/archery/archery.dart';
 
 /// Signature for HTTP route handlers.
@@ -57,89 +58,6 @@ enum HttpMethod {
 
   /// PATCH request
   patch,
-}
-
-/// Utility class for accessing route parameters in handlers and middleware.
-///
-/// Parameters are available via [Zone] values during request dispatch.
-/// Supports type-safe retrieval with generics.
-class RouteParams {
-  /// Private zone key for storing route parameters.
-  static final Object _key = Object();
-
-  /// Returns all route parameters as a [Map].
-  ///
-  /// Returns empty map if no parameters are available.
-  static Map<String, dynamic> all() => (Zone.current[_key] as Map<String, dynamic>?) ?? const {};
-
-  /// Retrieves a typed route parameter by [name].
-  ///
-  /// Returns `null` if parameter doesn't exist or type doesn't match.
-  ///
-  /// Example:
-  /// ```dart
-  /// final id = RouteParams.get<int>('id'); // 123
-  /// final slug = RouteParams.get<String>('slug'); // 'my-post'
-  /// ```
-  static T? get<T>(String name) => all()[name] as T?;
-
-  /// Creates zone values containing the route [params].
-  static Map<Object?, Object?> _zoneValues(Map<String, dynamic> params) => {_key: params};
-}
-
-/// Internal representation of a compiled dynamic route.
-///
-/// Contains regex pattern, parameter metadata, and execution pipeline.
-class _CompiledRoute {
-  const _CompiledRoute({
-    required this.method,
-    required this.regex,
-    required this.paramNames,
-    required this.paramTypes,
-    required this.middleware,
-    required this.handler,
-  });
-
-  /// HTTP method this route matches.
-  final HttpMethod method;
-
-  /// Regex pattern for path matching (with capture groups for params).
-  final RegExp regex;
-
-  /// Names of captured parameters (in regex group order).
-  final List<String> paramNames;
-
-  /// Expected types for each parameter (e.g., 'int', 'string').
-  final List<String> paramTypes;
-
-  /// Middleware chain for this route.
-  final List<HttpMiddleware> middleware;
-
-  /// Handler to execute after middleware.
-  final Handler handler;
-}
-
-/// Basic route definition structure.
-class Route {
-  /// HTTP method.
-  HttpMethod method;
-
-  /// Path pattern (static or dynamic with `{param:type}`).
-  String path;
-
-  /// Middleware chain.
-  List<HttpMiddleware> middleware;
-
-  /// Route handler.
-  Handler handler;
-
-  /// Creates a new route definition.
-  Route({
-    required this.method,
-    required this.path,
-    this.middleware = const [],
-    required this.handler,
-  });
 }
 
 /// Core HTTP router with support for:
@@ -438,6 +356,90 @@ class Router {
         ...(_dynamicRoutes[m]?.map((cr) => cr.regex.pattern) ?? const []),
       ],
   };
+}
+
+
+/// Basic route definition structure.
+class Route {
+  /// HTTP method.
+  HttpMethod method;
+
+  /// Path pattern (static or dynamic with `{param:type}`).
+  String path;
+
+  /// Middleware chain.
+  List<HttpMiddleware> middleware;
+
+  /// Route handler.
+  Handler handler;
+
+  /// Creates a new route definition.
+  Route({
+    required this.method,
+    required this.path,
+    this.middleware = const [],
+    required this.handler,
+  });
+}
+
+
+/// Utility class for accessing route parameters in handlers and middleware.
+///
+/// Parameters are available via [Zone] values during request dispatch.
+/// Supports type-safe retrieval with generics.
+class RouteParams {
+  /// Private zone key for storing route parameters.
+  static final Object _key = Object();
+
+  /// Returns all route parameters as a [Map].
+  ///
+  /// Returns empty map if no parameters are available.
+  static Map<String, dynamic> all() => (Zone.current[_key] as Map<String, dynamic>?) ?? const {};
+
+  /// Retrieves a typed route parameter by [name].
+  ///
+  /// Returns `null` if parameter doesn't exist or type doesn't match.
+  ///
+  /// Example:
+  /// ```dart
+  /// final id = RouteParams.get<int>('id'); // 123
+  /// final slug = RouteParams.get<String>('slug'); // 'my-post'
+  /// ```
+  static T? get<T>(String name) => all()[name] as T?;
+
+  /// Creates zone values containing the route [params].
+  static Map<Object?, Object?> _zoneValues(Map<String, dynamic> params) => {_key: params};
+}
+/// Internal representation of a compiled dynamic route.
+///
+/// Contains regex pattern, parameter metadata, and execution pipeline.
+class _CompiledRoute {
+  const _CompiledRoute({
+    required this.method,
+    required this.regex,
+    required this.paramNames,
+    required this.paramTypes,
+    required this.middleware,
+    required this.handler,
+  });
+
+  /// HTTP method this route matches.
+  final HttpMethod method;
+
+  /// Regex pattern for path matching (with capture groups for params).
+  final RegExp regex;
+
+  /// Names of captured parameters (in regex group order).
+  final List<String> paramNames;
+
+  /// Expected types for each parameter (e.g., 'int', 'string').
+  final List<String> paramTypes;
+
+  /// Middleware chain for this route.
+  final List<HttpMiddleware> middleware;
+
+  /// Handler to execute after middleware.
+  final Handler handler;
 }
 
 /// Internal wrapper for type coercion results.

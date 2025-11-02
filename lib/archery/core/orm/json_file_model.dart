@@ -179,7 +179,13 @@ abstract class JsonFileModel {
   /// ```dart
   /// JsonFileModel.migrate<User>((json) => User.fromJson(json));
   /// ```
-  static void migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) {
+  static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) async {
+
+    
+    final file = File("$dir/${_getTableName<T>()}");
+
+    if(! await file.exists()) await file.create(recursive: true);
+
     _jsonConstructors[T] = constructor;
   }
 

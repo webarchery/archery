@@ -11,7 +11,6 @@ Future<void> main(List<String> args) async {
   final config = await AppConfig.create();
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
-
   await app.boot();
 
   await migrateJsonFileModels();
@@ -21,14 +20,13 @@ Future<void> main(List<String> args) async {
   webRoutes(router);
   apiRoutes(router);
 
-
   final kernel = AppKernel(router: router);
 
   final port = config.get('server.port') ?? 8080;
   final staticFilesServer = app.make<StaticFilesServer>();
 
-
   // print(app.container.listRegistrations());
+  // print(router.listRoutes());
 
   try {
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {
@@ -49,5 +47,3 @@ Future<void> main(List<String> args) async {
     );
   }
 }
-
-
