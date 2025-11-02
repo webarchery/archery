@@ -4,7 +4,6 @@ import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 
 Future<void> main(List<String> args) async {
-
   final app = App();
   app.setKeys();
 
@@ -30,7 +29,6 @@ Future<void> main(List<String> args) async {
 
   try {
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {
-
       server.autoCompress = config.get('server.compress', true);
 
       print('🔥 Archery server running at http://localhost:$port');
@@ -42,8 +40,6 @@ Future<void> main(List<String> args) async {
     });
   } catch (e, stack) {
     print("Error booting server: $e\n$stack");
-    await app.shutdown().then(
-          (_) => print("App has shut down from a server initialization error"),
-    );
+    await app.shutdown().then((_) => print("App has shut down from a server initialization error"));
   }
 }

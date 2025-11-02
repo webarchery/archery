@@ -6,3 +6,7 @@
 
 - First Release.
 - ORM, Error Pages,
+
+## 1.0.4
+- Form Inputs
+- Body Parsing

@@ -63,7 +63,7 @@ class UploadedFile {
   }
 
   // Add validation property
-  bool get isValid => filename.isNotEmpty && _cachedBytes != null;
+  bool get isValid => filename.isNotEmpty;
 
 
   /// Get the file content as bytes
