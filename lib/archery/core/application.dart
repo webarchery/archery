@@ -100,7 +100,10 @@ class App {
       try {
         register(provider);
       } catch (e, stack) {
-        throw ProviderException.unregistered(type: provider.runtimeType, trace: stack);
+        throw ProviderException.unregistered(
+          type: provider.runtimeType,
+          trace: stack,
+        );
       }
     }
   }
@@ -136,15 +139,20 @@ class App {
     // final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
     // container.singleton<TemplateEngine>(factory: (_,[_]) => TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!), eager: true);
 
-    final settings = { "viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
+    final settings = {
+      "viewsPath": 'lib/src/http/views',
+      "publicPath": 'lib/src/http/public',
+    };
 
-    final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory:  settings['publicPath']!);
+    final engine = TemplateEngine(
+      viewsDirectory: settings['viewsPath']!,
+      publicDirectory: settings['publicPath']!,
+    );
 
     // Todo -move to config level
     // engine.shouldCache = true;
 
     container.bindInstance<TemplateEngine>(engine);
-
 
     // Default Static Files Server
     //container.singleton<StaticFilesServer>(factory: (_,[_]) => StaticFilesServer(root: Directory("")), eager: true);
@@ -157,8 +165,6 @@ class App {
 
     container.bindInstance<Uuid>(uuid);
     // container.singleton<Uuid>(factory: (_,[_]) => Uuid(), eager: true);
-
-
 
     // Default SQLite DB
     final Directory dir = Directory("lib/src/storage");
@@ -173,7 +179,7 @@ class App {
       ),
     );
 
-    container.singleton<Database>(factory: (_,[_]) => database, eager: true);
+    container.singleton<Database>(factory: (_, [_]) => database, eager: true);
 
     await container.initialize();
 
@@ -183,7 +189,10 @@ class App {
         try {
           await provider.boot(container);
         } catch (e, stack) {
-          throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
+          throw ProviderException.unbooted(
+            type: provider.runtimeType,
+            trace: stack,
+          );
         }
       }
 
@@ -214,7 +223,9 @@ class App {
   ///
   /// Used for application encryption key, session secrets, etc.
   static String generateKey() {
-    return base64Url.encode(List.generate(32, (i) => Random.secure().nextInt(256)));
+    return base64Url.encode(
+      List.generate(32, (i) => Random.secure().nextInt(256)),
+    );
   }
 
   /// Ensures `lib/src/config/app.json` exists and populates it with default config.

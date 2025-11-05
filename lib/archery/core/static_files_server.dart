@@ -213,13 +213,20 @@ class StaticFilesServer {
       final res = req.response;
 
       // Set caching headers
-      res.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=$maxAgeSeconds');
+      res.headers.set(
+        HttpHeaders.cacheControlHeader,
+        'public, max-age=$maxAgeSeconds',
+      );
       res.headers.set(HttpHeaders.etagHeader, etag);
-      res.headers.set(HttpHeaders.lastModifiedHeader, HttpDate.format(stat.modified));
+      res.headers.set(
+        HttpHeaders.lastModifiedHeader,
+        HttpDate.format(stat.modified),
+      );
       res.headers.set(HttpHeaders.contentTypeHeader, _typeFor(file.path));
 
       // 304 Not Modified
-      if (inm == etag || (ims != null && _notModifiedSince(ims, stat.modified))) {
+      if (inm == etag ||
+          (ims != null && _notModifiedSince(ims, stat.modified))) {
         res.statusCode = HttpStatus.notModified;
         await res.close();
         return true;

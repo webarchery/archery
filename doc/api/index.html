@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="archery API docs, for the Dart programming language.">
+  <title>archery - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">archery package</li>
+  </ol>
+  <div class="self-name">archery</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="archery--a-modern-web-framework-for-dart">Archery — A Modern Web Framework for Dart</h1>
+<p><em>Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.</em></p>
+<p>
+<a href="https://github.com/webarchery/archery/blob/main/LICENSE">BSD License</a> •
+<a href="https://webarchery.dev">Website</a> •
+<a href="#roadmap">Roadmap</a>
+</p>
+<hr>
+<h2 id="why-archery">Why Archery</h2>
+<p>Archery reimagines backend development in <strong>Dart</strong> with a small set of predictable building blocks:</p>
+<ul>
+<li><strong>Predictable</strong> – explicit, type‑safe APIs. No hidden magic.</li>
+<li><strong>Minimal</strong> – keep the surface area tiny; build only what’s needed.</li>
+<li><strong>Composable</strong> – IoC container + providers let features snap together.</li>
+<li><strong>Fast</strong> – built directly on <code>dart:io</code> for zero overhead.</li>
+</ul>
+<blockquote>
+<p>Goal: make backend programming in Dart as expressive as Laravel/Adonis—<strong>with compiler‑level benefits</strong> and a clean standard library.</p>
+</blockquote>
+<hr>
+<h2 id="status">Status</h2>
+<p>Version 1.0.0 Early Release.</p>
+<hr>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-clone--run">1) Clone &amp; run</h3>
+<pre class="language-bash"><code class="language-bash">git clone https://github.com/webarchery/archery.git
+cd archery
+dart run bin/server.dart
+</code></pre>
+<p>Now visit -&gt; localhost:5501</p>
+<blockquote>
+<p>Tip: if you just want to try it inside another project, add <code>archery</code> as a path dependency in your <code>pubspec.yaml</code> while experimenting.</p>
+</blockquote>
+<h3 id="2-hello-world-route">2) Hello World route</h3>
+<p>Create <code>lib/http/routes/web.dart</code> (or use your existing routing file):</p>
+<pre class="language-dart"><code class="language-dart">import 'dart:io';
+import 'package:archery/archery.dart';
+
+void webRoutes(Router router) {
+
+
+  router.get('/', (request) async {
+    return request.view("welcome", {});
+  });
+  
+  router.get('/hello-world', (request) async {
+    return request.text("Hello world!", {});
+  });
+
+  router.group(prefix: 'blog', routes: () {
+    router.get('/', BlogPagesController.index);
+    router.get('/{slug:string}',BlogPagesController.show);
+  });
+}
+</code></pre>
+<p>Wire routes in your app entry (<code>bin/server.dart</code>):</p>
+<hr>
+<h2 id="concepts-at-a-glance">Concepts at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What it is</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>App</strong></td>
+<td>The composition root that wires providers and boots the app.</td>
+<td>Centralized lifecycle &amp; configuration.</td>
+</tr>
+<tr>
+<td><strong>ServiceContainer</strong></td>
+<td>Lightweight IoC for factories/singletons/scopes.</td>
+<td>Predictable dependency management.</td>
+</tr>
+<tr>
+<td><strong>Provider</strong></td>
+<td>Registers and boots features (e.g., Router, DB).</td>
+<td>Clear module boundaries.</td>
+</tr>
+<tr>
+<td><strong>Router</strong></td>
+<td>Type‑safe routing with middleware.</td>
+<td>Expressive HTTP layer.</td>
+</tr>
+<tr>
+<td><strong>HttpKernel</strong></td>
+<td>Binds server to routes &amp; middleware stack.</td>
+<td>Separation of transport vs. app code.</td>
+</tr>
+<tr>
+<td><strong>ConfigRepository</strong></td>
+<td>Read structured config (env, files).</td>
+<td>12‑factor friendly.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="minimal-examples">Minimal examples</h2>
+<h3 id="container">Container</h3>
+<pre class="language-dart"><code class="language-dart">final c = Container.root();
+
+c.singleton&lt;Logger&gt;(() =&gt; ConsoleLogger());
+c.factory&lt;Clock&gt;(() =&gt; SystemClock.now());
+
+final logger = c.make&lt;Logger&gt;();
+logger.info('container ready');
+</code></pre>
+<h3 id="provider">Provider</h3>
+<pre class="language-dart"><code class="language-dart">class RouterProvider extends Provider {
+  final void Function(Router) configure;
+  RouterProvider({required this.configure});
+
+  @override
+  void register(ServiceContainer c) {
+    final router = Router();
+    configure(router);
+    c.bind&lt;Router&gt;(router);
+  }
+}
+</code></pre>
+<h3 id="routing--middleware">Routing &amp; middleware</h3>
+<pre class="language-dart"><code class="language-dart">void registerRoutes(Router r) {
+  r.use((req, next) { /* global middleware */ next(); });
+
+  r.get('/health', (req) =&gt; req.json({'ok': true}));
+
+  r.group('/v1', (api) {
+    api.get('/users/:id', (req) async {
+      final id = RouteParams.get&lt;int&gt;('id');
+      return req.json({'id': id});
+    });
+  });
+}
+</code></pre>
+<hr>
+<h2 id="configuration">Configuration</h2>
+<p>Archery prefers <strong>code over convention</strong>, but supports config repositories so you can do:</p>
+<pre class="language-dart"><code class="language-dart">final cfg = container.make&lt;ConfigRepository&gt;();
+final port = cfg.get&lt;int&gt;('server.port', defaultValue: 5501);
+</code></pre>
+<p>Bring your own loader (env, JSON/YAML, secrets manager). A default file/env loader is on the roadmap.</p>
+<hr>
+<p>For HTTP tests, spin up the <code>HttpKernel</code> on an ephemeral port and call it with <code>HttpClient</code>.</p>
+<hr>
+<h2 id="performance-notes">Performance notes</h2>
+<ul>
+<li>Built on <code>dart:io</code>.</li>
+<li>Minimal allocations in the hot path.</li>
+<li>Route matching designed for predictable performance.</li>
+<li>Container avoids reflection; favors generics and factories.</li>
+</ul>
+<hr>
+<h2 id="roadmap">Roadmap</h2>
+<ul>
+<li><code>x</code> Service Container polish (disposal hooks, readiness)</li>
+<li><code>x</code> Provider lifecycle ergonomics</li>
+<li><code>x</code> Router &amp; middleware (typed params, groups, prefixes)</li>
+<li><code>x</code> HTTP Kernel (static files, error handling)</li>
+<li><code>x</code> Template engine (Stitch)</li>
+<li><code>x</code> ORM (Archer)</li>
+<li><code> </code> CLI (<code>archery new &lt;app&gt;</code>)</li>
+</ul>
+<hr>
+<hr>
+<h2 id="license">License</h2>
+<p>BSD © WebArchery</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="archery">
+  <span class="name"><a href="archery_archery/">archery/archery</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="application">
+  <span class="name"><a href="archery_core_application/">archery/core/application</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="config">
+  <span class="name"><a href="archery_core_config/">archery/core/config</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="container">
+  <span class="name"><a href="archery_core_container/">archery/core/container</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="body_parser">
+  <span class="name"><a href="archery_core_http_body_parser/">archery/core/http/body_parser</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="extensions">
+  <span class="name"><a href="archery_core_http_extensions/">archery/core/http/extensions</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="http">
+  <span class="name"><a href="archery_core_http_http/">archery/core/http/http</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="router">
+  <span class="name"><a href="archery_core_http_router/">archery/core/http/router</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="kernel">
+  <span class="name"><a href="archery_core_kernel/">archery/core/kernel</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="logger">
+  <span class="name"><a href="archery_core_logger/">archery/core/logger</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="hasher">
+  <span class="name"><a href="archery_core_orm_hasher/">archery/core/orm/hasher</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="json_file_model">
+  <span class="name"><a href="archery_core_orm_json_file_model/">archery/core/orm/json_file_model</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="model">
+  <span class="name"><a href="archery_core_orm_model/">archery/core/orm/model</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="sqlite_model">
+  <span class="name"><a href="archery_core_orm_sqlite_model/">archery/core/orm/sqlite_model</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="provider">
+  <span class="name"><a href="archery_core_provider/">archery/core/provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="static_files_server">
+  <span class="name"><a href="archery_core_static_files_server/">archery/core/static_files_server</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="template_engine">
+  <span class="name"><a href="archery_core_template_engine/">archery/core/template_engine</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">archery package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">archery</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="archery_archery/">archery/archery</a></li>
+      <li><a href="archery_core_application/">archery/core/application</a></li>
+      <li><a href="archery_core_config/">archery/core/config</a></li>
+      <li><a href="archery_core_container/">archery/core/container</a></li>
+      <li><a href="archery_core_http_body_parser/">archery/core/http/body_parser</a></li>
+      <li><a href="archery_core_http_extensions/">archery/core/http/extensions</a></li>
+      <li><a href="archery_core_http_http/">archery/core/http/http</a></li>
+      <li><a href="archery_core_http_router/">archery/core/http/router</a></li>
+      <li><a href="archery_core_kernel/">archery/core/kernel</a></li>
+      <li><a href="archery_core_logger/">archery/core/logger</a></li>
+      <li><a href="archery_core_orm_hasher/">archery/core/orm/hasher</a></li>
+      <li><a href="archery_core_orm_json_file_model/">archery/core/orm/json_file_model</a></li>
+      <li><a href="archery_core_orm_model/">archery/core/orm/model</a></li>
+      <li><a href="archery_core_orm_sqlite_model/">archery/core/orm/sqlite_model</a></li>
+      <li><a href="archery_core_provider/">archery/core/provider</a></li>
+      <li><a href="archery_core_static_files_server/">archery/core/static_files_server</a></li>
+      <li><a href="archery_core_template_engine/">archery/core/template_engine</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.1.0
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

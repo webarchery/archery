@@ -29,8 +29,8 @@
 
 // https://webarchery.dev
 
-
 library;
+
 export 'dart:io';
 export 'dart:convert';
 export 'dart:math';
@@ -44,38 +44,20 @@ export 'package:intl/intl.dart';
 export 'dart:typed_data';
 export 'package:mime/mime.dart';
 
-
-
-
 //**********************************
 export './core/container.dart'
-    show
-    ServiceContainer,
-    Container,
-    ServiceContainerException;
+    show ServiceContainer, Container, ServiceContainerException;
 
 //***********************************
-export './core/provider.dart'
-    show
-    Provider,
-    ProviderException;
+export './core/provider.dart' show Provider, ProviderException;
 //***********************************
-export './core/application.dart'
-    show
-    ContainerOperations,
-    AppStatus,
-    App;
+export './core/application.dart' show ContainerOperations, AppStatus, App;
 
 //***********************************
-export './core/config.dart'
-    show
-    ConfigRepository,
-    AppConfig;
+export './core/config.dart' show ConfigRepository, AppConfig;
 
 //***********************************
 export './core/kernel.dart';
-
-
 
 //***********************************
 export './core/template_engine.dart';
@@ -101,7 +83,6 @@ export './core/orm/json_file_model.dart';
 //***********************************
 
 export './core/orm/sqlite_model.dart';
-
 
 //***********************************
 export 'core/http/http.dart';

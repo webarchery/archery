@@ -33,6 +33,7 @@ import 'package:archery/archery/archery.dart';
 export 'extensions.dart';
 export 'router.dart';
 export 'body_parser.dart';
+
 /// Signature for HTTP route handlers.
 ///
 /// Receives an [HttpRequest] and returns a [Future<dynamic>].
@@ -41,7 +42,8 @@ typedef Handler = Future<dynamic> Function(HttpRequest request);
 /// Signature for HTTP middleware functions.
 ///
 /// Receives an [HttpRequest] and a [next] callback to continue the chain.
-typedef HttpMiddleware = Future<dynamic> Function(HttpRequest request, void Function() next);
+typedef HttpMiddleware =
+    Future<dynamic> Function(HttpRequest request, void Function() next);
 
 /// HTTP methods supported by the router.
 enum HttpMethod {
@@ -60,4 +62,3 @@ enum HttpMethod {
   /// PATCH request
   patch,
 }
-

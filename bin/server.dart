@@ -40,6 +40,8 @@ Future<void> main(List<String> args) async {
     });
   } catch (e, stack) {
     print("Error booting server: $e\n$stack");
-    await app.shutdown().then((_) => print("App has shut down from a server initialization error"));
+    await app.shutdown().then(
+      (_) => print("App has shut down from a server initialization error"),
+    );
   }
 }

@@ -61,10 +61,7 @@ class AppKernel {
   ///   router: appRouter,
   /// );
   /// ```
-  AppKernel({
-    this.middleware = const [],
-    required this.router,
-  });
+  AppKernel({this.middleware = const [], required this.router});
 
   /// Handles an incoming [HttpRequest] by running global middleware,
   /// then dispatching to the router.

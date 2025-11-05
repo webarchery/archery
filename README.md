@@ -39,7 +39,7 @@ git clone https://github.com/webarchery/archery.git
 cd archery
 dart run bin/server.dart
 ```
-Now visit [http://localhost:5501](http://localhost:5501) → *Hello, Archery!*
+Now visit -> localhost:5501
 
 > Tip: if you just want to try it inside another project, add `archery` as a path dependency in your `pubspec.yaml` while experimenting.
 

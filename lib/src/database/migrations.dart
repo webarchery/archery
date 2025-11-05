@@ -4,9 +4,9 @@ Future<void> migrateJsonFileModels() async {
   await JsonFileModel.migrate<User>(constructor: User.fromJson);
 }
 
-
 Future<void> migrateSQLiteModels() async {
-    await SQLiteModel.migrate<User>(constructor: User.fromJson, columnDefinitions: User.columnDefinitions);
+  await SQLiteModel.migrate<User>(
+    constructor: User.fromJson,
+    columnDefinitions: User.columnDefinitions,
+  );
 }
-
-

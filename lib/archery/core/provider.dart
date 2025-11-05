@@ -50,11 +50,7 @@ class ProviderException implements Exception {
   final StackTrace? trace;
 
   /// Generic constructor.
-  ProviderException({
-    required this.type,
-    this.message,
-    this.trace,
-  });
+  ProviderException({required this.type, this.message, this.trace});
 
   /// Thrown when a provider is registered more than once.
   ///
@@ -74,10 +70,7 @@ class ProviderException implements Exception {
   }
 
   /// Thrown when a provider's `boot()` method throws during app startup.
-  factory ProviderException.unbooted({
-    required Type type,
-    StackTrace? trace,
-  }) {
+  factory ProviderException.unbooted({required Type type, StackTrace? trace}) {
     return ProviderException(
       type: type,
       message: '$type boot() method failed during APP initialization',

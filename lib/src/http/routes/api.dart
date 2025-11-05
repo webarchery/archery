@@ -1,8 +1,10 @@
 import 'package:archery/archery/archery.dart';
 
 void apiRoutes(Router router) {
-
-  router.group(prefix: '/api', middleware: [], routes: () {
+  router.group(
+    prefix: '/api',
+    middleware: [],
+    routes: () {
       router.get('/user', (request) async {
         return request.json({
           "username": "jason",

@@ -49,7 +49,7 @@ class ConfigRepository {
   ///
   /// All input data is deeply copied to prevent external mutation.
   ConfigRepository([Map<String, dynamic> items = const {}])
-      : _items = _deepCopy(items);
+    : _items = _deepCopy(items);
 
   /// Validates that a dot-notation [key] is safe and well-formed.
   ///
@@ -136,8 +136,7 @@ class ConfigRepository {
     final result = <String, dynamic>{};
     for (final entry in source.entries) {
       if (entry.value is Map) {
-        result[entry.key] =
-            _deepCopy(entry.value as Map<String, dynamic>);
+        result[entry.key] = _deepCopy(entry.value as Map<String, dynamic>);
       } else if (entry.value is List) {
         result[entry.key] = (entry.value as List)
             .map((e) => e is Map ? _deepCopy(e as Map<String, dynamic>) : e)
@@ -196,7 +195,9 @@ class _ConfigFilesLoader {
 
       try {
         final content = await entity.readAsString();
-        final value = content.isEmpty ? <String, dynamic>{} : jsonDecode(content);
+        final value = content.isEmpty
+            ? <String, dynamic>{}
+            : jsonDecode(content);
 
         if (content.isEmpty) {
           // Consider logging: empty file
@@ -245,7 +246,11 @@ class _ConfigFilesLoader {
   /// Sets a [value] at a nested [dottedKey] in [target] map.
   ///
   /// Creates intermediate maps if they don't exist.
-  void _setNested(Map<String, dynamic> target, String dottedKey, dynamic value) {
+  void _setNested(
+    Map<String, dynamic> target,
+    String dottedKey,
+    dynamic value,
+  ) {
     final segments = dottedKey.split('.');
     var current = target;
 

@@ -65,7 +65,10 @@ class Hasher {
   /// Returns URL-safe base64-encoded string.
   static String _generateSalt() {
     final random = Random.secure();
-    final saltBytes = List<int>.generate(_saltLength, (i) => random.nextInt(256));
+    final saltBytes = List<int>.generate(
+      _saltLength,
+      (i) => random.nextInt(256),
+    );
     return base64Url.encode(saltBytes);
   }
 
@@ -104,7 +107,12 @@ class Hasher {
   ///
   /// Derives a key from [password] and [salt] using [iterations].
   /// Returns first [keyLength] bytes of derived key.
-  static List<int> _pbkdf2(String password, String salt, int iterations, int keyLength) {
+  static List<int> _pbkdf2(
+    String password,
+    String salt,
+    int iterations,
+    int keyLength,
+  ) {
     final passwordBytes = utf8.encode(password);
     final saltBytes = utf8.encode(salt);
 
