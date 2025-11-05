@@ -87,10 +87,13 @@ abstract class Model {
   /// Last update timestamp (UTC).
   DateTime? updatedAt;
 
-  /// Default storage backend for this model.
-  ///
+  /// Default storage backend for all models.
+  /// can be overridden per-class
   /// Can be overridden per-operation.
-  Disk disk = Disk.file;
+
+  static const defaultDisk = Disk.sqlite;
+  Disk disk = defaultDisk;
+
 
   /// Serializes model data (excluding metadata).
   ///
@@ -142,13 +145,13 @@ abstract class Model {
   // ──────────────────────────────────────────────────────────────────────
 
   /// Saves the current instance.
-  Future<bool> save({Disk disk = Disk.file});
+  Future<bool> save({Disk disk = Model.defaultDisk});
 
   /// Deletes the current instance.
-  Future<bool> delete({Disk disk = Disk.file});
+  Future<bool> delete({Disk disk = Model.defaultDisk});
 
   /// Updates the current instance with new data.
-  Future<bool> update({Disk disk = Disk.file});
+  Future<bool> update({Disk disk = Model.defaultDisk});
 
   // ──────────────────────────────────────────────────────────────────────
   // Static CRUD API (disk-agnostic)
@@ -157,7 +160,7 @@ abstract class Model {
   /// Saves an [instance] to the specified [disk].
   ///
   /// Returns `true` on success.
-  static Future<bool> saveInstance<T extends Model>({required T instance, Disk disk = Disk.file}) async {
+  static Future<bool> saveInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -177,7 +180,7 @@ abstract class Model {
   }
 
   /// Deletes an [instance] by UUID.
-  static Future<bool> deleteInstance<T extends Model>({required T instance, Disk disk = Disk.file}) async {
+  static Future<bool> deleteInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -186,6 +189,11 @@ abstract class Model {
           return false;
         }
       case Disk.sqlite:
+        try {
+          return await SQLiteModel.delete<T>(instance.id);
+        } catch (e) {
+          return false;
+        }
       case Disk.s3:
         return false;
     }
@@ -218,22 +226,32 @@ abstract class Model {
   /// Returns all instances of type [T].
   ///
   /// Alias for `index<T>()`.
-  static Future<List<T>> all<T extends Model>({Disk disk = Disk.file}) async {
+  static Future<List<T>> all<T extends Model>({Disk disk = Model.defaultDisk}) async {
     return index<T>(disk: disk);
   }
 
   /// Retrieves all instances of type [T].
-  static Future<List<T>> index<T extends Model>({Disk disk = Disk.file}) async {
+  static Future<List<T>> index<T extends Model>({Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.index<T>();
+          final models = await JsonFileModel.index<T>();
+          if(models.isNotEmpty) {
+            models.map((model) => model.disk = Model.defaultDisk);
+            return models;
+          }
+          return [];
         } catch (e) {
           return [];
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.index<T>();
+          final models = await SQLiteModel.index<T>();
+          if(models.isNotEmpty) {
+            models.map((model) => model.disk = Disk.sqlite);
+            return models;
+          }
+          return [];
         } catch (e) {
           return [];
         }
@@ -243,7 +261,7 @@ abstract class Model {
   }
 
   /// Counts total instances of type [T].
-  static Future<int> count<T extends Model>({Disk disk = Disk.file}) async {
+  static Future<int> count<T extends Model>({Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -263,7 +281,7 @@ abstract class Model {
   }
 
   /// Checks if a record with [id] exists.
-  static Future<bool> exists<T extends Model>({required dynamic id, Disk disk = Disk.file}) async {
+  static Future<bool> exists<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -283,17 +301,27 @@ abstract class Model {
   }
 
   /// Finds a record by [id] (UUID or primary key).
-  static Future<T?> find<T extends Model>({required dynamic id, Disk disk = Disk.file}) async {
+  static Future<T?> find<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.find<T>(uuid: id);
+          final model = await JsonFileModel.find<T>(uuid: id);
+          if(model != null) {
+            model.disk = Disk.file;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.find<T>(id: id);
+          final model = await SQLiteModel.find<T>(id: id);
+          if(model != null) {
+            model.disk = Disk.sqlite;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
@@ -303,17 +331,28 @@ abstract class Model {
   }
 
   /// Finds first record where [field] matches [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, Disk disk = Disk.file}) async {
+  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.findBy<T>(field: field, value: value);
+          final model = await JsonFileModel.findBy<T>(field: field, value: value);
+          if(model != null) {
+            model.disk =Disk.file;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.findBy<T>(field: field, value: value);
+
+          final model = await SQLiteModel.findBy<T>(field: field, value: value);
+          if(model != null) {
+            model.disk =Disk.sqlite;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
@@ -334,13 +373,24 @@ abstract class Model {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.where<T>(field: field, value: value, comp: comp);
+          final models = await JsonFileModel.where<T>(field: field, value: value, comp: comp);
+          if(models.isNotEmpty) {
+            models.map((model) => model.disk = Disk.file);
+            return models;
+          }
+          return [];
+
         } catch (e) {
           return [];
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.where<T>(field: field, value: value, comp: comp);
+          final models = await SQLiteModel.where<T>(field: field, value: value, comp: comp);
+          if(models.isNotEmpty) {
+            models.map((model) => model.disk = Disk.sqlite);
+            return models;
+          }
+          return [];
         } catch (e) {
           return [];
         }
@@ -354,18 +404,28 @@ abstract class Model {
     required String field,
     required dynamic value,
     String comp = "==",
-    Disk disk = Disk.file,
+    Disk disk = Model.defaultDisk,
   }) async {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          final model = await JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if(model != null) {
+            model.disk =Disk.file;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.firstWhere<T>(field: field, value: value, comp: comp);
+          final model = await SQLiteModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if(model != null) {
+            model.disk =Disk.sqlite;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
@@ -375,17 +435,27 @@ abstract class Model {
   }
 
   /// Creates a new record from [fromJson].
-  static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, Disk disk = Disk.file}) async {
+  static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.create<T>(fromJson);
+          final model = await JsonFileModel.create<T>(fromJson);
+          if(model != null) {
+            model.disk =Disk.file;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.create<T>(fromJson);
+          final model = await SQLiteModel.create<T>(fromJson);
+          if(model != null) {
+            model.disk =Disk.file;
+            return model;
+          }
+          return null;
         } catch (e) {
           return null;
         }
@@ -395,7 +465,7 @@ abstract class Model {
   }
 
   /// Alias for `saveInstance`.
-  static Future<bool> store<T extends Model>({required T instance, Disk disk = Disk.file}) async {
+  static Future<bool> store<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
     return await saveInstance<T>(instance: instance, disk: disk);
   }
 
@@ -425,7 +495,7 @@ abstract class Model {
   }
 
   /// Deletes a record by [id].
-  static Future<bool> destroy<T extends Model>({required dynamic id, Disk disk = Disk.file}) async {
+  static Future<bool> destroy<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -445,7 +515,7 @@ abstract class Model {
   }
 
   /// Deletes all records of type [T].
-  static Future<bool> truncate<T extends Model>({Disk disk = Disk.file}) async {
+  static Future<bool> truncate<T extends Model>({Disk disk = Model.defaultDisk}) async {
     switch (disk) {
       case Disk.file:
         try {

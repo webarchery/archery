@@ -346,7 +346,7 @@ abstract class SQLiteModel {
 
       final instance = constructor({...fromJson, ...defaults}) as T;
 
-      if (await instance.save(disk: Disk.sqlite)) {
+      if (await instance.save()) {
         return instance;
       }
       return null;
@@ -411,7 +411,7 @@ abstract class SQLiteModel {
     final record = await firstWhere<T>(field: field, value: value);
     if (record == null) return false;
 
-    return await record.delete(disk: Disk.sqlite);
+    return await record.delete();
   }
 
   /// Deletes all records in table.

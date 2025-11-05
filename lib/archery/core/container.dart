@@ -78,6 +78,13 @@ abstract class ServiceContainer {
   /// Throws [ServiceContainerException.duplicateRegistration] if already registered.
   void bind<T>({String? name, required FactoryFunction<T> factory});
 
+
+
+  /// Disposes a binding
+  ///
+  Future<bool> disposeBinding<T>({String? name});
+
+
   /// Registers a **singleton** service.
   ///
   /// The same instance is returned for all [make] calls within the same scope.
@@ -382,6 +389,26 @@ class Container implements ServiceContainer {
     _factories.clear();
     _ready.clear();
     _eagerRegistrations.clear();
+  }
+
+
+
+  /// remove a binding from the container
+  /// dispose-> a container
+  /// disposeBinding -> a container-binding
+  @override
+  Future<bool> disposeBinding<T>({String? name}) async {
+    final binding = tryMake<T>(name: name);
+
+    if(binding != null) {
+
+      _factories.removeWhere((key, value) => value == binding as Object);
+      _singletons.removeWhere((key, value) => value == binding as Object);
+      _eagerRegistrations.removeWhere((key, value) => key == T.toString());
+
+      return true;
+    }
+    return false;
   }
 
   /// Initializes eager singletons.

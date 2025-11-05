@@ -181,8 +181,8 @@ abstract class JsonFileModel {
   /// ```
   static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) async {
 
-    
-    final file = File("$dir/${_getTableName<T>()}");
+
+    final file = File("$dir/${_getTableName<T>()}.json");
 
     if(! await file.exists()) await file.create(recursive: true);
 
@@ -366,7 +366,7 @@ abstract class JsonFileModel {
 
     try {
       final instance = constructor(json) as T;
-      if (!await instance.save(disk: Disk.file)) return null;
+      if (!await instance.save()) return null;
       return instance;
     } catch (e) {
       return null;

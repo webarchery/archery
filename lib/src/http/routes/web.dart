@@ -3,7 +3,7 @@ import 'package:archery/src/http/controllers/blog/blog_pages_controller.dart';
 
 void webRoutes(Router router) {
   router.get('/', (request) async {
-    return request.view("welcome", {});
+    return request.view("welcome");
   });
 
   router.group(

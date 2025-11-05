@@ -10,3 +10,9 @@
 ## 1.0.4
 - Form Inputs
 - Body Parsing
+- 
+## 1.0.5
+- Formatting
+
+## 1.1.0
+- Stable v1

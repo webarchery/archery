@@ -11,7 +11,7 @@ extension View on HttpRequest {
   /// - Adds caching and security headers
   /// - Sets XSRF token cookie
   /// - Handles errors gracefully in debug mode
-  HttpResponse view(String template, [ViewData? data]) {
+  Future<HttpResponse> view(String template, [ViewData? data]) async {
     final engine = App().container.make<TemplateEngine>();
     final config = App().container.make<AppConfig>();
 
@@ -121,7 +121,7 @@ extension NotFound on HttpRequest {
     final engine = App().container.make<TemplateEngine>();
 
     try {
-      final html = engine.render("errors.404");
+      final html = engine.render("errors.404", {});
       response.headers.contentType = ContentType.html;
       return response
         ..statusCode = HttpStatus.notFound

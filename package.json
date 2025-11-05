@@ -1,6 +1,6 @@
 {
   "name": "archery",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.",
   "main": "bin/server.dart",
   "scripts": {

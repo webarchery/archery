@@ -181,7 +181,13 @@ class Router {
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
   void dispatch(HttpRequest request) async {
-    final method = _parseMethod(request.method);
+
+    final spoofMethod = await request.input("_method");
+    HttpMethod method = _parseMethod(request.method);
+    if(spoofMethod != null) {
+      method = _parseMethod(spoofMethod);
+    }
+
     final path = _normalize(request.uri.path);
 
     // 1. Static route lookup (fastest)
