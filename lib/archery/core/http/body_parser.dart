@@ -1,4 +1,3 @@
-
 // SPDX-FileCopyrightText: 2025 Kwame, III <webarcherydev@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 //
@@ -30,7 +29,6 @@
 
 // https://webarchery.dev
 
-
 import 'package:archery/archery/archery.dart';
 
 /// Caches we attach to each HttpRequest without altering the class.
@@ -49,8 +47,8 @@ class UploadedFile {
     required this.filename,
     required Uint8List bytes,
     required this.contentType,
-  })  : _cachedBytes = Future.value(bytes),
-        _knownLength = bytes.length;
+  }) : _cachedBytes = Future.value(bytes),
+       _knownLength = bytes.length;
 
   // empty factory constructor for invalid files
   factory UploadedFile.empty() {
@@ -63,7 +61,6 @@ class UploadedFile {
 
   // Add validation property
   bool get isValid => filename.isNotEmpty;
-
 
   /// Get the file content as bytes
   Future<Uint8List> get bytes async => await _cachedBytes;
@@ -96,8 +93,7 @@ class UploadedFile {
   }
 
   Future<File> savePublic({bool autoName = true}) async {
-
-    if(autoName) {
+    if (autoName) {
       final ext = filename.split(".").last;
 
       final uuid = Uuid().v4();
@@ -105,34 +101,25 @@ class UploadedFile {
       final newFileName = "$uuid.$ext";
       final file = File("lib/src/http/public/img/$newFileName");
 
-
-
-
-      if(!await file.exists()) await file.create(recursive: true);
+      if (!await file.exists()) await file.create(recursive: true);
 
       final bytes = await _cachedBytes;
       await file.writeAsBytes(bytes);
       return file;
-
     } else {
-
       final file = File("lib/src/http/public/img/$filename");
 
-
-      if(!await file.exists()) await file.create(recursive: true);
+      if (!await file.exists()) await file.create(recursive: true);
 
       final bytes = await _cachedBytes;
       await file.writeAsBytes(bytes);
       return file;
     }
-
-
   }
 
-
-
   @override
-  String toString() => 'UploadedFile(filename: $filename, type: $contentType, lengthKnown: $isLengthKnown)';
+  String toString() =>
+      'UploadedFile(filename: $filename, type: $contentType, lengthKnown: $isLengthKnown)';
 }
 
 extension ArcheryRequestInput on HttpRequest {
@@ -146,7 +133,9 @@ extension ArcheryRequestInput on HttpRequest {
     // Check query parameters first, then body fields
     // Body fields take precedence over query parameters for same key
     final queryValue = uri.queryParameters[key];
-    final bodyValue = fields != null && fields.containsKey(key) ? fields[key] : null;
+    final bodyValue = fields != null && fields.containsKey(key)
+        ? fields[key]
+        : null;
 
     // Return body value if exists, otherwise query value
     return bodyValue ?? queryValue;
@@ -179,7 +168,8 @@ extension ArcheryRequestInput on HttpRequest {
   }
 
   /// Returns only query parameters (without body fields)
-  Map<String, String> get query => Map<String, String>.from(uri.queryParameters);
+  Map<String, String> get query =>
+      Map<String, String>.from(uri.queryParameters);
 
   /// Returns only body fields (without query parameters)
   Future<Map<String, dynamic>> body() async {
@@ -193,7 +183,6 @@ extension ArcheryRequestInput on HttpRequest {
 
   Future<void> _ensureParsed() async {
     if (_parsedBody[this] == true) return;
-
 
     // Initialize bags
     _fieldBag[this] = <String, dynamic>{};
@@ -265,20 +254,17 @@ extension ArcheryRequestInput on HttpRequest {
           _fileBag[this]![name] = UploadedFile.fromBytes(
             filename: filename,
             bytes: bytes,
-            contentType: part.headers['content-type'] ?? 'application/octet-stream',
+            contentType:
+                part.headers['content-type'] ?? 'application/octet-stream',
           );
         } else {
           // Empty file - store as empty
           _fileBag[this]![name] = UploadedFile.empty();
         }
-      }
-
-      else if (filename != null && filename.isEmpty) {
+      } else if (filename != null && filename.isEmpty) {
         // File field present but no file selected - store as empty
         _fileBag[this]![name] = UploadedFile.empty();
-      }
-
-      else {
+      } else {
         // This is a regular form field - read into memory (small size)
         final value = await utf8.decoder.bind(part).join();
         _fieldBag[this]![name] = value;
@@ -308,5 +294,3 @@ extension ArcheryRequestInput on HttpRequest {
     return params;
   }
 }
-
-

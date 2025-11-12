@@ -22,14 +22,11 @@ Future<void> main(List<String> args) async {
   //   await AuthSession.login(email: user.email, password: user.password!);
   // }
 
-
-
   final router = app.make<Router>();
   authRoutes(router);
   webRoutes(router);
   apiRoutes(router);
   todoRoutes(router);
-
 
   final kernel = AppKernel(router: router);
 
@@ -38,7 +35,6 @@ Future<void> main(List<String> args) async {
   print("Before registration");
   print(app.container.listRegistrations());
   print("=====================");
-
 
   //
   //
@@ -58,10 +54,6 @@ Future<void> main(List<String> args) async {
 
   app.container.bindInstance<List<AuthSession>>([]);
 
-
-
-
-
   try {
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {
       server.autoCompress = config.get('server.compress', true);
@@ -71,11 +63,12 @@ Future<void> main(List<String> args) async {
       await for (HttpRequest request in server) {
         if (await staticFilesServer.tryServe(request)) continue;
         kernel.handle(request);
-
       }
     });
   } catch (e, stack) {
     print("Error booting server: $e\n$stack");
-    await app.shutdown().then((_) => print("App has shut down from a server initialization error"));
+    await app.shutdown().then(
+      (_) => print("App has shut down from a server initialization error"),
+    );
   }
 }

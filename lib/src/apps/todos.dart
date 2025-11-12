@@ -11,7 +11,10 @@ enum TodoStatus {
   const TodoStatus(this.progress);
 
   static TodoStatus fromString(String progress) {
-    return TodoStatus.values.firstWhere((status) => status.progress == progress.toLowerCase(), orElse: () => TodoStatus.created);
+    return TodoStatus.values.firstWhere(
+      (status) => status.progress == progress.toLowerCase(),
+      orElse: () => TodoStatus.created,
+    );
   }
 }
 
@@ -35,7 +38,8 @@ class Todo extends Model {
     return {
       "uuid": uuid,
       'task': task,
-      'progress': "${status.progress[0].toUpperCase()}${status.progress.substring(1)}",
+      'progress':
+          "${status.progress[0].toUpperCase()}${status.progress.substring(1)}",
       "created_at": createdAt?.toIso8601String(),
       "updated_at": updatedAt?.toIso8601String(),
     };
@@ -47,31 +51,39 @@ class Todo extends Model {
       "id": id,
       "uuid": uuid,
       'task': task,
-      'progress': "${status.progress[0].toUpperCase()}${status.progress.substring(1)}",
+      'progress':
+          "${status.progress[0].toUpperCase()}${status.progress.substring(1)}",
       "created_at": createdAt?.toIso8601String(),
       "updated_at": updatedAt?.toIso8601String(),
     };
   }
 
-  static Map<String, String> columnDefinitions = {'task': 'TEXT NOT NULL', 'progress': 'TEXT NOT NULL'};
+  static Map<String, String> columnDefinitions = {
+    'task': 'TEXT NOT NULL',
+    'progress': 'TEXT NOT NULL',
+  };
 
   @override
-  Future<bool> save({Disk? disk}) async => await Model.saveInstance<Todo>(instance: this, disk: disk ?? this.disk);
+  Future<bool> save({Disk? disk}) async =>
+      await Model.saveInstance<Todo>(instance: this, disk: disk ?? this.disk);
 
   @override
-  Future<bool> delete({Disk? disk}) async => await Model.deleteInstance<Todo>(instance: this, disk: disk ?? this.disk);
+  Future<bool> delete({Disk? disk}) async =>
+      await Model.deleteInstance<Todo>(instance: this, disk: disk ?? this.disk);
 
   @override
-  Future<bool> update({Disk? disk}) async => await Model.updateInstance<Todo>(instance: this, withJson: toMetaJson(), disk: disk ?? this.disk);
+  Future<bool> update({Disk? disk}) async => await Model.updateInstance<Todo>(
+    instance: this,
+    withJson: toMetaJson(),
+    disk: disk ?? this.disk,
+  );
 }
 
 void todoRoutes(Router router) {
-
   router.group(
     prefix: "/todos",
     routes: () {
       router.get("/", middleware: [Auth.middleware], (request) async {
-
         final todos = await Model.all<Todo>();
         todos.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
         return request.view("todos.index", {
@@ -90,10 +102,15 @@ void todoRoutes(Router router) {
         }
       });
 
-      router.get("/{uuid:string}", middleware: [Auth.middleware], (request) async {
+      router.get("/{uuid:string}", middleware: [Auth.middleware], (
+        request,
+      ) async {
         try {
           final uuid = RouteParams.get<String>("uuid");
-          final todo = await Model.firstWhere<Todo>(field: "uuid", value: uuid!);
+          final todo = await Model.firstWhere<Todo>(
+            field: "uuid",
+            value: uuid!,
+          );
           if (todo == null) return request.notFound();
           return request.json(todo.toJson());
         } catch (e) {
@@ -101,7 +118,9 @@ void todoRoutes(Router router) {
         }
       });
 
-      router.delete("/{uuid:string}", middleware: [Auth.middleware], (request) async {
+      router.delete("/{uuid:string}", middleware: [Auth.middleware], (
+        request,
+      ) async {
         try {
           final uuid = RouteParams.get<String>("uuid");
           final todo = await Model.firstWhere<Todo>(field: "uuid", value: uuid);
@@ -122,6 +141,4 @@ void todoRoutes(Router router) {
       });
     },
   );
-
-
 }

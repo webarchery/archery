@@ -1,4 +1,3 @@
-
 // SPDX-FileCopyrightText: 2025 Kwame, III <webarcherydev@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 //
@@ -101,7 +100,10 @@ abstract class JsonFileModel {
   /// Converts `UserModel` → `user_models` (snake_case plural).
   static String _getTableName<T>() {
     final typeName = T.toString();
-    final upperSnakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    final upperSnakeCase = typeName.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (match) => '_',
+    );
     return "${upperSnakeCase.toLowerCase()}s";
   }
 
@@ -140,7 +142,9 @@ abstract class JsonFileModel {
 
     if (instance.uuid == null) return false;
 
-    final existingIndex = allRecords.indexWhere((r) => r['uuid'] == instance.uuid);
+    final existingIndex = allRecords.indexWhere(
+      (r) => r['uuid'] == instance.uuid,
+    );
     final preparedData = _prepareForSave<T>(instance);
 
     if (existingIndex >= 0) {
@@ -156,7 +160,9 @@ abstract class JsonFileModel {
   /// Loads all records from a JSON file.
   ///
   /// Returns empty list if file doesn't exist or is invalid.
-  static Future<List<Map<String, dynamic>>> _loadJsonFileRecords(File file) async {
+  static Future<List<Map<String, dynamic>>> _loadJsonFileRecords(
+    File file,
+  ) async {
     if (!await file.exists()) return [];
 
     try {
@@ -179,12 +185,12 @@ abstract class JsonFileModel {
   /// ```dart
   /// JsonFileModel.migrate<User>((json) => User.fromJson(json));
   /// ```
-  static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) async {
-
-
+  static Future<void> migrate<T extends Model>({
+    required T Function(Map<String, dynamic>) constructor,
+  }) async {
     final file = File("$dir/${_getTableName<T>()}.json");
 
-    if(! await file.exists()) await file.create(recursive: true);
+    if (!await file.exists()) await file.create(recursive: true);
 
     _jsonConstructors[T] = constructor;
   }
@@ -266,7 +272,10 @@ abstract class JsonFileModel {
   }
 
   /// Finds first record where [field] == [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value}) async {
+  static Future<T?> findBy<T extends Model>({
+    required String field,
+    required dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -281,7 +290,9 @@ abstract class JsonFileModel {
   }
 
   /// Returns raw JSON record by UUID.
-  static Future<Map<String, dynamic>?> jsonFind<T extends Model>(String uuid) async {
+  static Future<Map<String, dynamic>?> jsonFind<T extends Model>(
+    String uuid,
+  ) async {
     try {
       final records = await jsonIndex<T>();
       return records.firstWhereOrNull((r) => r['uuid'] == uuid);
@@ -293,7 +304,11 @@ abstract class JsonFileModel {
   /// Filters records with comparison operators.
   ///
   /// Supported: `==`, `!=`, `>`, `<`, `>=`, `<=`
-  static Future<List<T>> where<T extends Model>({required String field, String comp = "==", dynamic value}) async {
+  static Future<List<T>> where<T extends Model>({
+    required String field,
+    String comp = "==",
+    dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
 
@@ -326,7 +341,11 @@ abstract class JsonFileModel {
   }
 
   /// Returns first record matching `where()` condition.
-  static Future<T?> firstWhere<T extends Model>({required String field, String comp = "==", dynamic value}) async {
+  static Future<T?> firstWhere<T extends Model>({
+    required String field,
+    String comp = "==",
+    dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -383,7 +402,11 @@ abstract class JsonFileModel {
   }
 
   /// Updates a single field by UUID.
-  static Future<bool> update<T extends Model>({required dynamic id, required String field, required dynamic value}) async {
+  static Future<bool> update<T extends Model>({
+    required dynamic id,
+    required String field,
+    required dynamic value,
+  }) async {
     final file = File("$dir/${_getTableName<T>()}.json");
     if (!await file.exists()) return false;
 
@@ -393,7 +416,9 @@ abstract class JsonFileModel {
       if (index < 0) return false;
 
       allRecords[index][field] = value;
-      allRecords[index]['updated_at'] = DateTime.now().toUtc().toIso8601String();
+      allRecords[index]['updated_at'] = DateTime.now()
+          .toUtc()
+          .toIso8601String();
 
       await file.writeAsString(jsonEncode(allRecords), flush: true);
       return true;
@@ -418,7 +443,10 @@ abstract class JsonFileModel {
   }
 
   /// Updates instance with partial [withJson].
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson}) async {
+  static Future<bool> updateInstance<T extends Model>({
+    required T instance,
+    required Map<String, dynamic> withJson,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return false;
 
@@ -433,13 +461,17 @@ abstract class JsonFileModel {
   }
 
   /// Deletes [instance] by UUID.
-  static Future<bool> deleteInstance<T extends Model>({required T instance}) async {
+  static Future<bool> deleteInstance<T extends Model>({
+    required T instance,
+  }) async {
     if (instance.uuid == null) return false;
     return await delete<T>(uuid: instance.uuid!);
   }
 
   /// Saves [instance].
-  static Future<bool> saveInstance<T extends Model>({required T instance}) async {
+  static Future<bool> saveInstance<T extends Model>({
+    required T instance,
+  }) async {
     return await save<T>(instance);
   }
 

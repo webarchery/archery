@@ -1,7 +1,7 @@
 import 'package:archery/archery/archery.dart';
+
 /// Type alias for view data.
 typedef ViewData = Map<String, dynamic>;
-
 
 /// Extension on [HttpRequest] to render HTML views.
 extension View on HttpRequest {
@@ -15,10 +15,9 @@ extension View on HttpRequest {
     final engine = App().container.make<TemplateEngine>();
     final config = App().container.make<AppConfig>();
 
-
     final user = await Auth.user(this);
-    if(user != null) {
-      final userData = {"user" :user.toJson()};
+    if (user != null) {
+      final userData = {"user": user.toJson()};
       data = {...?data, ...userData};
     }
 
@@ -29,22 +28,37 @@ extension View on HttpRequest {
       response.headers.contentType = ContentType.html;
       response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
-
-      response.headers.set(HttpHeaders.cacheControlHeader, 'no-cache, no-store, must-revalidate, max-age=0');
-      response.headers.set(HttpHeaders.pragmaHeader, 'no-cache'); // HTTP/1.0 compatibility
-      response.headers.set(HttpHeaders.expiresHeader, '0'); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
+      response.headers.set(
+        HttpHeaders.cacheControlHeader,
+        'no-cache, no-store, must-revalidate, max-age=0',
+      );
+      response.headers.set(
+        HttpHeaders.pragmaHeader,
+        'no-cache',
+      ); // HTTP/1.0 compatibility
+      response.headers.set(
+        HttpHeaders.expiresHeader,
+        '0',
+      ); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
       //
       // // --- Security headers ---
       response.headers.set('X-Content-Type-Options', 'nosniff');
       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      response.headers.set(
+        'Referrer-Policy',
+        'strict-origin-when-cross-origin',
+      );
       response.headers.set('X-XSS-Protection', '1; mode=block');
 
-      final cookie = Cookie('xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-        ..httpOnly = true
-        ..secure =
-        true // only over HTTPS
-        ..sameSite = SameSite.lax;
+      final cookie =
+          Cookie(
+              'xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
+              "${config.get('app.id')}",
+            )
+            ..httpOnly = true
+            ..secure =
+                true // only over HTTPS
+            ..sameSite = SameSite.lax;
 
       return response
         ..cookies.add(cookie)
@@ -73,7 +87,10 @@ extension Json on HttpRequest {
 
     // --- Performance headers ---
     response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      'public, max-age=300, must-revalidate',
+    );
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
     //
     // // --- Security headers ---
@@ -82,10 +99,14 @@ extension Json on HttpRequest {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final cookie = Cookie('xsrf-json-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax;
+    final cookie =
+        Cookie(
+            'xsrf-json-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
+            "${config.get('app.id')}",
+          )
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax;
 
     response.headers.contentType = ContentType.json;
 
@@ -103,7 +124,10 @@ extension Text on HttpRequest {
   HttpResponse text([dynamic data]) {
     final config = App().container.make<AppConfig>();
     response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      'public, max-age=300, must-revalidate',
+    );
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
     // --- Security headers ---
@@ -112,10 +136,14 @@ extension Text on HttpRequest {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final cookie = Cookie('xsrf-text-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}', "${config.get('app.id')}")
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax;
+    final cookie =
+        Cookie(
+            'xsrf-text-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
+            "${config.get('app.id')}",
+          )
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax;
 
     response.headers.contentType = ContentType.text;
     return response
@@ -169,15 +197,13 @@ extension NotAuthenticated on HttpRequest {
   }
 }
 
-
-
 extension Redirect on HttpRequest {
   void redirectBack() {
     try {
       final referer = headers.value(HttpHeaders.refererHeader);
       // Remove the response.write() call - redirects don't need body content
       response.redirect(Uri.parse(referer!));
-    } catch(e) {
+    } catch (e) {
       redirectHome();
     }
   }
@@ -195,15 +221,11 @@ extension Redirect on HttpRequest {
   }
 
   void redirectTo({String path = "/"}) {
-
     try {
       response.redirect(Uri.parse(path));
       response.close();
-
-    }catch(e) {
+    } catch (e) {
       redirectHome();
     }
-
-
   }
 }

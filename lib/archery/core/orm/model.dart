@@ -159,7 +159,10 @@ abstract class Model {
   /// Saves an [instance] to the specified [disk].
   ///
   /// Returns `true` on success.
-  static Future<bool> saveInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> saveInstance<T extends Model>({
+    required T instance,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -179,7 +182,10 @@ abstract class Model {
   }
 
   /// Deletes an [instance] by UUID.
-  static Future<bool> deleteInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> deleteInstance<T extends Model>({
+    required T instance,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -207,13 +213,19 @@ abstract class Model {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.updateInstance<T>(instance: instance, withJson: withJson);
+          return await JsonFileModel.updateInstance<T>(
+            instance: instance,
+            withJson: withJson,
+          );
         } catch (e) {
           return false;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.updateInstance<T>(instance: instance, withJson: withJson);
+          return await SQLiteModel.updateInstance<T>(
+            instance: instance,
+            withJson: withJson,
+          );
         } catch (e) {
           return false;
         }
@@ -225,12 +237,16 @@ abstract class Model {
   /// Returns all instances of type [T].
   ///
   /// Alias for `index<T>()`.
-  static Future<List<T>> all<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<List<T>> all<T extends Model>({
+    Disk disk = Model.defaultDisk,
+  }) async {
     return index<T>(disk: disk);
   }
 
   /// Retrieves all instances of type [T].
-  static Future<List<T>> index<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<List<T>> index<T extends Model>({
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -260,7 +276,9 @@ abstract class Model {
   }
 
   /// Counts total instances of type [T].
-  static Future<int> count<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<int> count<T extends Model>({
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -280,7 +298,10 @@ abstract class Model {
   }
 
   /// Checks if a record with [id] exists.
-  static Future<bool> exists<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> exists<T extends Model>({
+    required dynamic id,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -300,7 +321,10 @@ abstract class Model {
   }
 
   /// Finds a record by [id] (UUID or primary key).
-  static Future<T?> find<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> find<T extends Model>({
+    required dynamic id,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -330,11 +354,18 @@ abstract class Model {
   }
 
   /// Finds first record where [field] matches [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> findBy<T extends Model>({
+    required String field,
+    required dynamic value,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
-          final model = await JsonFileModel.findBy<T>(field: field, value: value);
+          final model = await JsonFileModel.findBy<T>(
+            field: field,
+            value: value,
+          );
           if (model != null) {
             model.disk = Disk.file;
             return model;
@@ -371,7 +402,11 @@ abstract class Model {
     switch (disk) {
       case Disk.file:
         try {
-          final models = await JsonFileModel.where<T>(field: field, value: value, comp: comp);
+          final models = await JsonFileModel.where<T>(
+            field: field,
+            value: value,
+            comp: comp,
+          );
           if (models.isNotEmpty) {
             models.map((model) => model.disk = Disk.file);
             return models;
@@ -382,7 +417,11 @@ abstract class Model {
         }
       case Disk.sqlite:
         try {
-          final models = await SQLiteModel.where<T>(field: field, value: value, comp: comp);
+          final models = await SQLiteModel.where<T>(
+            field: field,
+            value: value,
+            comp: comp,
+          );
           if (models.isNotEmpty) {
             models.map((model) => model.disk = Disk.sqlite);
             return models;
@@ -406,7 +445,11 @@ abstract class Model {
     switch (disk) {
       case Disk.file:
         try {
-          final model = await JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          final model = await JsonFileModel.firstWhere<T>(
+            field: field,
+            value: value,
+            comp: comp,
+          );
           if (model != null) {
             model.disk = Disk.file;
             return model;
@@ -417,7 +460,11 @@ abstract class Model {
         }
       case Disk.sqlite:
         try {
-          final model = await SQLiteModel.firstWhere<T>(field: field, value: value, comp: comp);
+          final model = await SQLiteModel.firstWhere<T>(
+            field: field,
+            value: value,
+            comp: comp,
+          );
           if (model != null) {
             model.disk = Disk.sqlite;
             return model;
@@ -432,7 +479,10 @@ abstract class Model {
   }
 
   /// Creates a new record from [fromJson].
-  static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> create<T extends Model>({
+    required Map<String, dynamic> fromJson,
+    Disk disk = Model.defaultDisk,
+  }) async {
     if (fromJson['password'] != null) {
       fromJson['password'] = Hasher.hashPassword(fromJson['password']);
     }
@@ -465,7 +515,10 @@ abstract class Model {
   }
 
   /// Alias for `saveInstance`.
-  static Future<bool> store<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> store<T extends Model>({
+    required T instance,
+    Disk disk = Model.defaultDisk,
+  }) async {
     return await saveInstance<T>(instance: instance, disk: disk);
   }
 
@@ -479,13 +532,21 @@ abstract class Model {
     switch (disk) {
       case Disk.file:
         try {
-          return await JsonFileModel.update<T>(id: id, field: field, value: value);
+          return await JsonFileModel.update<T>(
+            id: id,
+            field: field,
+            value: value,
+          );
         } catch (e) {
           return false;
         }
       case Disk.sqlite:
         try {
-          return await SQLiteModel.update<T>(id: id, field: field, value: value);
+          return await SQLiteModel.update<T>(
+            id: id,
+            field: field,
+            value: value,
+          );
         } catch (e) {
           return false;
         }
@@ -495,7 +556,10 @@ abstract class Model {
   }
 
   /// Deletes a record by [id].
-  static Future<bool> destroy<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> destroy<T extends Model>({
+    required dynamic id,
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
@@ -515,7 +579,9 @@ abstract class Model {
   }
 
   /// Deletes all records of type [T].
-  static Future<bool> truncate<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<bool> truncate<T extends Model>({
+    Disk disk = Model.defaultDisk,
+  }) async {
     switch (disk) {
       case Disk.file:
         try {
