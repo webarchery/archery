@@ -7,6 +7,7 @@
 
     <!-- Tailwind via CDN for new apps; swap to a compiled build in production -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <!-- Color scheme: follow system by default -->
     <meta name="color-scheme" content="dark light" />
@@ -39,9 +40,9 @@
         <!-- Brand -->
         @include('includes._main-header')
         <!-- Hero -->
-        <section class="my-16">
+        <section class="mt-16">
 
-            <h1 class="text-3xl sm:text-4xl font-black tracking-tight">
+            <h1 class="text-3xl sm:text-4xl font-black tracking-tight animate__animated animate__slideInLeft">
                 You’re up and running.
             </h1>
 
@@ -81,7 +82,7 @@
         </section>
 
         <!-- Getting started card -->
-        <section class="mt-10">
+        <section class="mt-32">
             <div class="rounded-2xl border border-zinc-200 bg-white/70 backdrop-blur-sm p-5 shadow-sm dark:border-zinc-800 dark:bg-stone-900/60">
                 <div class="flex flex-col items-start justify-between gap-4">
                     <div>
@@ -103,10 +104,18 @@
             </div>
         </section>
 
-        <!-- Footer -->
-        @include('includes._main-footer')
+        <section class="mt-16">
+            @include('includes._main-footer')
+        </section>
+
     </div>
 </main>
 
 </body>
 </html>
+
+
+
+
+
+

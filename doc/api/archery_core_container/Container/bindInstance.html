@@ -82,17 +82,11 @@ void bindInstance&lt;T&gt;(T instance, {String? name}) {
   final key = _key&lt;T&gt;(name);
 
   if (_factories.containsKey(key) || _singletons.containsKey(key)) {
-    throw ServiceContainerException.duplicateRegistration(
-      type: T,
-      name: name,
-    );
+    throw ServiceContainerException.duplicateRegistration(type: T, name: name);
   }
 
   if (instance == null) {
-    throw ServiceContainerException.nullInstanceUnallowed(
-      type: T,
-      name: name,
-    );
+    throw ServiceContainerException.nullInstanceUnallowed(type: T, name: name);
   }
 
   _singletons[key] = instance as Object;
@@ -124,7 +118,7 @@ void bindInstance&lt;T&gt;(T instance, {String? name}) {
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

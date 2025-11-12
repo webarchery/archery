@@ -68,7 +68,8 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;File&gt; savePublic({bool autoName = true}) async {
-  if (autoName) {
+
+  if(autoName) {
     final ext = filename.split(&quot;.&quot;).last;
 
     final uuid = Uuid().v4();
@@ -76,20 +77,28 @@
     final newFileName = &quot;$uuid.$ext&quot;;
     final file = File(&quot;lib&#47;src&#47;http&#47;public&#47;img&#47;$newFileName&quot;);
 
-    if (!await file.exists()) await file.create(recursive: true);
+
+
+
+    if(!await file.exists()) await file.create(recursive: true);
 
     final bytes = await _cachedBytes;
     await file.writeAsBytes(bytes);
     return file;
+
   } else {
+
     final file = File(&quot;lib&#47;src&#47;http&#47;public&#47;img&#47;$filename&quot;);
 
-    if (!await file.exists()) await file.create(recursive: true);
+
+    if(!await file.exists()) await file.create(recursive: true);
 
     final bytes = await _cachedBytes;
     await file.writeAsBytes(bytes);
     return file;
   }
+
+
 }</code></pre>
 </section>
 
@@ -118,7 +127,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

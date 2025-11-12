@@ -78,6 +78,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void dispatch(HttpRequest request) async {
+
   final spoofMethod = await request.input(&quot;_method&quot;);
   HttpMethod method = _parseMethod(request.method);
   if (spoofMethod != null) {
@@ -88,15 +89,11 @@
 
   &#47;&#47; 1. Static route lookup (fastest)
   final handler = _routes[method]?[path];
-  final middleware = _middlewareMap[path] ?? const [];
+  &#47;&#47; Get middleware for this specific method+path combination
+  final middleware = _middlewareMap[method]?[path] ?? const [];
 
   if (handler != null) {
-    _runMiddleware(
-      request,
-      middleware,
-      0,
-      () async =&gt; await handler(request),
-    );
+    _runMiddleware(request, middleware, 0, () async =&gt; await handler(request));
     return;
   }
 
@@ -119,23 +116,17 @@
         valid = false;
         break;
       }
-      params[cr.paramNames[i]] = coerced is _Coerce
-          ? coerced.value!
-          : coerced;
+      params[cr.paramNames[i]] = coerced is _Coerce ? coerced.value! : coerced;
     }
 
     if (!valid) continue;
 
     &#47;&#47; Execute with params in Zone
     runZoned(
-      () =&gt; _runMiddleware(
-        request,
-        cr.middleware,
-        0,
-        () =&gt; cr.handler(request),
-      ),
+          () =&gt; _runMiddleware(request, cr.middleware, 0, () =&gt; cr.handler(request)),
       zoneValues: RouteParams._zoneValues(params),
     );
+
     return;
   }
 
@@ -169,7 +160,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

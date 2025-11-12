@@ -70,9 +70,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; deleteInstance&lt;T extends Model&gt;({
-  required T instance,
-}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; deleteInstance&lt;T extends Model&gt;({required T instance}) async {
   if (instance.uuid == null) return false;
   return await delete&lt;T&gt;(uuid: instance.uuid!);
 }</code></pre>
@@ -103,7 +101,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

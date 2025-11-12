@@ -61,7 +61,10 @@ class AppKernel {
   ///   router: appRouter,
   /// );
   /// ```
-  AppKernel({this.middleware = const [], required this.router});
+  AppKernel({
+    this.middleware = const [],
+    required this.router,
+  });
 
   /// Handles an incoming [HttpRequest] by running global middleware,
   /// then dispatching to the router.
@@ -74,7 +77,17 @@ class AppKernel {
   /// });
   /// ```
   void handle(HttpRequest request) {
+    // Session.cookie
+    // request.session.cookie
+    // init session??
+    // Session.start()
+    // create new (archery_guest) cookie if not on request
+    // request.response.cookies.add(Cookie("before", "before-done"));
     _runMiddleware(request, 0);
+    // Session.end()
+    // queue cookie on response
+    // request.response.cookies.add(Cookie("after", "after-done"));
+
   }
 
   /// Recursively executes the global middleware chain.

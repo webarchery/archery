@@ -72,11 +72,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({
-  required dynamic id,
-  required String field,
-  required dynamic value,
-}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({required dynamic id, required String field, required dynamic value}) async {
   final instance = await find&lt;T&gt;(id: id);
   if (instance == null) return false;
 
@@ -113,7 +109,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

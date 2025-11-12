@@ -77,7 +77,17 @@ then dispatching to the router.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void handle(HttpRequest request) {
+  &#47;&#47; Session.cookie
+  &#47;&#47; request.session.cookie
+  &#47;&#47; init session??
+  &#47;&#47; Session.start()
+  &#47;&#47; create new (archery_guest) cookie if not on request
+  &#47;&#47; request.response.cookies.add(Cookie(&quot;before&quot;, &quot;before-done&quot;));
   _runMiddleware(request, 0);
+  &#47;&#47; Session.end()
+  &#47;&#47; queue cookie on response
+  &#47;&#47; request.response.cookies.add(Cookie(&quot;after&quot;, &quot;after-done&quot;));
+
 }</code></pre>
 </section>
 
@@ -106,7 +116,7 @@ then dispatching to the router.</p>
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

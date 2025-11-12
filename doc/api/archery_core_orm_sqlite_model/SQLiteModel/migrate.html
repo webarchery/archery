@@ -96,9 +96,7 @@
     final tableName = _getTableName&lt;T&gt;();
     final allColumns = {..._columnDefinitions, ...columnDefinitions};
 
-    final columnsDef = allColumns.entries
-        .map((e) =&gt; &#39;${e.key} ${e.value}&#39;)
-        .join(&#39;, &#39;);
+    final columnsDef = allColumns.entries.map((e) =&gt; &#39;${e.key} ${e.value}&#39;).join(&#39;, &#39;);
 
     await _database.execute(&#39;&#39;&#39;
       CREATE TABLE IF NOT EXISTS $tableName (
@@ -116,6 +114,7 @@
       CREATE INDEX IF NOT EXISTS idx_${tableName}_created_at
       ON $tableName (created_at)
     &#39;&#39;&#39;);
+
   }
 }</code></pre>
 </section>
@@ -145,7 +144,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

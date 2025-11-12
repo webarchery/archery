@@ -86,3 +86,5 @@ export './core/orm/sqlite_model.dart';
 
 //***********************************
 export 'core/http/http.dart';
+
+export 'core/auth/auth_session.dart';

@@ -72,11 +72,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({
-  required dynamic id,
-  required String field,
-  required dynamic value,
-}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({required dynamic id, required String field, required dynamic value}) async {
   final file = File(&quot;$dir&#47;${_getTableName&lt;T&gt;()}.json&quot;);
   if (!await file.exists()) return false;
 
@@ -86,9 +82,7 @@
     if (index &lt; 0) return false;
 
     allRecords[index][field] = value;
-    allRecords[index][&#39;updated_at&#39;] = DateTime.now()
-        .toUtc()
-        .toIso8601String();
+    allRecords[index][&#39;updated_at&#39;] = DateTime.now().toUtc().toIso8601String();
 
     await file.writeAsString(jsonEncode(allRecords), flush: true);
     return true;
@@ -123,7 +117,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

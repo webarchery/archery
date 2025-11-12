@@ -81,7 +81,8 @@ disposeBinding -&gt; a container-binding</p>
 Future&lt;bool&gt; disposeBinding&lt;T&gt;({String? name}) async {
   final binding = tryMake&lt;T&gt;(name: name);
 
-  if (binding != null) {
+  if(binding != null) {
+
     _factories.removeWhere((key, value) =&gt; value == binding as Object);
     _singletons.removeWhere((key, value) =&gt; value == binding as Object);
     _eagerRegistrations.removeWhere((key, value) =&gt; key == T.toString());
@@ -117,7 +118,7 @@ Future&lt;bool&gt; disposeBinding&lt;T&gt;({String? name}) async {
 <footer>
   <span class="no-break">
     archery
-      1.1.0
+      1.2.0
   </span>
   
 </footer>

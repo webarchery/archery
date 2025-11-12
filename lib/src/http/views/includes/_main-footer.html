@@ -1,10 +1,20 @@
-<footer class="mt-12 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400">
-    <div class="flex items-center gap-2">
+<footer class="mt-8 flex gap-3 text-xs text-zinc-500 dark:text-zinc-400 xbg-red-500 justify-between">
+    <div class="flex items-center gap-2 ">
         <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
         <span>Archery scaffold ready</span>
     </div>
 
-    <nav class="flex items-center gap-4">
+
+    @if(user)
+    <div class="flex items-center gap-2 bg-stone-100 px-3 py-1 rounded">
+        <a href="/logout" class="text-red-500 font-bold text-xs">Logout</a>->
+        <a href="/user/profile" class="text-xs text-indigo-500  font-medium ">{{ user.name }}</a>
+    </div>
+
+    @endif
+
+
+    <nav class="items-center gap-4 hidden sm:flex">
         <a href="https://webarchery.dev" class="hover:text-zinc-700 dark:hover:text-zinc-200 transition">Docs</a>
         <a href="https://webarchery.dev" class="hover:text-zinc-700 dark:hover:text-zinc-200 transition">Examples</a>
         <a href="https://github.com/webarchery/archery" class="hover:text-zinc-700 dark:hover:text-zinc-200 transition">GitHub</a>

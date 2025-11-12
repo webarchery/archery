@@ -1,3 +1,5 @@
+
+
 // SPDX-FileCopyrightText: 2025 Kwame, III <webarcherydev@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 //
@@ -39,23 +41,19 @@ import 'package:archery/archery/archery.dart';
 class TemplateEngineException implements Exception {
   /// Error message.
   String? message;
-
   /// Generic constructor.
   TemplateEngineException(this.message);
-
   /// Thrown when a variable is referenced but not present in data.
-  TemplateEngineException.variableNotFound(String? errorMessage)
-    : message = errorMessage;
-
+  TemplateEngineException.variableNotFound(String? errorMessage) : message = errorMessage;
   /// Thrown when a template file cannot be located.
-  TemplateEngineException.templateNotFound(String? errorMessage)
-    : message = errorMessage;
+  TemplateEngineException.templateNotFound(String? errorMessage) : message = errorMessage;
 
   @override
   String toString() {
     return "Template Error: $message";
   }
 }
+
 
 /// A powerful, Laravel Blade-inspired templating engine for Dart.
 ///
@@ -157,8 +155,7 @@ class TemplateEngine {
 
     if (!file.existsSync()) {
       throw TemplateEngineException.templateNotFound(
-        "HTML view for '$templateName' was not found at path: $templatePath",
-      );
+          "HTML view for '$templateName' was not found at path: $templatePath");
     }
 
     final content = file.readAsStringSync();
@@ -271,10 +268,8 @@ class TemplateEngine {
     if (expression == 'null') return null;
 
     // Handle simple arithmetic expressions
-    if (expression.contains('+') ||
-        expression.contains('-') ||
-        expression.contains('*') ||
-        expression.contains('/')) {
+    if (expression.contains('+') || expression.contains('-') ||
+        expression.contains('*') || expression.contains('/')) {
       return _evaluateArithmetic(expression, data);
     }
 
@@ -298,9 +293,7 @@ class TemplateEngine {
     try {
       // Extract variables and replace with their values
       var processed = expression;
-      final variablePattern = RegExp(
-        r'[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*',
-      );
+      final variablePattern = RegExp(r'[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*');
 
       for (final match in variablePattern.allMatches(expression)) {
         final varName = match.group(0)!;
@@ -348,9 +341,8 @@ class TemplateEngine {
       }
 
       // Extract what looks like a method name
-      final methodMatch = RegExp(
-        r'^([a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*)\(\)$',
-      ).firstMatch(expression);
+      final methodMatch = RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*)\(\)$')
+          .firstMatch(expression);
 
       if (methodMatch != null) {
         final propertyPath = methodMatch.group(1)!;
@@ -472,10 +464,7 @@ class TemplateEngine {
   /// <html><title>@yield('title')</title><body>@yield('content')</body></html>
   /// ```
   String _processLayouts(String content, Map<String, dynamic> data) {
-    final layoutRegex = RegExp(
-      r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''',
-      dotAll: true,
-    );
+    final layoutRegex = RegExp(r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true);
 
     final match = layoutRegex.firstMatch(content);
     if (match == null) {
@@ -495,9 +484,8 @@ class TemplateEngine {
   /// returns them as a map of section names to content.
   Map<String, String> _extractSections(String content) {
     final sectionRegex = RegExp(
-      r'''@section\(\s*['"]([^'"]+)['"]\s*\)(.*?)@endsection''',
-      dotAll: true,
-    );
+        r'''@section\(\s*['"]([^'"]+)['"]\s*\)(.*?)@endsection''',
+        dotAll: true);
 
     final sections = <String, String>{};
 
@@ -514,21 +502,16 @@ class TemplateEngine {
   ///
   /// Replaces all `@yield('sectionName')` directives in the layout
   /// with the corresponding section content.
-  String _renderLayout(
-    String layoutName,
-    Map<String, String> sections,
-    Map<String, dynamic> data,
-  ) {
+  String _renderLayout(String layoutName, Map<String, String> sections, Map<String, dynamic> data) {
     final layoutContent = _loadTemplate(layoutName);
 
     // Replace yield directives with section content
     return layoutContent.replaceAllMapped(
-      RegExp(r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true),
-      (match) {
-        final yieldName = match.group(1)!;
-        return sections[yieldName] ?? ''; // Empty string if section not found
-      },
-    );
+        RegExp(r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true),
+            (match) {
+          final yieldName = match.group(1)!;
+          return sections[yieldName] ?? ''; // Empty string if section not found
+        });
   }
 
   /// Processes include directives for template partials.
@@ -541,9 +524,8 @@ class TemplateEngine {
   /// Additional data is merged with the parent template's data.
   String _processIncludes(String content, Map<String, dynamic> data) {
     final includeRegex = RegExp(
-      r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''',
-      dotAll: true,
-    );
+        r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''',
+        dotAll: true);
 
     /// Processes a single pass of include directives
     String process(String text) {
@@ -557,8 +539,7 @@ class TemplateEngine {
         // Merge include-specific data if provided
         if (jsonString != null) {
           try {
-            final additionalData =
-                jsonDecode(jsonString) as Map<String, dynamic>;
+            final additionalData = jsonDecode(jsonString) as Map<String, dynamic>;
             mergedData.addAll(additionalData);
           } catch (e) {
             print('Warning: Invalid JSON in include: $jsonString');
@@ -612,10 +593,7 @@ class TemplateEngine {
   /// @endforeach
   /// ```
   String _processForeach(String content, Map<String, dynamic> data) {
-    final regex = RegExp(
-      r'@foreach\s*\(\s*(\w+)\s+as\s+(\w+)\s*\)(.*?)@endforeach',
-      dotAll: true,
-    );
+    final regex = RegExp(r'@foreach\s*\(\s*(\w+)\s+as\s+(\w+)\s*\)(.*?)@endforeach', dotAll: true);
 
     return content.replaceAllMapped(regex, (match) {
       final collectionName = match.group(1)!;
@@ -661,10 +639,7 @@ class TemplateEngine {
   /// - `!user.isActive`
   /// - `role == 'admin'`
   String _processIfStatements(String content, Map<String, dynamic> data) {
-    final regex = RegExp(
-      r'@if\s*\((.*?)\)(.*?)(?:@else(.*?))?@endif',
-      dotAll: true,
-    );
+    final regex = RegExp(r'@if\s*\((.*?)\)(.*?)(?:@else(.*?))?@endif', dotAll: true);
 
     return content.replaceAllMapped(regex, (match) {
       final condition = match.group(1)!;
