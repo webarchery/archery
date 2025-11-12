@@ -83,7 +83,11 @@
   switch (disk) {
     case Disk.file:
       try {
-        final models = await JsonFileModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await JsonFileModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = Disk.file);
           return models;
@@ -94,7 +98,11 @@
       }
     case Disk.sqlite:
       try {
-        final models = await SQLiteModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await SQLiteModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = Disk.sqlite);
           return models;

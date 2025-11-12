@@ -71,7 +71,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; create&lt;T extends Model&gt;({required Map&lt;String, dynamic&gt; fromJson, Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; create&lt;T extends Model&gt;({
+  required Map&lt;String, dynamic&gt; fromJson,
+  Disk disk = Model.defaultDisk,
+}) async {
   if (fromJson[&#39;password&#39;] != null) {
     fromJson[&#39;password&#39;] = Hasher.hashPassword(fromJson[&#39;password&#39;]);
   }

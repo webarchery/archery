@@ -69,10 +69,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; login({required String email, required String password}) async {
-
   try {
     final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
-    if(authSessions == null) return false;
+    if (authSessions == null) return false;
 
     final authSession = authSessions.firstWhereOrNull((session) =&gt; session.email == email);
 

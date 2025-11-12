@@ -74,7 +74,10 @@
   if (constructor == null) return [];
 
   try {
-    final maps = await _database.query(_getTableName&lt;T&gt;(), orderBy: &#39;id DESC&#39;);
+    final maps = await _database.query(
+      _getTableName&lt;T&gt;(),
+      orderBy: &#39;id DESC&#39;,
+    );
     return maps.map((map) =&gt; constructor(map) as T).toList();
   } catch (e) {
     print(&#39;SQLite index error: $e&#39;);

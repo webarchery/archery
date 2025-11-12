@@ -82,13 +82,21 @@
   switch (disk) {
     case Disk.file:
       try {
-        return await JsonFileModel.update&lt;T&gt;(id: id, field: field, value: value);
+        return await JsonFileModel.update&lt;T&gt;(
+          id: id,
+          field: field,
+          value: value,
+        );
       } catch (e) {
         return false;
       }
     case Disk.sqlite:
       try {
-        return await SQLiteModel.update&lt;T&gt;(id: id, field: field, value: value);
+        return await SQLiteModel.update&lt;T&gt;(
+          id: id,
+          field: field,
+          value: value,
+        );
       } catch (e) {
         return false;
       }

@@ -69,11 +69,12 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, void Function() next) async {
-
   final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
   final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-  if(cookie == null || authSessions == null || authSessions.isEmpty) return next();
+  if (cookie == null || authSessions == null || authSessions.isEmpty) {
+    return next();
+  }
 
   final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
 

@@ -75,7 +75,12 @@
   if (constructor == null) return null;
 
   try {
-    final maps = await _database.query(_getTableName&lt;T&gt;(), where: &#39;id = ?&#39;, whereArgs: [id], limit: 1);
+    final maps = await _database.query(
+      _getTableName&lt;T&gt;(),
+      where: &#39;id = ?&#39;,
+      whereArgs: [id],
+      limit: 1,
+    );
 
     if (maps.isNotEmpty) {
       return constructor(maps.first) as T;

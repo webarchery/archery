@@ -75,12 +75,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; migrate&lt;T extends Model&gt;({required T Function(Map&lt;String, dynamic&gt;) constructor}) async {
-
-
+  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; migrate&lt;T extends Model&gt;({
+  required T Function(Map&lt;String, dynamic&gt;) constructor,
+}) async {
   final file = File(&quot;$dir&#47;${_getTableName&lt;T&gt;()}.json&quot;);
 
-  if(! await file.exists()) await file.create(recursive: true);
+  if (!await file.exists()) await file.create(recursive: true);
 
   _jsonConstructors[T] = constructor;
 }</code></pre>

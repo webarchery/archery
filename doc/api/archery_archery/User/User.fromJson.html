@@ -64,16 +64,17 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">User.fromJson(Map&lt;String, dynamic&gt; json) : super.fromJson(json) {
-
-  if(json[&#39;name&#39;] != null &amp;&amp; json[&#39;name&#39;] is String) {
+  if (json[&#39;name&#39;] != null &amp;&amp; json[&#39;name&#39;] is String) {
     name = json[&#39;name&#39;];
   }
 
-  if(json[&#39;email&#39;] != null &amp;&amp; json[&#39;email&#39;] is String) {
+  if (json[&#39;email&#39;] != null &amp;&amp; json[&#39;email&#39;] is String) {
     email = json[&#39;email&#39;];
   }
 
-  if(json[&#39;password&#39;] != null &amp;&amp; json[&#39;password&#39;] is String &amp;&amp; json[&#39;password&#39;].toString().isNotEmpty) {
+  if (json[&#39;password&#39;] != null &amp;&amp;
+      json[&#39;password&#39;] is String &amp;&amp;
+      json[&#39;password&#39;].toString().isNotEmpty) {
     password = json[&#39;password&#39;];
   }
 }</code></pre>

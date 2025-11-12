@@ -71,7 +71,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; deleteInstance&lt;T extends Model&gt;({required T instance, Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; deleteInstance&lt;T extends Model&gt;({
+  required T instance,
+  Disk disk = Model.defaultDisk,
+}) async {
   switch (disk) {
     case Disk.file:
       try {

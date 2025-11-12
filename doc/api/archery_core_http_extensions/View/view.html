@@ -81,10 +81,9 @@
   final engine = App().container.make&lt;TemplateEngine&gt;();
   final config = App().container.make&lt;AppConfig&gt;();
 
-
   final user = await Auth.user(this);
-  if(user != null) {
-    final userData = {&quot;user&quot; :user.toJson()};
+  if (user != null) {
+    final userData = {&quot;user&quot;: user.toJson()};
     data = {...?data, ...userData};
   }
 
@@ -95,22 +94,37 @@
     response.headers.contentType = ContentType.html;
     response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
 
-
-    response.headers.set(HttpHeaders.cacheControlHeader, &#39;no-cache, no-store, must-revalidate, max-age=0&#39;);
-    response.headers.set(HttpHeaders.pragmaHeader, &#39;no-cache&#39;); &#47;&#47; HTTP&#47;1.0 compatibility
-    response.headers.set(HttpHeaders.expiresHeader, &#39;0&#39;); &#47;&#47; or a date in the past, e.g., &#39;Tue, 01 Jan 1980 00:00:00 GMT&#39;
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      &#39;no-cache, no-store, must-revalidate, max-age=0&#39;,
+    );
+    response.headers.set(
+      HttpHeaders.pragmaHeader,
+      &#39;no-cache&#39;,
+    ); &#47;&#47; HTTP&#47;1.0 compatibility
+    response.headers.set(
+      HttpHeaders.expiresHeader,
+      &#39;0&#39;,
+    ); &#47;&#47; or a date in the past, e.g., &#39;Tue, 01 Jan 1980 00:00:00 GMT&#39;
     &#47;&#47;
     &#47;&#47; &#47;&#47; --- Security headers ---
     response.headers.set(&#39;X-Content-Type-Options&#39;, &#39;nosniff&#39;);
     response.headers.set(&#39;X-Frame-Options&#39;, &#39;SAMEORIGIN&#39;);
-    response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
+    response.headers.set(
+      &#39;Referrer-Policy&#39;,
+      &#39;strict-origin-when-cross-origin&#39;,
+    );
     response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
 
-    final cookie = Cookie(&#39;xsrf-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;, &quot;${config.get(&#39;app.id&#39;)}&quot;)
-      ..httpOnly = true
-      ..secure =
-      true &#47;&#47; only over HTTPS
-      ..sameSite = SameSite.lax;
+    final cookie =
+        Cookie(
+            &#39;xsrf-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;,
+            &quot;${config.get(&#39;app.id&#39;)}&quot;,
+          )
+          ..httpOnly = true
+          ..secure =
+              true &#47;&#47; only over HTTPS
+          ..sameSite = SameSite.lax;
 
     return response
       ..cookies.add(cookie)

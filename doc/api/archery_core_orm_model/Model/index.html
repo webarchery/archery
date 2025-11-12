@@ -70,7 +70,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; index&lt;T extends Model&gt;({Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; index&lt;T extends Model&gt;({
+  Disk disk = Model.defaultDisk,
+}) async {
   switch (disk) {
     case Disk.file:
       try {

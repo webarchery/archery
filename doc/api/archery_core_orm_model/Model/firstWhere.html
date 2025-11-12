@@ -82,7 +82,11 @@
   switch (disk) {
     case Disk.file:
       try {
-        final model = await JsonFileModel.firstWhere&lt;T&gt;(field: field, value: value, comp: comp);
+        final model = await JsonFileModel.firstWhere&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (model != null) {
           model.disk = Disk.file;
           return model;
@@ -93,7 +97,11 @@
       }
     case Disk.sqlite:
       try {
-        final model = await SQLiteModel.firstWhere&lt;T&gt;(field: field, value: value, comp: comp);
+        final model = await SQLiteModel.firstWhere&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (model != null) {
           model.disk = Disk.sqlite;
           return model;

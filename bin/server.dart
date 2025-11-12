@@ -1,58 +1,42 @@
 import 'package:archery/archery/archery.dart';
-import 'package:archery/src/apps/todos.dart';
 import 'package:archery/src/database/migrations.dart';
 import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 
 Future<void> main(List<String> args) async {
+
+  // init application
   final app = App();
   app.setKeys();
 
+  // parse config and attach to app
   final config = await AppConfig.create();
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
   await app.boot();
 
+
+  // db migrations
   await migrateJsonFileModels();
   await migrateSQLiteModels();
 
-  // final user = await Model.create<User>(fromJson: { "name": "Kwame III", "email": "lucius.sinna@gmail.com", "password": "password"});
-
-  // if(user != null) {
-  //   await AuthSession.login(email: user.email, password: user.password!);
-  // }
-
+  // router
   final router = app.make<Router>();
   authRoutes(router);
   webRoutes(router);
   apiRoutes(router);
-  todoRoutes(router);
 
+  // pass router to kernel
   final kernel = AppKernel(router: router);
 
+  // make sure there's a bag for sessions
+  app.container.bindInstance<List<AuthSession>>([]);
+
+
+  // init server with static files
   final port = config.get('server.port') ?? 8080;
   final staticFilesServer = app.make<StaticFilesServer>();
-  print("Before registration");
-  print(app.container.listRegistrations());
-  print("=====================");
 
-  //
-  //
-  // app.container.bindInstance<int>(2, name: "myInt");
-  // print(router.listRoutes());
-  //
-  // print("After registration");
-  // print(app.container.listRegistrations());
-  // print("=====================");
-  //
-  //
-  // print("After dispose");
-  // await app.container.disposeBinding<int>(name: "myInt");
-  // print(app.container.listRegistrations());
-  // print("=====================");
-  //
-
-  app.container.bindInstance<List<AuthSession>>([]);
 
   try {
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {

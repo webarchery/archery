@@ -68,7 +68,6 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void authRoutes(Router router) {
-
   router.get(&#39;&#47;login&#39;, middleware: [Guest.middleware], (request) async {
     return request.view(&quot;auth.login&quot;);
   });
@@ -78,59 +77,55 @@
   });
 
   router.post(&#39;&#47;register&#39;, middleware: [Guest.middleware], (request) async {
-
-   try {
-
-     final name = await request.input(&quot;name&quot;);
-     final email = await request.input(&quot;email&quot;);
-     final password = await request.input(&quot;password&quot;);
-
-     if(name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
-       return request.redirectBack();
-     }
-
-     final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
-     if(userRecord != null) return request.redirectBack();
-
-     final user = User(name: name, email: email, password: password);
-     if(await user.save()) {
-       await Auth.login(email: user.email, password: password);
-       return request.redirectToDashboard();
-     }
-
-     return request.redirectBack();
-
-   } catch(e) {
-     return request.redirectBack();
-   }
-
-  });
-
-  router.post(&#39;&#47;login&#39;, (request) async {
-
     try {
-
+      final name = await request.input(&quot;name&quot;);
       final email = await request.input(&quot;email&quot;);
       final password = await request.input(&quot;password&quot;);
 
-      if(email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
+      if (name == null ||
+          name.toString().isEmpty ||
+          email == null ||
+          email.toString().isEmpty ||
+          password == null ||
+          password.toString().isEmpty) {
         return request.redirectBack();
       }
 
-      if(await Auth.login(email: email, password: password)) {
+      final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
+      if (userRecord != null) return request.redirectBack();
 
+      final user = User(name: name, email: email, password: password);
+      if (await user.save()) {
+        await Auth.login(email: user.email, password: password);
+        return request.redirectToDashboard();
+      }
+
+      return request.redirectBack();
+    } catch (e) {
+      return request.redirectBack();
+    }
+  });
+
+  router.post(&#39;&#47;login&#39;, (request) async {
+    try {
+      final email = await request.input(&quot;email&quot;);
+      final password = await request.input(&quot;password&quot;);
+
+      if (email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
+        return request.redirectBack();
+      }
+
+      if (await Auth.login(email: email, password: password)) {
         final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
           ..httpOnly = true
           ..secure =
-          true &#47;&#47; only over HTTPS
+              true &#47;&#47; only over HTTPS
           ..sameSite = SameSite.lax;
-
-
 
         final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
         final session = sessions?.firstWhereOrNull((session) =&gt; session.email == email);
-        if(session != null) {
+        if (session != null) {
           session.cookie = cookie;
           request.response.cookies.add(cookie);
         }
@@ -138,8 +133,7 @@
       }
 
       return request.redirectBack();
-
-    } catch(e) {
+    } catch (e) {
       return request.redirectBack();
     }
   });
@@ -149,23 +143,30 @@
     return request.redirectHome();
   });
 
+  router.group(
+    prefix: &quot;&#47;user&quot;,
+    middleware: [Auth.middleware],
+    routes: () {
+      &#47;&#47; - grouped for profile &amp; dashboard crud
+      router.group(
+        prefix: &quot;&#47;profile&quot;,
+        routes: () {
+          router.get(&quot;&#47;&quot;, (request) async {
+            return request.view(&quot;auth.user.profile&quot;);
+          });
+        },
+      );
 
-  router.group(prefix: &quot;&#47;user&quot;, middleware: [Auth.middleware], routes: () {
-
-    &#47;&#47; - grouped for profile &amp; dashboard crud
-    router.group(prefix: &quot;&#47;profile&quot;, routes: () {
-      router.get(&quot;&#47;&quot;, (request) async {
-        return request.view(&quot;auth.user.profile&quot;);
-      });
-    });
-
-    router.group(prefix: &quot;&#47;dashboard&quot;, routes: () {
-      router.get(&quot;&#47;&quot;, (request) async {
-        return request.view(&quot;auth.user.dashboard&quot;);
-      });
-    });
-  });
-
+      router.group(
+        prefix: &quot;&#47;dashboard&quot;,
+        routes: () {
+          router.get(&quot;&#47;&quot;, (request) async {
+            return request.view(&quot;auth.user.dashboard&quot;);
+          });
+        },
+      );
+    },
+  );
 }</code></pre>
 </section>
 

@@ -7,8 +7,8 @@ void apiRoutes(Router router) {
     routes: () {
       router.get('/user', (request) async {
         return request.json({
-          "username": "jason",
-          "email": "jason@example.com",
+          "username": "json",
+          "email": "json@costanza.com",
           "password": "password",
           "created_at": DateTime.now().toIso8601String(),
         });

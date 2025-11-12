@@ -68,16 +68,12 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void redirectTo({String path = &quot;&#47;&quot;}) {
-
   try {
     response.redirect(Uri.parse(path));
     response.close();
-
-  }catch(e) {
+  } catch (e) {
     redirectHome();
   }
-
-
 }</code></pre>
 </section>
 

@@ -71,7 +71,7 @@
     final referer = headers.value(HttpHeaders.refererHeader);
     &#47;&#47; Remove the response.write() call - redirects don&#39;t need body content
     response.redirect(Uri.parse(referer!));
-  } catch(e) {
+  } catch (e) {
     redirectHome();
   }
 }</code></pre>

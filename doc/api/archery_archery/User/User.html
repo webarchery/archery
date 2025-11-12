@@ -65,7 +65,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">User({required this.name, required this.email, String? password} ) :  password = password != null ? Hasher.hashPassword(password) : null, super.fromJson({});</code></pre>
+  <pre class="language-dart"><code class="language-dart">User({required this.name, required this.email, String? password})
+  : password = password != null ? Hasher.hashPassword(password) : null,
+    super.fromJson({});</code></pre>
 </section>
 
 

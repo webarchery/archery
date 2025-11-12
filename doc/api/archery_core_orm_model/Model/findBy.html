@@ -72,11 +72,18 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; findBy&lt;T extends Model&gt;({required String field, required dynamic value, Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; findBy&lt;T extends Model&gt;({
+  required String field,
+  required dynamic value,
+  Disk disk = Model.defaultDisk,
+}) async {
   switch (disk) {
     case Disk.file:
       try {
-        final model = await JsonFileModel.findBy&lt;T&gt;(field: field, value: value);
+        final model = await JsonFileModel.findBy&lt;T&gt;(
+          field: field,
+          value: value,
+        );
         if (model != null) {
           model.disk = Disk.file;
           return model;

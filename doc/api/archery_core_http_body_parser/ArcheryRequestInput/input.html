@@ -79,7 +79,9 @@ Priority: Body parameters &gt; Query parameters (body overrides query for same k
   &#47;&#47; Check query parameters first, then body fields
   &#47;&#47; Body fields take precedence over query parameters for same key
   final queryValue = uri.queryParameters[key];
-  final bodyValue = fields != null &amp;&amp; fields.containsKey(key) ? fields[key] : null;
+  final bodyValue = fields != null &amp;&amp; fields.containsKey(key)
+      ? fields[key]
+      : null;
 
   &#47;&#47; Return body value if exists, otherwise query value
   return bodyValue ?? queryValue;

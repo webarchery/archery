@@ -73,7 +73,10 @@
   <pre class="language-dart"><code class="language-dart">HttpResponse text([dynamic data]) {
   final config = App().container.make&lt;AppConfig&gt;();
   response.headers.contentType = ContentType.html;
-  response.headers.set(HttpHeaders.cacheControlHeader, &#39;public, max-age=300, must-revalidate&#39;);
+  response.headers.set(
+    HttpHeaders.cacheControlHeader,
+    &#39;public, max-age=300, must-revalidate&#39;,
+  );
   response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
 
   &#47;&#47; --- Security headers ---
@@ -82,10 +85,14 @@
   response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
   response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
 
-  final cookie = Cookie(&#39;xsrf-text-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;, &quot;${config.get(&#39;app.id&#39;)}&quot;)
-    ..httpOnly = true
-    ..secure = true
-    ..sameSite = SameSite.lax;
+  final cookie =
+      Cookie(
+          &#39;xsrf-text-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;,
+          &quot;${config.get(&#39;app.id&#39;)}&quot;,
+        )
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax;
 
   response.headers.contentType = ContentType.text;
   return response

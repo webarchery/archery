@@ -80,13 +80,19 @@
   switch (disk) {
     case Disk.file:
       try {
-        return await JsonFileModel.updateInstance&lt;T&gt;(instance: instance, withJson: withJson);
+        return await JsonFileModel.updateInstance&lt;T&gt;(
+          instance: instance,
+          withJson: withJson,
+        );
       } catch (e) {
         return false;
       }
     case Disk.sqlite:
       try {
-        return await SQLiteModel.updateInstance&lt;T&gt;(instance: instance, withJson: withJson);
+        return await SQLiteModel.updateInstance&lt;T&gt;(
+          instance: instance,
+          withJson: withJson,
+        );
       } catch (e) {
         return false;
       }
