@@ -14,7 +14,9 @@ class GuestSession {
 
     final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
 
-    if (session != null) return request.redirectToDashboard();
+    if (session != null) {
+      return request.redirectToDashboard();
+    }
 
     return next();
   }
@@ -66,7 +68,9 @@ class AuthSession extends Model {
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
     final authSessions = App().tryMake<List<AuthSession>>();
 
-    if (cookie == null || authSessions == null || authSessions.isEmpty) return null;
+    if (cookie == null || authSessions == null || authSessions.isEmpty) {
+      return null;
+    }
 
     final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
 
