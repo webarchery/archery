@@ -1,182 +1,252 @@
-# Archery — A Modern Web Framework for Dart
 
-  <em>Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.</em>
+---
 
+# Archery - A Full-Stack Web Framework for Dart
 
-<p >
-  <a href="https://github.com/webarchery/archery/blob/main/LICENSE">BSD License</a> •
-  <a href="https://webarchery.dev">Website</a> •
-  <a href="#roadmap">Roadmap</a>
-</p>
+Laravel-inspired developer flow. Dart-native performance.  
+A readable, minimal, batteries-included backend framework for **Dart 3**.
 
 ---
 
 ## Why Archery
+Archery reimagines backend development in Dart with a small set of predictable building blocks:
 
-Archery reimagines backend development in **Dart** with a small set of predictable building blocks:
-
-* **Predictable** – explicit, type‑safe APIs. No hidden magic.
-* **Minimal** – keep the surface area tiny; build only what’s needed.
-* **Composable** – IoC container + providers let features snap together.
-* **Fast** – built directly on `dart:io` for zero overhead.
-
-> Goal: make backend programming in Dart as expressive as Laravel/Adonis—**with compiler‑level benefits** and a clean standard library.
+- Predictable – explicit, type‑safe APIs. No hidden magic.
+- Minimal – keep the surface area tiny; build only what’s needed.
+- Composable – IoC container + providers let features snap together.
+- Fast – built directly on dart:io for zero overhead
 
 ---
 
-## Status
+## Features
 
-Version 1.0.0 Early Release.
+- **IoC Container** - simple, predictable dependency resolution
+- **HTTP Kernel & Router** - controllers, middleware, groups, typed params
+- **HTML Templating Engine** - Blade-style includes & layouts
+- **ORM (JSON + SQLite)** - migrations, models, CRUD helpers
+- **Auth System** - login, register, sessions, middleware
+- **Static File Server** - safe MIME mapping, caching, SPA fallback
+- **Config Loader** - JSON configs with dot-notation access
+- **Example App** - routes, controllers, auth views, blog, todos
+
+Archery aims to stay small, explicit, and easy to read—without sacrificing the comforts of a real framework.
 
 ---
 
-## Quick Start
+## Project Structure
 
-### 1) Clone & run
+```
+lib/
+    archery/                            # Framework core
+        core/
+            application.dart            # App lifecycle & provider registry
+            container.dart              # ServiceContainer (DI)
+            config.dart                 # JSON config loader
+            kernel.dart                 # HTTP kernel
+            provider.dart               # Provider base class
+            template_engine.dart        # HTML templating engine
+            static_files_server.dart
+    
+            http/
+              router.dart               # Routes, groups, params, middleware
+              body_parser.dart          # Form-data, URL-encoded, JSON, file uploads
+              extensions.dart           # request.view(), request.json(), redirects
+
+            orm/
+              model.dart                # Base Model API
+              json_file_model.dart
+              sqlite_model.dart
+              hasher.dart
+
+            auth/
+              auth_session.dart         # Sessions, login/logout, auth middleware
+              
+    src/                                # project source code
+        config/                         # app.json, server.json
+        database/                       # User model + migrations
+        http/
+            routes/                     # web.dart, api.dart
+            controllers/
+            views/                      # HTML templates
+            public/                     # css/js/img
+        apps/
+            todos.dart                  # Todo model + routes
+
+```
+
+
+
+## Getting Started
+
+### 1. Install dependencies
 
 ```bash
-git clone https://github.com/webarchery/archery.git
+git clone https://github.com/webarchery/archery
 cd archery
+dart pub get
+````
+
+### 2. Run the server
+
+```bash
 dart run bin/server.dart
 ```
-Now visit -> localhost:5501
 
-> Tip: if you just want to try it inside another project, add `archery` as a path dependency in your `pubspec.yaml` while experimenting.
+Default server config lives in `lib/src/config/server.json`:
 
-### 2) Hello World route
-
-Create `lib/http/routes/web.dart` (or use your existing routing file):
-
-```dart
-import 'dart:io';
-import 'package:archery/archery.dart';
-
-void webRoutes(Router router) {
-
-
-  router.get('/', (request) async {
-    return request.view("welcome", {});
-  });
-  
-  router.get('/hello-world', (request) async {
-    return request.text("Hello world!", {});
-  });
-
-  router.group(prefix: 'blog', routes: () {
-    router.get('/', BlogPagesController.index);
-    router.get('/{slug:string}',BlogPagesController.show);
-  });
+```json
+{
+  "domain": "localhost",
+  "port": 5501,
+  "compress": true
 }
 ```
 
-Wire routes in your app entry (`bin/server.dart`):
+Visit your app at:
 
+**[http://localhost:5501](http://localhost:5501)**
 
+### 3. (Optional) Enable live reload
+Install dartmon_cli for reloading server
 
----
+```bash
+dart pub global activate dartmon_cli
 
-## Concepts at a glance
+dartmon run bin/server.dart
 
-| Concept              | What it is                                                   | Why it matters                         |
-| -------------------- | ------------------------------------------------------------ | -------------------------------------- |
-| **App**              | The composition root that wires providers and boots the app. | Centralized lifecycle & configuration. |
-| **ServiceContainer** | Lightweight IoC for factories/singletons/scopes.             | Predictable dependency management.     |
-| **Provider**         | Registers and boots features (e.g., Router, DB).             | Clear module boundaries.               |
-| **Router**           | Type‑safe routing with middleware.                           | Expressive HTTP layer.                 |
-| **HttpKernel**       | Binds server to routes & middleware stack.                   | Separation of transport vs. app code.  |
-| **ConfigRepository** | Read structured config (env, files).                         | 12‑factor friendly.                    |
-
----
-
-## Minimal examples
-
-### Container
-
-```dart
-final c = Container.root();
-
-c.singleton<Logger>(() => ConsoleLogger());
-c.factory<Clock>(() => SystemClock.now());
-
-final logger = c.make<Logger>();
-logger.info('container ready');
 ```
-
-### Provider
-
-```dart
-class RouterProvider extends Provider {
-  final void Function(Router) configure;
-  RouterProvider({required this.configure});
-
-  @override
-  void register(ServiceContainer c) {
-    final router = Router();
-    configure(router);
-    c.bind<Router>(router);
-  }
-}
-```
-
-### Routing & middleware
-
-```dart
-void registerRoutes(Router r) {
-  r.use((req, next) { /* global middleware */ next(); });
-
-  r.get('/health', (req) => req.json({'ok': true}));
-
-  r.group('/v1', (api) {
-    api.get('/users/:id', (req) async {
-      final id = RouteParams.get<int>('id');
-      return req.json({'id': id});
-    });
-  });
-}
+BrowserSync watches HTML/CSS/JS/Dart files.
+```bash
+npm install
+npm run start
 ```
 
 ---
-## Configuration
 
-Archery prefers **code over convention**, but supports config repositories so you can do:
+## Core Concepts
+
+### App & Container
+
+`App` bootstraps the framework and exposes a DI container:
 
 ```dart
-final cfg = container.make<ConfigRepository>();
-final port = cfg.get<int>('server.port', defaultValue: 5501);
+final app = App();
+await app.boot();
 ```
 
-Bring your own loader (env, JSON/YAML, secrets manager). A default file/env loader is on the roadmap.
+The container supports:
+
+* `bind` (transient)
+* `singleton`
+* `bindInstance`
+* scoped containers
+* disposal callbacks
+
+### Routing
+
+* GET/POST/PUT/PATCH/DELETE
+* Route groups and middleware
+* Typed params: `{id:int}`, `{slug:string}`
+* `RouteParams.get<T>()` for safe access
+
+```dart
+router.get('/blog/{slug:string}', BlogPagesController.show);
+```
+
+### Templates
+
+Blade-style templates in `lib/src/http/views`:
+
+```dart
+@include('includes._main-header')
+<h1>{{ title }}</h1>
+@include('includes._main-footer')
+```
+
+Render in controllers:
+
+```dart
+return request.view('welcome', {'title': 'Hello'});
+```
+
+### Request Helpers
+
+* `request.input('field')`
+* `request.file('avatar')`
+* `request.files()`
+* `request.json(data)`
+* `request.view(template, data)`
+* `request.redirectToLogin()` / `redirectBack()`
+
+Handles:
+
+* JSON
+* URL-encoded forms
+* Multipart forms + file uploads (`UploadedFile`)
+
+### ORM
+
+Two backends:
+
+* **JsonFileModel** — fast prototyping
+* **SQLiteModel** — SQLite persistence (via `sqflite_common_ffi`)
+
+Models implement:
+
+```dart
+static fromJson(Map json)
+toJson(),    // for public api fields
+toMetaJson() // for private db fields
+Map<String, String> columnDefinitions
+```
+
+Migrations are plain Dart functions (`lib/src/database/migrations.dart`).
+
+### Auth
+
+Located in `archery/auth/auth_session.dart`:
+
+* Cookie-based sessions
+* 1-hour expiration
+* `Auth.user(request)` returns  User?
+* `Auth.check(request)` returns bool
+* `Auth.middleware` / `Guest.middleware`
+* Auth routes + views included:
+
+    * `/login`
+    * `/register`
+    * `/logout`
+    * `/user/profile`
+    * `/user/dashboard`
 
 ---
 
-For HTTP tests, spin up the `HttpKernel` on an ephemeral port and call it with `HttpClient`.
+## Example Features Included
 
----
+* Blog demo (`/blog`)
+* Todos demo (`/todos`) with full CRUD
+* Auth pages and dashboard
+* Welcome screen
+* Asset pipeline via `public/`
 
-## Performance notes
-
-* Built on `dart:io`.
-* Minimal allocations in the hot path.
-* Route matching designed for predictable performance.
-* Container avoids reflection; favors generics and factories.
+These examples double as documentation for how to structure your own app.
 
 ---
 
 ## Roadmap
 
-* [x] Service Container polish (disposal hooks, readiness)
-* [x] Provider lifecycle ergonomics
-* [x] Router & middleware (typed params, groups, prefixes)
-* [x] HTTP Kernel (static files, error handling)
-* [x] Template engine (Stitch)
-* [x] ORM (Archer)
-* [ ] CLI (`archery new <app>`)
-
----
-
+* CLI: `archery new <app>`
+* View macros & control structures
+* ORM relations
+* Mailer
+* Queue workers
+* Testing utilities
 
 ---
 
 ## License
 
-BSD © WebArchery
+**BSD-3-Clause**
+See LICENSE file for details.
+
+```

@@ -4,6 +4,7 @@ import '../apps/todos.dart';
 
 Future<void> migrateJsonFileModels() async {
   await JsonFileModel.migrate<User>(constructor: User.fromJson);
+  await JsonFileModel.migrate<Session>(constructor: Session.fromJson);
   await JsonFileModel.migrate<AuthSession>(constructor: AuthSession.fromJson);
   await JsonFileModel.migrate<Todo>(constructor: Todo.fromJson);
 }

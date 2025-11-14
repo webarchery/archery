@@ -30,6 +30,8 @@ Future<void> main(List<String> args) async {
   final kernel = AppKernel(router: router);
 
   // make sure there's a bag for sessions
+  app.container.bindInstance<List<Session>>([]);
+
   app.container.bindInstance<List<AuthSession>>([]);
 
 

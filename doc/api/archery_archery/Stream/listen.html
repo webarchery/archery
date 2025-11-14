@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">listen abstract method</li>
   </ol>
   <div class="self-name">listen</div>
@@ -49,18 +49,18 @@
     data-above-sidebar="archery_archery&#47;Stream-class-sidebar.html"
     data-below-sidebar="">
     <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L723"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L723"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-method">listen</span> abstract method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/dart-async/StreamSubscription-class.html">StreamSubscription</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/dart-async/StreamSubscription-class.html">StreamSubscription</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
 <span class="name ">listen</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="listen-param-onData"><span class="type-annotation">void</span> <span class="parameter-name">onData</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="onData-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span></li>
 </ol>)?, {</span></li>
-<li><span class="parameter" id="listen-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span>, </span></li>
+<li><span class="parameter" id="listen-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span>, </span></li>
 <li><span class="parameter" id="listen-param-onDone"><span class="type-annotation">void</span> <span class="parameter-name">onDone</span>()?, </span></li>
-<li><span class="parameter" id="listen-param-cancelOnError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">cancelOnError</span>, </span></li>
+<li><span class="parameter" id="listen-param-cancelOnError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">cancelOnError</span>, </span></li>
 </ol>})
 
       
@@ -69,7 +69,7 @@
     
 <section class="desc markdown">
   <p>Adds a subscription to this stream.</p>
-<p>Returns a <a href="https://api.dart.dev/stable/3.9.4/dart-async/StreamSubscription-class.html">StreamSubscription</a> which handles events from this stream using
+<p>Returns a <a href="https://api.dart.dev/stable/3.10.0/dart-async/StreamSubscription-class.html">StreamSubscription</a> which handles events from this stream using
 the provided <code>onData</code>, <code>onError</code> and <code>onDone</code> handlers.
 The handlers can be changed on the subscription, but they start out
 as the provided functions.</p>
@@ -81,11 +81,11 @@ error object and possibly a stack trace.</p>
 <code>void Function(Object error, StackTrace)</code>.
 The function type determines whether <code>onError</code> is invoked with a stack
 trace argument.
-The stack trace argument may be <a href="https://api.dart.dev/stable/3.9.4/dart-core/StackTrace/empty-constant.html">StackTrace.empty</a> if this stream received
+The stack trace argument may be <a href="https://api.dart.dev/stable/3.10.0/dart-core/StackTrace/empty-constant.html">StackTrace.empty</a> if this stream received
 an error without a stack trace.</p>
 <p>Otherwise it is called with just the error object.
 If <code>onError</code> is omitted, any errors on this stream are considered unhandled,
-and will be passed to the current <a href="https://api.dart.dev/stable/3.9.4/dart-async/Zone-class.html">Zone</a>'s error handler.
+and will be passed to the current <a href="https://api.dart.dev/stable/3.10.0/dart-async/Zone-class.html">Zone</a>'s error handler.
 By default unhandled async errors are treated
 as if they were uncaught top-level errors.</p>
 <p>If this stream closes and sends a done event, the <code>onDone</code> handler is
@@ -121,7 +121,7 @@ event handler functions are called.</p>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">listen abstract method</li>
 </ol>
 
@@ -134,7 +134,7 @@ event handler functions are called.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpResponse-class.html">HttpResponse</a></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpResponse-class.html">HttpResponse</a></span>
 <span class="name ">json</span>(<wbr>[<ol class="parameter-list single-line"> <li><span class="parameter" id="json-param-data"><span class="type-annotation">dynamic</span> <span class="parameter-name">data</span></span></li>
 </ol>])
 
@@ -75,10 +75,7 @@
 
   &#47;&#47; --- Performance headers ---
   response.headers.contentType = ContentType.html;
-  response.headers.set(
-    HttpHeaders.cacheControlHeader,
-    &#39;public, max-age=300, must-revalidate&#39;,
-  );
+  response.headers.set(HttpHeaders.cacheControlHeader, &#39;public, max-age=300, must-revalidate&#39;);
   response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
   &#47;&#47;
   &#47;&#47; &#47;&#47; --- Security headers ---
@@ -87,14 +84,10 @@
   response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
   response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
 
-  final cookie =
-      Cookie(
-          &#39;xsrf-json-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;,
-          &quot;${config.get(&#39;app.id&#39;)}&quot;,
-        )
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax;
+  final cookie = Cookie(&#39;archery_csrf_token&#39;, App.generateKey())
+    ..httpOnly = true
+    ..secure = true
+    ..sameSite = SameSite.lax;
 
   response.headers.contentType = ContentType.json;
 
@@ -122,7 +115,7 @@
     <li class="self-crumb">json method</li>
 </ol>
 
-    <h5>Json extension on <a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
+    <h5>Json extension on <a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -131,7 +124,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

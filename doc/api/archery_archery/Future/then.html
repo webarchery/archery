@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">then&lt;<wbr><span class="type-parameter">R</span>&gt; abstract method</li>
   </ol>
   <div class="self-name">then</div>
@@ -49,16 +49,16 @@
     data-above-sidebar="archery_archery&#47;Future-class-sidebar.html"
     data-below-sidebar="">
     <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L781"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L803"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-method">then&lt;<wbr><span class="type-parameter">R</span>&gt;</span> abstract method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
-<span class="name ">then</span>&lt;<wbr><span class="type-parameter">R</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="then-param-onValue"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">onValue</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="onValue-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+<span class="name ">then</span>&lt;<wbr><span class="type-parameter">R</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="then-param-onValue"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">onValue</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="onValue-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span></li>
 </ol>), {</span></li>
-<li><span class="parameter" id="then-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span>, </span></li>
+<li><span class="parameter" id="then-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span>, </span></li>
 </ol>})
 
       
@@ -74,14 +74,14 @@ immediately, but will be scheduled in a later microtask.</p>
 <p>If <code>onError</code> is provided, and this future completes with an error,
 the <code>onError</code> callback is called with that error and its stack trace.
 The <code>onError</code> callback must accept either one argument or two arguments
-where the latter is a <a href="https://api.dart.dev/stable/3.9.4/dart-core/StackTrace-class.html">StackTrace</a>.
+where the latter is a <a href="https://api.dart.dev/stable/3.10.0/dart-core/StackTrace-class.html">StackTrace</a>.
 If <code>onError</code> accepts two arguments,
 it is called with both the error and the stack trace,
 otherwise it is called with just the error object.
 The <code>onError</code> callback must return a value or future that can be used
 to complete the returned future, so it must be something assignable to
 <code>FutureOr&lt;R&gt;</code>.</p>
-<p>Returns a new <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a>
+<p>Returns a new <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a>
 which is completed with the result of the call to <code>onValue</code>
 (if this future completes with a value)
 or to <code>onError</code> (if this future completes with an error).</p>
@@ -94,20 +94,20 @@ and it is thrown <em>synchronously</em>
 the throw is considered a rethrow,
 and the original stack trace is used instead.
 To rethrow with the same stack trace in an asynchronous callback,
-use <a href="https://api.dart.dev/stable/3.9.4/dart-core/Error/throwWithStackTrace.html">Error.throwWithStackTrace</a>.</p>
-<p>If the callback returns a <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a>,
+use <a href="https://api.dart.dev/stable/3.10.0/dart-core/Error/throwWithStackTrace.html">Error.throwWithStackTrace</a>.</p>
+<p>If the callback returns a <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a>,
 the future returned by <code>then</code> will be completed with
 the same result as the future returned by the callback.</p>
 <p>If <code>onError</code> is not given, and this future completes with an error,
 the error is forwarded directly to the returned future.</p>
-<p>In most cases, it is more readable to use <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/catchError.html">catchError</a> separately,
+<p>In most cases, it is more readable to use <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/catchError.html">catchError</a> separately,
 possibly with a <code>test</code> parameter,
-instead of handling both value and error in a single <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/then.html">then</a> call.</p>
+instead of handling both value and error in a single <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/then.html">then</a> call.</p>
 <p>Note that futures don't delay reporting of errors until listeners are
 added. If the first <code>then</code> or <code>catchError</code> call happens
 after this future has completed with an error,
 then the error is reported as unhandled error.
-See the description on <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a>.</p>
+See the description on <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a>.</p>
 </section>
 
 
@@ -129,7 +129,7 @@ See the description on <a href="https://api.dart.dev/stable/3.9.4/archery_archer
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">then&lt;<wbr><span class="type-parameter">R</span>&gt; abstract method</li>
 </ol>
 
@@ -142,7 +142,7 @@ See the description on <a href="https://api.dart.dev/stable/3.9.4/archery_archer
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

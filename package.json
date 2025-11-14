@@ -4,6 +4,7 @@
   "description": "Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.",
   "main": "bin/server.dart",
   "scripts": {
+    "serve": "dartmon bin/server.dart --ignore  lib/src/storage/json_file_models/auth_sessions.json,lib/src/storage/json_file_models/sessions.json",
     "start": "browser-sync start --proxy \"localhost:5501\" --files \"lib/**/*.html,lib/**/*.js,lib/**/*.css,lib/**/*.dart\" --no-notify"
   },
   "repository": {

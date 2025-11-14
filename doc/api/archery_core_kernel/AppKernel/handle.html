@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">handle</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handle-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+<span class="name ">handle</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handle-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
       
@@ -63,7 +63,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Handles an incoming <a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a> by running global middleware,
+  <p>Handles an incoming <a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a> by running global middleware,
 then dispatching to the router.</p>
 <p>This is the <strong>main entry point</strong> for HTTP request processing.</p>
 <pre class="language-dart"><code class="language-dart">HttpServer.bind('0.0.0.0', 8080).then((server) {
@@ -76,17 +76,15 @@ then dispatching to the router.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void handle(HttpRequest request) {
-  &#47;&#47; Session.cookie
-  &#47;&#47; request.session.cookie
-  &#47;&#47; init session??
-  &#47;&#47; Session.start()
-  &#47;&#47; create new (archery_guest) cookie if not on request
-  &#47;&#47; request.response.cookies.add(Cookie(&quot;before&quot;, &quot;before-done&quot;));
+  <pre class="language-dart"><code class="language-dart">void handle(HttpRequest request) async {
+
+  final session = await Session.init(request);
+  &#47;&#47; print(&quot;================&quot;);
+  &#47;&#47; print(session?.toMetaJson());
+  &#47;&#47; print(&quot;================&quot;);
   _runMiddleware(request, 0);
-  &#47;&#47; Session.end()
-  &#47;&#47; queue cookie on response
-  &#47;&#47; request.response.cookies.add(Cookie(&quot;after&quot;, &quot;after-done&quot;));
+
+
 }</code></pre>
 </section>
 
@@ -115,7 +113,7 @@ then dispatching to the router.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

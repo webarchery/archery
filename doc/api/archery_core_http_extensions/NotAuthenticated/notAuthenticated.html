@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpResponse-class.html">HttpResponse</a></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpResponse-class.html">HttpResponse</a></span>
 <span class="name ">notAuthenticated</span>(<wbr>)
 
       
@@ -75,8 +75,14 @@
   try {
     final html = engine.render(&quot;errors.401&quot;, {});
     response.headers.contentType = ContentType.html;
+    final cookie = Cookie(&#39;archery_csrf_token&#39;, App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
+
     return response
       ..statusCode = HttpStatus.unauthorized
+      ..cookies.add(cookie)
       ..write(html)
       ..close();
   } catch (e) {
@@ -104,7 +110,7 @@
     <li class="self-crumb">notAuthenticated method</li>
 </ol>
 
-    <h5>NotAuthenticated extension on <a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
+    <h5>NotAuthenticated extension on <a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -113,7 +119,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

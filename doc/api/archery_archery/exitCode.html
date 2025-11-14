@@ -57,7 +57,7 @@
   <section id="getter">
     <section class="multi-line-signature">
       
-      <span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/dart-core/int-class.html">int</a></span>
+      <span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/dart-core/int-class.html">int</a></span>
       get
       <span class="name ">exitCode</span>
       
@@ -69,7 +69,7 @@
 <p>The exit code is global for the Dart VM and the last assignment to
 exitCode from any isolate determines the exit code of the Dart VM
 on normal termination.</p>
-<p>See <a href="https://api.dart.dev/stable/3.9.4/dart-io/exit.html">exit</a> for more information on how to chose a value for the
+<p>See <a href="https://api.dart.dev/stable/3.10.0/dart-io/exit.html">exit</a> for more information on how to chose a value for the
 exit code.</p>
 </section>
 
@@ -88,7 +88,7 @@ exit code.</p>
       
       set
       <span class="name ">exitCode</span>
-      <span class="signature">(<wbr><span class="parameter" id="exitCode=-param-code"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/int-class.html">int</a></span> <span class="parameter-name">code</span></span>)</span>
+      <span class="signature">(<wbr><span class="parameter" id="exitCode=-param-code"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/int-class.html">int</a></span> <span class="parameter-name">code</span></span>)</span>
       
 
     </section>
@@ -99,7 +99,7 @@ exit code.</p>
 exitCode from any isolate determines the exit code of the Dart VM
 on normal termination.</p>
 <p>Default value is <code>0</code>.</p>
-<p>See <a href="https://api.dart.dev/stable/3.9.4/dart-io/exit.html">exit</a> for more information on how to chose a value for the
+<p>See <a href="https://api.dart.dev/stable/3.10.0/dart-io/exit.html">exit</a> for more information on how to chose a value for the
 exit code.</p>
 </section>
 
@@ -107,7 +107,6 @@ exit code.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void set exitCode(int code) {
-  ArgumentError.checkNotNull(code, &quot;code&quot;);
   _ProcessUtils._setExitCode(code);
 }</code></pre>
 </section>
@@ -137,7 +136,7 @@ exit code.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

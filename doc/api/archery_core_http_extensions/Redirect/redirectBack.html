@@ -69,7 +69,6 @@
   <pre class="language-dart"><code class="language-dart">void redirectBack() {
   try {
     final referer = headers.value(HttpHeaders.refererHeader);
-    &#47;&#47; Remove the response.write() call - redirects don&#39;t need body content
     response.redirect(Uri.parse(referer!));
   } catch (e) {
     redirectHome();
@@ -93,7 +92,7 @@
     <li class="self-crumb">redirectBack method</li>
 </ol>
 
-    <h5>Redirect extension on <a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
+    <h5>Redirect extension on <a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -102,7 +101,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

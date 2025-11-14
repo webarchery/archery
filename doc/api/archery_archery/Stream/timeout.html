@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">timeout method</li>
   </ol>
   <div class="self-name">timeout</div>
@@ -49,15 +49,15 @@
     data-above-sidebar="archery_archery&#47;Stream-class-sidebar.html"
     data-below-sidebar="">
     <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L2034"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L2034"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-method">timeout</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">timeout</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="timeout-param-timeLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">timeLimit</span>, {</span></li>
-<li><span class="parameter" id="timeout-param-onTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onTimeout</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="onTimeout-param-sink"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-async/EventSink-class.html">EventSink</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">sink</span></span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+<span class="name ">timeout</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="timeout-param-timeLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">timeLimit</span>, {</span></li>
+<li><span class="parameter" id="timeout-param-onTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onTimeout</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="onTimeout-param-sink"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-async/EventSink-class.html">EventSink</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">sink</span></span></li>
 </ol>)?, </span></li>
 </ol>})
 
@@ -81,11 +81,11 @@ and the <code>onTimeout</code> function is called, even if events are emitted.
 If the delay between events of this stream is multiple times
 <code>timeLimit</code>, at most one timeout will happen between events.</p>
 <p>The <code>onTimeout</code> function is called with one argument: an
-<a href="https://api.dart.dev/stable/3.9.4/dart-async/EventSink-class.html">EventSink</a> that allows putting events into the returned stream.
+<a href="https://api.dart.dev/stable/3.10.0/dart-async/EventSink-class.html">EventSink</a> that allows putting events into the returned stream.
 This <code>EventSink</code> is only valid during the call to <code>onTimeout</code>.
-Calling <a href="https://api.dart.dev/stable/3.9.4/dart-async/EventSink/close.html">EventSink.close</a> on the sink passed to <code>onTimeout</code> closes the
+Calling <a href="https://api.dart.dev/stable/3.10.0/dart-async/EventSink/close.html">EventSink.close</a> on the sink passed to <code>onTimeout</code> closes the
 returned stream, and no further events are processed.</p>
-<p>If <code>onTimeout</code> is omitted, a timeout will emit a <a href="https://api.dart.dev/stable/3.9.4/dart-async/TimeoutException-class.html">TimeoutException</a>
+<p>If <code>onTimeout</code> is omitted, a timeout will emit a <a href="https://api.dart.dev/stable/3.10.0/dart-async/TimeoutException-class.html">TimeoutException</a>
 into the error channel of the returned stream.
 If the call to <code>onTimeout</code> throws, the error is emitted as an error
 on the returned stream.</p>
@@ -207,7 +207,7 @@ stream.listen(print, onDone: () =&gt; print('Done'));
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Stream-class.html">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">timeout method</li>
 </ol>
 
@@ -220,7 +220,7 @@ stream.listen(print, onDone: () =&gt; print('Done'));
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

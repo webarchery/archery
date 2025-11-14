@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">Future.value factory constructor</li>
   </ol>
   <div class="self-name">Future.value</div>
@@ -49,13 +49,13 @@
       data-above-sidebar="archery_archery&#47;Future-class-sidebar.html"
       data-below-sidebar="">
       <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L350"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L371"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-constructor">Future&lt;<wbr><span class="type-parameter">T</span>&gt;.value</span> constructor 
 </h1></div>
 
     <section class="multi-line-signature">
       
-      <span class="name ">Future&lt;<wbr><span class="type-parameter">T</span>&gt;.value</span>(<wbr>[<ol class="parameter-list single-line"> <li><span class="parameter" id="value-param-value"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">value</span></span></li>
+      <span class="name ">Future&lt;<wbr><span class="type-parameter">T</span>&gt;.value</span>(<wbr>[<ol class="parameter-list single-line"> <li><span class="parameter" id="value-param-value"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">value</span></span></li>
 </ol>])
     </section>
     
@@ -64,14 +64,14 @@
 <p>If <code>value</code> is a future, the created future waits for the
 <code>value</code> future to complete, and then completes with the same result.
 Since a <code>value</code> future can complete with an error, so can the future
-created by <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/Future.value.html">Future.value</a>, even if the name suggests otherwise.</p>
-<p>If <code>value</code> is not a <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a>, the created future is completed
+created by <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/Future.value.html">Future.value</a>, even if the name suggests otherwise.</p>
+<p>If <code>value</code> is not a <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a>, the created future is completed
 with the <code>value</code> value,
 equivalently to <code>new Future&lt;T&gt;.sync(() =&gt; value)</code>.</p>
 <p>If <code>value</code> is omitted or <code>null</code>, it is converted to <code>FutureOr&lt;T&gt;</code> by
 <code>value as FutureOr&lt;T&gt;</code>. If <code>T</code> is not nullable, then a non-<code>null</code> <code>value</code>
 must be provided, otherwise the construction throws.</p>
-<p>Use <a href="https://api.dart.dev/stable/3.9.4/dart-async/Completer-class.html">Completer</a> to create a future now and complete it later.</p>
+<p>Use <a href="https://api.dart.dev/stable/3.10.0/dart-async/Completer-class.html">Completer</a> to create a future now and complete it later.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">Future&lt;int&gt; getFuture() {
  return Future&lt;int&gt;.value(2021);
@@ -104,7 +104,7 @@ factory Future.value([FutureOr&lt;T&gt;? value]) {
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">Future.value factory constructor</li>
 </ol>
 
@@ -117,7 +117,7 @@ factory Future.value([FutureOr&lt;T&gt;? value]) {
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

@@ -73,17 +73,15 @@ class AppKernel {
   ///   server.listen(kernel.handle);
   /// });
   /// ```
-  void handle(HttpRequest request) {
-    // Session.cookie
-    // request.session.cookie
-    // init session??
-    // Session.start()
-    // create new (archery_guest) cookie if not on request
-    // request.response.cookies.add(Cookie("before", "before-done"));
+  void handle(HttpRequest request) async {
+
+    final session = await Session.init(request);
+    // print("================");
+    // print(session?.toMetaJson());
+    // print("================");
     _runMiddleware(request, 0);
-    // Session.end()
-    // queue cookie on response
-    // request.response.cookies.add(Cookie("after", "after-done"));
+
+
   }
 
   /// Recursively executes the global middleware chain.

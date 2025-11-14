@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">doWhile static method</li>
   </ol>
   <div class="self-name">doWhile</div>
@@ -49,14 +49,14 @@
     data-above-sidebar="archery_archery&#47;Future-class-sidebar.html"
     data-below-sidebar="">
     <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L699"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L720"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-method">doWhile</span> static method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-<span class="name ">doWhile</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="doWhile-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.4/dart-core/bool-class.html">bool</a></span>&gt;</span></span> <span class="parameter-name">action</span>()</span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">doWhile</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="doWhile-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.0/dart-core/bool-class.html">bool</a></span>&gt;</span></span> <span class="parameter-name">action</span>()</span></li>
 </ol>)
 
       
@@ -66,13 +66,13 @@
 <section class="desc markdown">
   <p>Performs an operation repeatedly until it returns <code>false</code>.</p>
 <p>The operation, <code>action</code>, may be either synchronous or asynchronous.</p>
-<p>The operation is called repeatedly as long as it returns either the <a href="https://api.dart.dev/stable/3.9.4/dart-core/bool-class.html">bool</a>
+<p>The operation is called repeatedly as long as it returns either the <a href="https://api.dart.dev/stable/3.10.0/dart-core/bool-class.html">bool</a>
 value <code>true</code> or a <code>Future&lt;bool&gt;</code> which completes with the value <code>true</code>.</p>
-<p>If a call to <code>action</code> returns <code>false</code> or a <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a> that completes to
-<code>false</code>, iteration ends and the future returned by <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/doWhile.html">doWhile</a> is completed
+<p>If a call to <code>action</code> returns <code>false</code> or a <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a> that completes to
+<code>false</code>, iteration ends and the future returned by <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/doWhile.html">doWhile</a> is completed
 with a <code>null</code> value.</p>
 <p>If a call to <code>action</code> throws or a future returned by <code>action</code> completes
-with an error, iteration ends and the future returned by <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/doWhile.html">doWhile</a>
+with an error, iteration ends and the future returned by <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/doWhile.html">doWhile</a>
 completes with the same error.</p>
 <p>Calls to <code>action</code> may happen at any time,
 including immediately after calling <code>doWhile</code>.
@@ -101,6 +101,7 @@ until that future has completed.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; doWhile(FutureOr&lt;bool&gt; action()) {
+  @pragma(&#39;vm:awaiter-link&#39;)
   _Future&lt;void&gt; doneSignal = _Future&lt;void&gt;();
   late void Function(bool) nextIteration;
   &#47;&#47; Bind this callback explicitly so that each iteration isn&#39;t bound in the
@@ -145,7 +146,7 @@ until that future has completed.</p>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">doWhile static method</li>
 </ol>
 
@@ -158,7 +159,7 @@ until that future has completed.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

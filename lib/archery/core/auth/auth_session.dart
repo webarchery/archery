@@ -3,6 +3,265 @@ import 'package:archery/archery/archery.dart';
 typedef Auth = AuthSession;
 typedef Guest = GuestSession;
 
+class Session extends Model {
+  late String token;
+  late DateTime lastActivity = DateTime.now();
+
+  // set in view engine
+  String? csrf;
+
+  Session({required this.token}) : super.fromJson({});
+
+  // this is from view templates
+  // token and xsrf double security
+  String? xsrf(HttpRequest request) {
+    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "xsrf-token");
+
+    if (cookie != null) {
+      return cookie.value;
+    }
+    return null;
+  }
+
+  static Future<Session?> init(HttpRequest request) async {
+    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+    final sessions = App().tryMake<List<Session>>();
+
+    if (cookie == null) {
+      final session = Session(token: App.generateKey());
+      await session.save();
+      sessions?.add(session);
+      request.cookies.add(Cookie("archery_guest_session", session.token));
+      request.response.cookies.add(Cookie("archery_guest_session", session.token));
+      return session;
+    } else {
+      final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+      if (session != null) {
+        session.lastActivity = DateTime.now();
+        await session.save();
+        request.cookies.add(Cookie("archery_guest_session", session.token));
+        request.response.cookies.add(Cookie("archery_guest_session", session.token));
+        return session;
+      }
+    }
+
+    if (sessions != null && sessions.isEmpty) {
+      final sessionRecord = await Model.firstWhere<Session>(field: "token", value: cookie.value);
+
+      if (sessionRecord != null) {
+        sessionRecord.lastActivity = DateTime.now();
+        await sessionRecord.save();
+        sessions.add(sessionRecord);
+        request.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
+        request.response.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
+        return sessionRecord;
+      } else {
+        final session = Session(token: App.generateKey());
+        await session.save();
+        sessions.add(session);
+        request.cookies.add(Cookie("archery_guest_session", session.token));
+        request.response.cookies.add(Cookie("archery_guest_session", session.token));
+        return session;
+      }
+    }
+
+    return null;
+  }
+
+  static Future<Session?> _init(HttpRequest request) async {
+    print(request.cookies.toString());
+    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+
+    print(cookie?.value);
+
+    try {
+      final sessions = App().tryMake<List<Session>>();
+      print("Sessions");
+      print("============");
+      sessions?.forEach(print);
+      print("=================");
+      final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+
+      if (cookie == null) {
+        final session = Session(token: App.generateKey());
+
+        await session.save();
+        request.response.cookies.add(Cookie("archery_guest_session", session.token));
+        sessions?.add(session);
+
+        return session;
+      }
+
+      // else {
+      //
+      //
+      //   final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+      //
+      //   print(session);
+      //   if(session == null) {
+      //     final session = Session(token: App.generateKey());
+      //
+      //     await session.save();
+      //     request.response.cookies.add(Cookie("archery_guest_session", session.token));
+      //     sessions?.add(session);
+      //
+      //     return session;
+      //
+      //   } else {
+      //     session.lastActivity = DateTime.now();
+      //     await session.save();
+      //     return session;
+      //   }
+      //
+      // }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // static Future<bool> start(HttpRequest request) async {
+  //   // v2 check db for record of cookie
+  //
+  //   final sessions = App().tryMake<List<Session>>();
+  //   if (sessions == null) {
+  //     return false;
+  //   }
+  //
+  //   // get the cookie
+  //   final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+  //   if (cookie == null) {}
+  //   // if null create new cookie, set new session, return session object
+  //   // if cookie, find in sessions, if cookie valid but not session destroy cookie, return new session
+  //   // if cookie, find in sessions, if cookie valid and session valid, return  session
+  //
+  //   try {
+  //     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+  //
+  //     if (cookie != null) {
+  //       final sessions = App().tryMake<List<Session>>();
+  //       if (sessions != null && sessions.isNotEmpty) {
+  //         final session = sessions.firstWhereOrNull((session) => session.cookie.value == cookie.value);
+  //
+  //         if (session != null) {
+  //           session.lastActivity = DateTime.now();
+  //           request.response.cookies.add(cookie);
+  //           sessions.add(session);
+  //           return await session.save();
+  //         }
+  //       }
+  //     } else {
+  //       final sessions = App().tryMake<List<Session>>();
+  //       if (sessions != null) {
+  //         final token = App.generateKey();
+  //         final session = Session(token: token);
+  //         request.response.cookies.add(session.cookie);
+  //         sessions.add(session);
+  //         return await session.save();
+  //       }
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
+
+  // static Future<void> end(HttpRequest request) async{
+  //
+  //   // find cookie or set
+  //   // add cookie to request.response
+  //
+  //   try {
+  //
+  //     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest");
+  //     final sessions = App().tryMake<List<Session>>();
+  //
+  //     // List<Session> must be in the
+  //     if(sessions != null && sessions.isNotEmpty) {
+  //
+  //       if(cookie != null) {
+  //         request.response.cookies.add(cookie);
+  //
+  //       } else {
+  //         final token = App.generateKey();
+  //         final session = Session(token: token);
+  //         await session.save();
+  //         request.response.cookies.add(session.cookie);
+  //
+  //       }
+  //
+  //     }
+  //     else if(sessions != null && sessions.isEmpty) {
+  //
+  //       final token = App.generateKey();
+  //       final session = Session(token: token);
+  //       await session.save();
+  //       request.response.cookies.add(session.cookie);
+  //
+  //     }
+  //
+  //   } catch(e) {
+  //     final token = App.generateKey();
+  //     final session = Session(token: token);
+  //     await session.save();
+  //     request.response.cookies.add(session.cookie);
+  //
+  //   }
+  //
+  //
+  //
+  //
+  // }
+
+  Session.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
+    if (json['token'] != null && json['token'] is String) {
+      token = json['token'];
+    }
+
+    if (json['last_activity'] != null && json['last_activity'] is String) {
+      try {
+        lastActivity = DateTime.parse(json['last_activity'] as String);
+      } catch (e) {
+        lastActivity = DateTime.now();
+      }
+    }
+  }
+
+  static Map<String, String> columnDefinitions = {'cookie': 'TEXT NOT NULL', 'last_activity': "TEXT NOT NULL"};
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      "uuid": uuid,
+      "token": token,
+      'last_activity': lastActivity.toIso8601String(),
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  Map<String, dynamic> toMetaJson() {
+    return {
+      "id": id,
+      "uuid": uuid,
+      "token": token,
+      'last_activity': lastActivity.toIso8601String(),
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  Future<bool> save({Disk? disk}) async => await Model.saveInstance<Session>(instance: this, disk: disk ?? this.disk);
+
+  @override
+  Future<bool> delete({Disk? disk}) async => await Model.deleteInstance<Session>(instance: this, disk: disk ?? this.disk);
+
+  @override
+  Future<bool> update({Disk? disk}) async =>
+      await Model.updateInstance<Session>(instance: this, disk: disk ?? this.disk, withJson: toMetaJson());
+}
+
 class GuestSession {
   static Future<dynamic> middleware(HttpRequest request, void Function() next) async {
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
@@ -14,9 +273,7 @@ class GuestSession {
 
     final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
 
-    if (session != null) {
-      return request.redirectToDashboard();
-    }
+    if (session != null) return request.redirectToDashboard();
 
     return next();
   }
@@ -148,7 +405,9 @@ class AuthSession extends Model {
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
     final authSessions = App().tryMake<List<AuthSession>>();
 
-    if (cookie == null || authSessions == null || authSessions.isEmpty) return request.redirectToLogin();
+    if (cookie == null || authSessions == null || authSessions.isEmpty) {
+      return request.redirectToLogin();
+    }
 
     final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
 
@@ -232,7 +491,7 @@ void authRoutes(Router router) {
         final cookie = Cookie('archery_session', App.generateKey())
           ..httpOnly = true
           ..secure =
-              true // only over HTTPS
+          true // only over HTTPS
           ..sameSite = SameSite.lax;
 
         final sessions = App().container.tryMake<List<AuthSession>>();

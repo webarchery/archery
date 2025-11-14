@@ -1,7 +1,29 @@
 import 'package:archery/archery/archery.dart';
 
+
 /// Type alias for view data.
 typedef ViewData = Map<String, dynamic>;
+
+// calling is thisSession because
+// request.session is taken
+extension ThisSession on HttpRequest {
+  Session? get thisSession {
+    try {
+      final cookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+      final sessions = App().tryMake<List<Session>>();
+      if (cookie != null) {
+        final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+        if (session != null) {
+          session.lastActivity = DateTime.now();
+          return session;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+}
 
 /// Extension on [HttpRequest] to render HTML views.
 extension View on HttpRequest {
@@ -28,37 +50,34 @@ extension View on HttpRequest {
       response.headers.contentType = ContentType.html;
       response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
-      response.headers.set(
-        HttpHeaders.cacheControlHeader,
-        'no-cache, no-store, must-revalidate, max-age=0',
-      );
-      response.headers.set(
-        HttpHeaders.pragmaHeader,
-        'no-cache',
-      ); // HTTP/1.0 compatibility
-      response.headers.set(
-        HttpHeaders.expiresHeader,
-        '0',
-      ); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
+      response.headers.set(HttpHeaders.cacheControlHeader, 'no-cache, no-store, must-revalidate, max-age=0');
+      response.headers.set(HttpHeaders.pragmaHeader, 'no-cache'); // HTTP/1.0 compatibility
+      response.headers.set(HttpHeaders.expiresHeader, '0'); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
       //
       // // --- Security headers ---
       response.headers.set('X-Content-Type-Options', 'nosniff');
       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set(
-        'Referrer-Policy',
-        'strict-origin-when-cross-origin',
-      );
+      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
       response.headers.set('X-XSS-Protection', '1; mode=block');
 
-      final cookie =
-          Cookie(
-              'xsrf-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
-              "${config.get('app.id')}",
-            )
-            ..httpOnly = true
-            ..secure =
-                true // only over HTTPS
-            ..sameSite = SameSite.lax;
+      final cookie = Cookie('archery_csrf_token', App.generateKey())
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax;
+
+      final sessions = App().tryMake<List<Session>>();
+      if (sessions != null && sessions.isNotEmpty) {
+        final requestCookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+
+
+        if (requestCookie != null) {
+          final session = sessions.firstWhereOrNull((session) => session.token == requestCookie.value);
+
+          if (session != null) {
+            session.csrf = cookie.value;
+          }
+        }
+      }
 
       return response
         ..cookies.add(cookie)
@@ -87,10 +106,7 @@ extension Json on HttpRequest {
 
     // --- Performance headers ---
     response.headers.contentType = ContentType.html;
-    response.headers.set(
-      HttpHeaders.cacheControlHeader,
-      'public, max-age=300, must-revalidate',
-    );
+    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
     //
     // // --- Security headers ---
@@ -99,14 +115,10 @@ extension Json on HttpRequest {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final cookie =
-        Cookie(
-            'xsrf-json-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
-            "${config.get('app.id')}",
-          )
-          ..httpOnly = true
-          ..secure = true
-          ..sameSite = SameSite.lax;
+    final cookie = Cookie('archery_csrf_token', App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
 
     response.headers.contentType = ContentType.json;
 
@@ -122,12 +134,8 @@ extension Json on HttpRequest {
 extension Text on HttpRequest {
   /// Sends plain text response.
   HttpResponse text([dynamic data]) {
-    final config = App().container.make<AppConfig>();
     response.headers.contentType = ContentType.html;
-    response.headers.set(
-      HttpHeaders.cacheControlHeader,
-      'public, max-age=300, must-revalidate',
-    );
+    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
     // --- Security headers ---
@@ -136,14 +144,10 @@ extension Text on HttpRequest {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final cookie =
-        Cookie(
-            'xsrf-text-token-${config.get('app.timestamp').toString().replaceAll(':', '-')}',
-            "${config.get('app.id')}",
-          )
-          ..httpOnly = true
-          ..secure = true
-          ..sameSite = SameSite.lax;
+    final cookie = Cookie('archery_csrf_token', App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
 
     response.headers.contentType = ContentType.text;
     return response
@@ -163,8 +167,15 @@ extension NotFound on HttpRequest {
     try {
       final html = engine.render("errors.404", {});
       response.headers.contentType = ContentType.html;
+
+      final cookie = Cookie('archery_csrf_token', App.generateKey())
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax;
+
       return response
         ..statusCode = HttpStatus.notFound
+        ..cookies.add(cookie)
         ..write(html)
         ..close();
     } catch (e) {
@@ -184,8 +195,14 @@ extension NotAuthenticated on HttpRequest {
     try {
       final html = engine.render("errors.401", {});
       response.headers.contentType = ContentType.html;
+      final cookie = Cookie('archery_csrf_token', App.generateKey())
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax;
+
       return response
         ..statusCode = HttpStatus.unauthorized
+        ..cookies.add(cookie)
         ..write(html)
         ..close();
     } catch (e) {
@@ -201,7 +218,6 @@ extension Redirect on HttpRequest {
   void redirectBack() {
     try {
       final referer = headers.value(HttpHeaders.refererHeader);
-      // Remove the response.write() call - redirects don't need body content
       response.redirect(Uri.parse(referer!));
     } catch (e) {
       redirectHome();

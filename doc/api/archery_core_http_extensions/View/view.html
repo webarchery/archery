@@ -54,8 +54,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpResponse-class.html">HttpResponse</a></span>&gt;</span></span>
-<span class="name ">view</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="view-param-template"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">template</span>, [</span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpResponse-class.html">HttpResponse</a></span>&gt;</span></span>
+<span class="name ">view</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="view-param-template"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/String-class.html">String</a></span> <span class="parameter-name">template</span>, [</span></li>
 <li><span class="parameter" id="view-param-data"><span class="type-annotation"><a href="../../archery_core_http_extensions/ViewData.html">ViewData</a>?</span> <span class="parameter-name">data</span></span></li>
 </ol>])
 
@@ -94,37 +94,34 @@
     response.headers.contentType = ContentType.html;
     response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
 
-    response.headers.set(
-      HttpHeaders.cacheControlHeader,
-      &#39;no-cache, no-store, must-revalidate, max-age=0&#39;,
-    );
-    response.headers.set(
-      HttpHeaders.pragmaHeader,
-      &#39;no-cache&#39;,
-    ); &#47;&#47; HTTP&#47;1.0 compatibility
-    response.headers.set(
-      HttpHeaders.expiresHeader,
-      &#39;0&#39;,
-    ); &#47;&#47; or a date in the past, e.g., &#39;Tue, 01 Jan 1980 00:00:00 GMT&#39;
+    response.headers.set(HttpHeaders.cacheControlHeader, &#39;no-cache, no-store, must-revalidate, max-age=0&#39;);
+    response.headers.set(HttpHeaders.pragmaHeader, &#39;no-cache&#39;); &#47;&#47; HTTP&#47;1.0 compatibility
+    response.headers.set(HttpHeaders.expiresHeader, &#39;0&#39;); &#47;&#47; or a date in the past, e.g., &#39;Tue, 01 Jan 1980 00:00:00 GMT&#39;
     &#47;&#47;
     &#47;&#47; &#47;&#47; --- Security headers ---
     response.headers.set(&#39;X-Content-Type-Options&#39;, &#39;nosniff&#39;);
     response.headers.set(&#39;X-Frame-Options&#39;, &#39;SAMEORIGIN&#39;);
-    response.headers.set(
-      &#39;Referrer-Policy&#39;,
-      &#39;strict-origin-when-cross-origin&#39;,
-    );
+    response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
     response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
 
-    final cookie =
-        Cookie(
-            &#39;xsrf-token-${config.get(&#39;app.timestamp&#39;).toString().replaceAll(&#39;:&#39;, &#39;-&#39;)}&#39;,
-            &quot;${config.get(&#39;app.id&#39;)}&quot;,
-          )
-          ..httpOnly = true
-          ..secure =
-              true &#47;&#47; only over HTTPS
-          ..sameSite = SameSite.lax;
+    final cookie = Cookie(&#39;archery_csrf_token&#39;, App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
+
+    final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
+    if (sessions != null &amp;&amp; sessions.isNotEmpty) {
+      final requestCookie = cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;);
+
+
+      if (requestCookie != null) {
+        final session = sessions.firstWhereOrNull((session) =&gt; session.token == requestCookie.value);
+
+        if (session != null) {
+          session.csrf = cookie.value;
+        }
+      }
+    }
 
     return response
       ..cookies.add(cookie)
@@ -161,7 +158,7 @@
     <li class="self-crumb">view method</li>
 </ol>
 
-    <h5>View extension on <a href="https://api.dart.dev/stable/3.9.4/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
+    <h5>View extension on <a href="https://api.dart.dev/stable/3.10.0/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -170,7 +167,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

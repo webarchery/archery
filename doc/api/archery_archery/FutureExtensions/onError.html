@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/FutureExtensions.html">FutureExtensions<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/FutureExtensions.html">FutureExtensions<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">onError&lt;<wbr><span class="type-parameter">E extends Object</span>&gt; method</li>
   </ol>
   <div class="self-name">onError</div>
@@ -49,17 +49,17 @@
     data-above-sidebar="archery_archery&#47;FutureExtensions-extension-sidebar.html"
     data-below-sidebar="">
     <div>
-  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/2f5a888a5e6a7316074416822a9584d54e3f5ab5/sdk/lib/async/async.dart#L1065"><span class="material-symbols-outlined">description</span></a></div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/b1a587b650acd12239743dd1f9d88d6fe19ae442/sdk/lib/async/async.dart#L1087"><span class="material-symbols-outlined">description</span></a></div>
 <h1><span class="kind-method">onError&lt;<wbr><span class="type-parameter">E extends Object</span>&gt;</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">onError</span>&lt;<wbr><span class="type-parameter">E extends Object</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="onError-param-handleError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">handleError</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="handleError-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span>, </span></li>
-<li><span class="parameter" id="handleError-param-stackTrace"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/StackTrace-class.html">StackTrace</a></span> <span class="parameter-name">stackTrace</span></span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+<span class="name ">onError</span>&lt;<wbr><span class="type-parameter">E extends Object</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="onError-param-handleError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">handleError</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="handleError-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span>, </span></li>
+<li><span class="parameter" id="handleError-param-stackTrace"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/StackTrace-class.html">StackTrace</a></span> <span class="parameter-name">stackTrace</span></span></li>
 </ol>), {</span></li>
-<li><span class="parameter" id="onError-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.9.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="test-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span></span></li>
+<li><span class="parameter" id="onError-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.0/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="test-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span></span></li>
 </ol>)?, </span></li>
 </ol>})
 
@@ -72,8 +72,8 @@
 <p>Catches errors of type <code>E</code> that this future complete with.
 If <code>test</code> is supplied, only catches errors of type <code>E</code>
 where <code>test</code> returns <code>true</code>.
-If <code>E</code> is <a href="https://api.dart.dev/stable/3.9.4/dart-core/Object-class.html">Object</a>, then all errors are potentially caught,
-depending only on a supplied <code>test</code>.toString()</p>
+If <code>E</code> is <a href="https://api.dart.dev/stable/3.10.0/dart-core/Object-class.html">Object</a>, then all errors are potentially caught,
+depending only on a supplied <code>test</code>.</p>
 <p>If the error is caught,
 the returned future completes with the result of calling <code>handleError</code>
 with the error and stack trace.
@@ -111,10 +111,10 @@ someFuture.onError&lt;SomeException&gt;((e, _) {
 completes with the same result, value or error,
 as this future.</p>
 <p>This method is effectively a more precisely typed version
-of <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future/catchError.html">Future.catchError</a>.
+of <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future/catchError.html">Future.catchError</a>.
 It makes it easy to catch specific error types,
 and requires a correctly typed error handler function,
-rather than just <a href="https://api.dart.dev/stable/3.9.4/dart-core/Function-class.html">Function</a>.
+rather than just <a href="https://api.dart.dev/stable/3.10.0/dart-core/Function-class.html">Function</a>.
 Because of this, the error handlers must accept
 the stack trace argument.</p>
 </section>
@@ -157,11 +157,11 @@ the stack trace argument.</p>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
     <li><a href="../../archery_archery/">archery</a></li>
-    <li><a href="https://api.dart.dev/stable/3.9.4/archery_archery/FutureExtensions.html">FutureExtensions<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.0/archery_archery/FutureExtensions.html">FutureExtensions<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">onError&lt;<wbr><span class="type-parameter">E extends Object</span>&gt; method</li>
 </ol>
 
-    <h5>FutureExtensions extension on <a href="https://api.dart.dev/stable/3.9.4/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></h5>
+    <h5>FutureExtensions extension on <a href="https://api.dart.dev/stable/3.10.0/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -170,7 +170,7 @@ the stack trace argument.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.0
+      1.2.1
   </span>
   
 </footer>

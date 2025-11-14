@@ -32,7 +32,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="h-full antialiased bg-zinc-50 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-100 selection:bg-indigo-200/60 dark:selection:bg-indigo-400/25">
+<body class="h-full antialiased bg-stone-300 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-100 selection:bg-indigo-200/60 dark:selection:bg-indigo-400/25">
 <main  id="app" class="relative min-h-full flex xitems-center">
     <div class=" pointer-events-none absolute inset-0 dot-grid text-zinc-900 dark:text-white"></div>
 
@@ -60,10 +60,10 @@
 
 
                 @foreach(posts as post)
-                <div class="border p-4 rounded border-stone-500 shadow-lg">
+                <div class="border p-4 rounded border-stone-500 shadow-lg bg-stone-100">
                     <article class="">
                         <div class="md:col-span-3 group relative flex flex-col items-start">
-                            <h2 class="text-base font-semibold tracking-tight text-zinc-800 dark:text-white">
+                            <h2 class="text-base font-semibold tracking-tight text-stone-700/90">
                                 <a href="/blog/{{ post.slug}}">{{ post.title }}</a></h2>
                             <time
                                     class="relative order-first mb-3 flex items-center text-sm text-zinc-400 pl-3.5"
@@ -72,7 +72,7 @@
                                     class="h-4 w-1 rounded-full bg-yellow-400 "></span></span>{{ post.published_at }}
                             </time>
 
-                            <p class="mt-2 text-zinc-600 dark:text-stone-300 line-clamp-2">{{ post.excerpt }}</p>
+                            <p class="mt-2 text-zinc-600 dark:text-stone-500/65 line-clamp-2">{{ post.excerpt }}</p>
                             <a href="/blog/{{ post.slug}}" aria-hidden="true"
                                class="rounded border border-stone-500 shadow py-1 px-2 bg-yellow-400 hover:bg-stone-800 hover:text-white text-stone-600 mt-4">Read
                                 Post
