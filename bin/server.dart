@@ -4,7 +4,6 @@ import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 
 Future<void> main(List<String> args) async {
-
   // init application
   final app = App();
   app.setKeys();
@@ -14,7 +13,6 @@ Future<void> main(List<String> args) async {
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
   await app.boot();
-
 
   // db migrations
   await migrateJsonFileModels();
@@ -34,11 +32,9 @@ Future<void> main(List<String> args) async {
 
   app.container.bindInstance<List<AuthSession>>([]);
 
-
   // init server with static files
   final port = config.get('server.port') ?? 8080;
   final staticFilesServer = app.make<StaticFilesServer>();
-
 
   try {
     HttpServer.bind(InternetAddress.loopbackIPv4, port).then((server) async {

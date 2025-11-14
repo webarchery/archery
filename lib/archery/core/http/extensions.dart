@@ -1,6 +1,5 @@
 import 'package:archery/archery/archery.dart';
 
-
 /// Type alias for view data.
 typedef ViewData = Map<String, dynamic>;
 
@@ -9,10 +8,14 @@ typedef ViewData = Map<String, dynamic>;
 extension ThisSession on HttpRequest {
   Session? get thisSession {
     try {
-      final cookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+      final cookie = cookies.firstWhereOrNull(
+        (cookie) => cookie.name == "archery_guest_session",
+      );
       final sessions = App().tryMake<List<Session>>();
       if (cookie != null) {
-        final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+        final session = sessions?.firstWhereOrNull(
+          (session) => session.token == cookie.value,
+        );
         if (session != null) {
           session.lastActivity = DateTime.now();
           return session;
@@ -50,14 +53,26 @@ extension View on HttpRequest {
       response.headers.contentType = ContentType.html;
       response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
-      response.headers.set(HttpHeaders.cacheControlHeader, 'no-cache, no-store, must-revalidate, max-age=0');
-      response.headers.set(HttpHeaders.pragmaHeader, 'no-cache'); // HTTP/1.0 compatibility
-      response.headers.set(HttpHeaders.expiresHeader, '0'); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
+      response.headers.set(
+        HttpHeaders.cacheControlHeader,
+        'no-cache, no-store, must-revalidate, max-age=0',
+      );
+      response.headers.set(
+        HttpHeaders.pragmaHeader,
+        'no-cache',
+      ); // HTTP/1.0 compatibility
+      response.headers.set(
+        HttpHeaders.expiresHeader,
+        '0',
+      ); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
       //
       // // --- Security headers ---
       response.headers.set('X-Content-Type-Options', 'nosniff');
       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      response.headers.set(
+        'Referrer-Policy',
+        'strict-origin-when-cross-origin',
+      );
       response.headers.set('X-XSS-Protection', '1; mode=block');
 
       final cookie = Cookie('archery_csrf_token', App.generateKey())
@@ -67,11 +82,14 @@ extension View on HttpRequest {
 
       final sessions = App().tryMake<List<Session>>();
       if (sessions != null && sessions.isNotEmpty) {
-        final requestCookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
-
+        final requestCookie = cookies.firstWhereOrNull(
+          (cookie) => cookie.name == "archery_guest_session",
+        );
 
         if (requestCookie != null) {
-          final session = sessions.firstWhereOrNull((session) => session.token == requestCookie.value);
+          final session = sessions.firstWhereOrNull(
+            (session) => session.token == requestCookie.value,
+          );
 
           if (session != null) {
             session.csrf = cookie.value;
@@ -102,11 +120,12 @@ extension View on HttpRequest {
 extension Json on HttpRequest {
   /// Sends JSON response with security headers and XSRF cookie.
   HttpResponse json([dynamic data]) {
-    final config = App().container.make<AppConfig>();
-
     // --- Performance headers ---
     response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      'public, max-age=300, must-revalidate',
+    );
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
     //
     // // --- Security headers ---
@@ -135,7 +154,10 @@ extension Text on HttpRequest {
   /// Sends plain text response.
   HttpResponse text([dynamic data]) {
     response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      'public, max-age=300, must-revalidate',
+    );
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
     // --- Security headers ---

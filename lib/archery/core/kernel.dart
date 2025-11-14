@@ -74,14 +74,11 @@ class AppKernel {
   /// });
   /// ```
   void handle(HttpRequest request) async {
-
-    final session = await Session.init(request);
+    await Session.init(request);
     // print("================");
     // print(session?.toMetaJson());
     // print("================");
     _runMiddleware(request, 0);
-
-
   }
 
   /// Recursively executes the global middleware chain.
