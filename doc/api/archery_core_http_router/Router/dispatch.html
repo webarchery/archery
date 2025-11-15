@@ -78,10 +78,23 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void dispatch(HttpRequest request) async {
-  final spoofMethod = await request.input(&quot;_method&quot;);
+
+  &#47;&#47; final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
+  &#47;&#47; HttpMethod method = _parseMethod(request.method);
+  &#47;&#47; if (spoofMethod != null) {
+  &#47;&#47;   method = _parseMethod(spoofMethod);
+  &#47;&#47; }
+
   HttpMethod method = _parseMethod(request.method);
-  if (spoofMethod != null) {
-    method = _parseMethod(spoofMethod);
+
+
+
+  &#47;&#47; Only check for method spoofing on POST requests with _method query parameter
+  if (request.method == &#39;POST&#39;) {
+    final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
+    if (spoofMethod != null) {
+      method = _parseMethod(spoofMethod);
+    }
   }
 
   final path = _normalize(request.uri.path);
@@ -171,7 +184,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.1
+      1.2.2
   </span>
   
 </footer>

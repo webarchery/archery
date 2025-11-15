@@ -72,7 +72,10 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">HttpResponse text([dynamic data]) {
   response.headers.contentType = ContentType.html;
-  response.headers.set(HttpHeaders.cacheControlHeader, &#39;public, max-age=300, must-revalidate&#39;);
+  response.headers.set(
+    HttpHeaders.cacheControlHeader,
+    &#39;public, max-age=300, must-revalidate&#39;,
+  );
   response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
 
   &#47;&#47; --- Security headers ---
@@ -120,7 +123,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.1
+      1.2.2
   </span>
   
 </footer>

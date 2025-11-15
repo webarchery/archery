@@ -26,3 +26,6 @@
 
 ## 1.2.1
 - Sessions
+
+## 1.2.2
+- Body Parser -> FormRequest

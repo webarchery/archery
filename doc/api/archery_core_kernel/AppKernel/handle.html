@@ -77,14 +77,11 @@ then dispatching to the router.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void handle(HttpRequest request) async {
-
-  final session = await Session.init(request);
+  await Session.init(request);
   &#47;&#47; print(&quot;================&quot;);
   &#47;&#47; print(session?.toMetaJson());
   &#47;&#47; print(&quot;================&quot;);
   _runMiddleware(request, 0);
-
-
 }</code></pre>
 </section>
 
@@ -113,7 +110,7 @@ then dispatching to the router.</p>
 <footer>
   <span class="no-break">
     archery
-      1.2.1
+      1.2.2
   </span>
   
 </footer>

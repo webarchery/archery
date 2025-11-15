@@ -25,11 +25,7 @@ class Request {
   HttpResponse get response => raw.response;
 
   /// Combines body, query, and params (body wins, then query, then params).
-  Map<String, dynamic> all() => {
-    ...params,
-    ...query,
-    ...body,
-  };
+  Map<String, dynamic> all() => {...params, ...query, ...body};
 
   /// Laravel-style: input("field") → body > query > params
   dynamic input(String key, {dynamic defaultValue}) {

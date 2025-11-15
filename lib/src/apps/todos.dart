@@ -92,10 +92,8 @@ void todoRoutes(Router router) {
       });
 
       router.post("/", middleware: [Auth.middleware], (request) async {
-
-        
         final form = FormRequest(request);
-        final task =  await form.input('task');
+        final task = await form.input('task');
         if (task != null && task.isNotEmpty && task.toString().length <= 255) {
           final todo = Todo(task: task.toString().trim());
           await todo.save();

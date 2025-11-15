@@ -1,4 +1,3 @@
-
 import 'package:archery/archery/archery.dart';
 
 class UploadedFile {
@@ -12,7 +11,7 @@ class UploadedFile {
     required Uint8List bytes,
     required this.contentType,
   }) : _cachedBytes = Future.value(bytes),
-        _knownLength = bytes.length;
+       _knownLength = bytes.length;
 
   // empty factory constructor for invalid files
   factory UploadedFile.empty() {

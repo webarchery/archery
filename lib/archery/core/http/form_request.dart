@@ -8,11 +8,10 @@ class FormRequest {
   Uint8List? _bodyBuffer;
   Future<void>? _parsingFuture;
 
-
   FormRequest(this._request)
-      : _fields = <String, dynamic>{},
-        _files = <String, UploadedFile>{},
-        _parsed = false;
+    : _fields = <String, dynamic>{},
+      _files = <String, UploadedFile>{},
+      _parsed = false;
 
   /// Gets form field value from request body
   Future<dynamic> input(String key) async {
@@ -79,7 +78,7 @@ class FormRequest {
         _bodyBuffer = Uint8List.fromList(chunks.expand((x) => x).toList());
       }
 
-      final ct   = _request.headers.contentType;
+      final ct = _request.headers.contentType;
       final mime = ct?.mimeType ?? '';
       final bodyBytes = _bodyBuffer!;
 
@@ -126,7 +125,10 @@ class FormRequest {
     }
   }
 
-  Future<void> _parseMultipartFormDataFromBytes(Uint8List bodyBytes, String boundary) async {
+  Future<void> _parseMultipartFormDataFromBytes(
+    Uint8List bodyBytes,
+    String boundary,
+  ) async {
     final stream = Stream<Uint8List>.value(bodyBytes);
     final transformer = MimeMultipartTransformer(boundary);
     final partsStream = transformer.bind(stream);
@@ -153,7 +155,8 @@ class FormRequest {
           _files[name] = UploadedFile.fromBytes(
             filename: filename,
             bytes: bytes,
-            contentType: part.headers['content-type'] ?? 'application/octet-stream',
+            contentType:
+                part.headers['content-type'] ?? 'application/octet-stream',
           );
         } else {
           _files[name] = UploadedFile.empty();
@@ -190,4 +193,3 @@ class FormRequest {
     return params;
   }
 }
-

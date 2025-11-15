@@ -78,9 +78,11 @@
 
   router.post(&#39;&#47;register&#39;, middleware: [Guest.middleware], (request) async {
     try {
-      final name = await request.input(&quot;name&quot;);
-      final email = await request.input(&quot;email&quot;);
-      final password = await request.input(&quot;password&quot;);
+
+      final form = request.form();
+      final name =  await form.input(&#39;name&#39;);
+      final email =  await form.input(&#39;email&#39;);
+      final password =  await form.input(&#39;password&#39;);
 
       if (name == null ||
           name.toString().isEmpty ||
@@ -91,27 +93,35 @@
         return request.redirectBack();
       }
 
-      final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
+      final userRecord = await Model.firstWhere&lt;User&gt;(
+        field: &quot;email&quot;,
+        value: email,
+      );
       if (userRecord != null) return request.redirectBack();
 
       final user = User(name: name, email: email, password: password);
-      if (await user.save()) {
-        await Auth.login(email: user.email, password: password);
-        return request.redirectToDashboard();
-      }
+       await user.save();
 
-      return request.redirectBack();
+      return request.redirectToLogin();
     } catch (e) {
       return request.redirectBack();
     }
   });
 
   router.post(&#39;&#47;login&#39;, (request) async {
-    try {
-      final email = await request.input(&quot;email&quot;);
-      final password = await request.input(&quot;password&quot;);
 
-      if (email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
+
+
+
+    try {
+      final form = request.form();
+      final email =  await form.input(&#39;email&#39;);
+      final password =  await form.input(&#39;password&#39;);
+
+      if (email == null ||
+          email.toString().isEmpty ||
+          password == null ||
+          password.toString().isEmpty) {
         return request.redirectBack();
       }
 
@@ -119,12 +129,14 @@
         final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
           ..httpOnly = true
           ..secure =
-          true &#47;&#47; only over HTTPS
+              true &#47;&#47; only over HTTPS
           ..sameSite = SameSite.lax;
 
         final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-        final session = sessions?.firstWhereOrNull((session) =&gt; session.email == email);
+        final session = sessions?.firstWhereOrNull(
+          (session) =&gt; session.email == email,
+        );
         if (session != null) {
           session.cookie = cookie;
           request.response.cookies.add(cookie);
@@ -194,7 +206,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.2.1
+      1.2.2
   </span>
   
 </footer>
