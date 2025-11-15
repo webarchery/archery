@@ -219,14 +219,11 @@ class Router {
     //   method = _parseMethod(spoofMethod);
     // }
 
+    final spoofMethod = request.uri.queryParameters['_method'];
     HttpMethod method = _parseMethod(request.method);
 
-    // Only check for method spoofing on POST requests with _method query parameter
-    if (request.method == 'POST') {
-      final spoofMethod = request.uri.queryParameters['_method'];
-      if (spoofMethod != null) {
-        method = _parseMethod(spoofMethod);
-      }
+    if (spoofMethod != null) {
+      method = _parseMethod(spoofMethod);
     }
 
     final path = _normalize(request.uri.path);
