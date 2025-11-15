@@ -267,3 +267,7 @@ extension Redirect on HttpRequest {
     }
   }
 }
+
+extension HttpRequestFormExtension on HttpRequest {
+  FormRequest form() => FormRequest(this);
+}

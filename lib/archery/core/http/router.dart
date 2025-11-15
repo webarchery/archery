@@ -42,6 +42,9 @@ typedef Handler = Future<dynamic> Function(HttpRequest request);
 typedef HttpMiddleware =
     Future<dynamic> Function(HttpRequest request, void Function() next);
 
+
+
+
 /// HTTP methods supported by the router.
 enum HttpMethod {
   /// GET request
@@ -58,6 +61,37 @@ enum HttpMethod {
 
   /// PATCH request
   patch,
+}
+
+
+class RoutableRequest {
+  final HttpRequest _request;
+  final String? _spoofMethod;
+  FormRequest? _formRequest;
+
+  RoutableRequest(this._request, this._spoofMethod);
+
+  HttpMethod get method {
+    final baseMethod = _parseMethod(_request.method);
+    return _spoofMethod != null ? _parseMethod(_spoofMethod!) : baseMethod;
+  }
+
+  Future<FormRequest> get form async {
+    _formRequest ??=  FormRequest(_request);
+    return _formRequest!;
+  }
+
+  // Delegate other HttpRequest methods
+  Uri get uri => _request.uri;
+  HttpHeaders get headers => _request.headers;
+  HttpResponse get response => _request.response;
+
+  HttpMethod _parseMethod(String method) => HttpMethod.values.firstWhere(
+        (m) => m.name.toUpperCase() == method.toUpperCase(),
+    orElse: () => HttpMethod.get,
+  );
+
+// Add other delegates as needed...
 }
 
 /// Core HTTP router with support for:
@@ -212,10 +246,23 @@ class Router {
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
   void dispatch(HttpRequest request) async {
-    final spoofMethod = await request.input("_method");
+
+    // final spoofMethod = request.uri.queryParameters['_method'];
+    // HttpMethod method = _parseMethod(request.method);
+    // if (spoofMethod != null) {
+    //   method = _parseMethod(spoofMethod);
+    // }
+
     HttpMethod method = _parseMethod(request.method);
-    if (spoofMethod != null) {
-      method = _parseMethod(spoofMethod);
+
+
+
+    // Only check for method spoofing on POST requests with _method query parameter
+    if (request.method == 'POST') {
+      final spoofMethod = request.uri.queryParameters['_method'];
+      if (spoofMethod != null) {
+        method = _parseMethod(spoofMethod);
+      }
     }
 
     final path = _normalize(request.uri.path);
@@ -277,6 +324,27 @@ class Router {
 
     // 3. Not found
     request.notFound();
+  }
+
+
+  Future<String?> _parseSpoofMethod(HttpRequest request) async {
+    // Only parse if it's a POST request (method spoofing only makes sense for POST)
+    if (request.method != 'POST') return null;
+
+    final contentType = request.headers.contentType;
+    if (contentType?.mimeType != 'application/x-www-form-urlencoded') {
+      return null;
+    }
+
+    try {
+      // Read just enough to find _method parameter
+      final body = await utf8.decoder.bind(request).join();
+      final params = Uri.splitQueryString(body);
+      return params['_method'];
+    } catch (e) {
+      print('Error parsing spoof method: $e');
+      return null;
+    }
   }
 
   /// Current prefix from group stack.

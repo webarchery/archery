@@ -392,9 +392,11 @@ void authRoutes(Router router) {
 
   router.post('/register', middleware: [Guest.middleware], (request) async {
     try {
-      final name = await request.input("name");
-      final email = await request.input("email");
-      final password = await request.input("password");
+
+      final form = request.form();
+      final name =  await form.input('name');
+      final email =  await form.input('email');
+      final password =  await form.input('password');
 
       if (name == null ||
           name.toString().isEmpty ||
@@ -412,21 +414,23 @@ void authRoutes(Router router) {
       if (userRecord != null) return request.redirectBack();
 
       final user = User(name: name, email: email, password: password);
-      if (await user.save()) {
-        await Auth.login(email: user.email, password: password);
-        return request.redirectToDashboard();
-      }
+       await user.save();
 
-      return request.redirectBack();
+      return request.redirectToLogin();
     } catch (e) {
       return request.redirectBack();
     }
   });
 
   router.post('/login', (request) async {
+
+
+
+
     try {
-      final email = await request.input("email");
-      final password = await request.input("password");
+      final form = request.form();
+      final email =  await form.input('email');
+      final password =  await form.input('password');
 
       if (email == null ||
           email.toString().isEmpty ||

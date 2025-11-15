@@ -78,8 +78,7 @@
                         <div class="flex items-start justify-between break-words break-all gap-8">
                             <a href="/todos/{{ todo.uuid }}"
                                class="text-indigo-500 dark:text-yellow-400 font-medium block break-words">{{ todo.task }}</a>
-                            <form action="/todos/{{todo.uuid}}" method="post" class="">
-                                <input type="hidden" name="_method" value="delete">
+                            <form action="/todos/{{todo.uuid}}?_method=delete" method="post" class="">
                                 <button type="submit" class="">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                          class="size-5 dark:text-stone-900 hover:text-red-500">
@@ -97,9 +96,9 @@
         </div>
 
         @if(todos.length)
+
         <div class="mt-8 flex">
-            <form action="/todos/truncate" method="post" class="animate__animated animate__slideInUp flex w-full justify-end ">
-                <input type="hidden" name="_method" value="patch" class="">
+            <form action="/todos/truncate?_method=patch" method="post" class="animate__animated animate__slideInUp flex w-full justify-end ">
                 <button class="text-xs font-medium flex items-center group ">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="size-4 text-red-500  group-hover:scale-110">

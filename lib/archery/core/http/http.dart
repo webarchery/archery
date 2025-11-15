@@ -32,7 +32,8 @@
 import 'package:archery/archery/archery.dart';
 export 'extensions.dart';
 export 'router.dart';
-export 'body_parser.dart';
+export 'uploaded_file.dart';
+export 'form_request.dart';
 
 /// Signature for HTTP route handlers.
 ///
