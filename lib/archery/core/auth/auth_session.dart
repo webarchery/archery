@@ -390,7 +390,7 @@ void authRoutes(Router router) {
     return request.view("auth.register");
   });
 
-  router.post('/register', middleware: [Guest.middleware], (request) async {
+  router.post('/register', (request) async {
     try {
       final form = request.form();
       final name = await form.input('name');

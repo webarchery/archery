@@ -29,92 +29,92 @@ extension ThisSession on HttpRequest {
 }
 
 /// Extension on [HttpRequest] to render HTML views.
-// extension View on HttpRequest {
-//   /// Renders a template and sends HTML response.
-//   ///
-//   /// - Sets `Content-Type: text/html`
-//   /// - Adds caching and security headers
-//   /// - Sets XSRF token cookie
-//   /// - Handles errors gracefully in debug mode
-//   Future<HttpResponse> view(String template, [ViewData? data]) async {
-//     final engine = App().container.make<TemplateEngine>();
-//     final config = App().container.make<AppConfig>();
-//
-//     final user = await Auth.user(this);
-//     if (user != null) {
-//       final userData = {"user": user.toJson()};
-//       data = {...?data, ...userData};
-//     }
-//
-//     try {
-//       final html = engine.render(template, data ?? {});
-//
-//       // --- Performance headers ---
-//       response.headers.contentType = ContentType.html;
-//       response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-//
-//       response.headers.set(
-//         HttpHeaders.cacheControlHeader,
-//         'no-cache, no-store, must-revalidate, max-age=0',
-//       );
-//       response.headers.set(
-//         HttpHeaders.pragmaHeader,
-//         'no-cache',
-//       ); // HTTP/1.0 compatibility
-//       response.headers.set(
-//         HttpHeaders.expiresHeader,
-//         '0',
-//       ); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
-//       //
-//       // // --- Security headers ---
-//       response.headers.set('X-Content-Type-Options', 'nosniff');
-//       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-//       response.headers.set(
-//         'Referrer-Policy',
-//         'strict-origin-when-cross-origin',
-//       );
-//       response.headers.set('X-XSS-Protection', '1; mode=block');
-//
-//       final cookie = Cookie('archery_csrf_token', App.generateKey())
-//         ..httpOnly = true
-//         ..secure = true
-//         ..sameSite = SameSite.lax;
-//
-//       final sessions = App().tryMake<List<Session>>();
-//       if (sessions != null && sessions.isNotEmpty) {
-//         final requestCookie = cookies.firstWhereOrNull(
-//           (cookie) => cookie.name == "archery_guest_session",
-//         );
-//
-//         if (requestCookie != null) {
-//           final session = sessions.firstWhereOrNull(
-//             (session) => session.token == requestCookie.value,
-//           );
-//
-//           if (session != null) {
-//             session.csrf = cookie.value;
-//           }
-//         }
-//       }
-//
-//       return response
-//         ..cookies.add(cookie)
-//         ..write(html)
-//         ..close();
-//     } catch (e, stack) {
-//       if (config.get('app.debug')) {
-//         return response
-//           ..statusCode = HttpStatus.internalServerError
-//           ..write("$e\n\n$stack")
-//           ..close();
-//       }
-//       return response
-//         ..statusCode = HttpStatus.internalServerError
-//         ..write(e)
-//         ..close();
-//     }
-//   }
-// }
+extension View on HttpRequest {
+  /// Renders a template and sends HTML response.
+  ///
+  /// - Sets `Content-Type: text/html`
+  /// - Adds caching and security headers
+  /// - Sets XSRF token cookie
+  /// - Handles errors gracefully in debug mode
+  Future<HttpResponse> view(String template, [ViewData? data]) async {
+    final engine = App().container.make<TemplateEngine>();
+    final config = App().container.make<AppConfig>();
+
+    final user = await Auth.user(this);
+    if (user != null) {
+      final userData = {"user": user.toJson()};
+      data = {...?data, ...userData};
+    }
+
+    try {
+      final html = engine.render(template, data ?? {});
+
+      // --- Performance headers ---
+      response.headers.contentType = ContentType.html;
+      response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+
+      response.headers.set(
+        HttpHeaders.cacheControlHeader,
+        'no-cache, no-store, must-revalidate, max-age=0',
+      );
+      response.headers.set(
+        HttpHeaders.pragmaHeader,
+        'no-cache',
+      ); // HTTP/1.0 compatibility
+      response.headers.set(
+        HttpHeaders.expiresHeader,
+        '0',
+      ); // or a date in the past, e.g., 'Tue, 01 Jan 1980 00:00:00 GMT'
+      //
+      // // --- Security headers ---
+      response.headers.set('X-Content-Type-Options', 'nosniff');
+      response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+      response.headers.set(
+        'Referrer-Policy',
+        'strict-origin-when-cross-origin',
+      );
+      response.headers.set('X-XSS-Protection', '1; mode=block');
+
+      final cookie = Cookie('archery_csrf_token', App.generateKey())
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax;
+
+      final sessions = App().tryMake<List<Session>>();
+      if (sessions != null && sessions.isNotEmpty) {
+        final requestCookie = cookies.firstWhereOrNull(
+          (cookie) => cookie.name == "archery_guest_session",
+        );
+
+        if (requestCookie != null) {
+          final session = sessions.firstWhereOrNull(
+            (session) => session.token == requestCookie.value,
+          );
+
+          if (session != null) {
+            session.csrf = cookie.value;
+          }
+        }
+      }
+
+      return response
+        ..cookies.add(cookie)
+        ..write(html)
+        ..close();
+    } catch (e, stack) {
+      if (config.get('app.debug')) {
+        return response
+          ..statusCode = HttpStatus.internalServerError
+          ..write("$e\n\n$stack")
+          ..close();
+      }
+      return response
+        ..statusCode = HttpStatus.internalServerError
+        ..write(e)
+        ..close();
+    }
+  }
+}
 
 /// Extension on [HttpRequest] to send JSON responses.
 extension Json on HttpRequest {
@@ -273,119 +273,119 @@ extension HttpRequestFormExtension on HttpRequest {
 }
 
 
-extension View on HttpRequest {
-  Future<HttpResponse> view(String template, [ViewData? data]) async {
-    final engine = App().container.make<TemplateEngine>();
-    final config = App().container.make<AppConfig>();
-    final isProduction = config.get('app.env') == 'production';
-    final appUrl = config.get('app.url'); // Add this to your config
-
-    // Get user data for template
-    final user = await Auth.user(this);
-    if (user != null) {
-      final userData = {"user": user.toJson()};
-      data = {...?data, ...userData};
-    }
-
-    // Add environment and config data to all templates
-    final templateData = {
-      ...?data,
-      'isProduction': isProduction,
-      'appUrl': appUrl,
-      'appName': config.get('app.name'),
-      'csrfToken': await _getOrCreateCsrfToken(this),
-    };
-
-    try {
-      final html = engine.render(template, templateData);
-
-      // --- Headers ---
-      response.headers.contentType = ContentType.html;
-      response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-
-      // Cache headers - different for production
-      if (isProduction) {
-        response.headers.set(
-          HttpHeaders.cacheControlHeader,
-          'public, max-age=300', // 5 minutes for production
-        );
-      } else {
-        response.headers.set(
-          HttpHeaders.cacheControlHeader,
-          'no-cache, no-store, must-revalidate, max-age=0',
-        );
-      }
-
-      response.headers.set(HttpHeaders.pragmaHeader, 'no-cache');
-      response.headers.set(HttpHeaders.expiresHeader, '0');
-
-      // --- Security headers ---
-      response.headers.set('X-Content-Type-Options', 'nosniff');
-      response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      response.headers.set('X-XSS-Protection', '1; mode=block');
-
-      // Add CSP header in production
-      // if (isProduction) {
-      //   response.headers.set(
-      //       'Content-Security-Policy',
-      //       "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-      //   );
-      // }
-
-      // --- CSRF Cookie ---
-      final csrfToken = await _getOrCreateCsrfToken(this);
-      final cookie = Cookie('archery_csrf_token', csrfToken)
-        ..httpOnly = true
-        ..secure = isProduction
-        ..sameSite = isProduction ? SameSite.none : SameSite.lax
-        ..path = '/'
-        ..maxAge = 3600; // 1 hour
-
-      // Set domain in production for cross-subdomain cookies
-      if (isProduction) {
-        cookie.domain = '.dartmastery.com'; // Replace with your actual domain
-      }
-
-
-      return response
-        ..cookies.add(cookie)
-        ..write(html)
-        ..close();
-    } catch (e, stack) {
-      if (config.get('app.debug')) {
-        return response
-          ..statusCode = HttpStatus.internalServerError
-          ..write("Error rendering template: $e\n\n$stack")
-          ..close();
-      }
-      // In production, render a friendly error page
-      return response
-        ..statusCode = HttpStatus.internalServerError
-        ..write(engine.render('error', {'message': 'Something went wrong'}))
-        ..close();
-    }
-  }
-
-  Future<String> _getOrCreateCsrfToken(HttpRequest request) async {
-    final sessions = App().tryMake<List<Session>>();
-    if (sessions != null && sessions.isNotEmpty) {
-      final requestCookie = request.cookies.firstWhereOrNull(
-            (cookie) => cookie.name == "archery_guest_session",
-      );
-
-      if (requestCookie != null) {
-        final session = sessions.firstWhereOrNull(
-              (session) => session.token == requestCookie.value,
-        );
-
-        if (session != null && session.csrf != null) {
-          return session.csrf!;
-        }
-      }
-    }
-
-    // Generate new token if none exists
-    return App.generateKey();
-  }
-}
+// extension View on HttpRequest {
+//   Future<HttpResponse> view(String template, [ViewData? data]) async {
+//     final engine = App().container.make<TemplateEngine>();
+//     final config = App().container.make<AppConfig>();
+//     final isProduction = config.get('app.env') == 'production';
+//     final appUrl = config.get('app.url'); // Add this to your config
+//
+//     // Get user data for template
+//     final user = await Auth.user(this);
+//     if (user != null) {
+//       final userData = {"user": user.toJson()};
+//       data = {...?data, ...userData};
+//     }
+//
+//     // Add environment and config data to all templates
+//     final templateData = {
+//       ...?data,
+//       'isProduction': isProduction,
+//       'appUrl': appUrl,
+//       'appName': config.get('app.name'),
+//       'csrfToken': await _getOrCreateCsrfToken(this),
+//     };
+//
+//     try {
+//       final html = engine.render(template, templateData);
+//
+//       // --- Headers ---
+//       response.headers.contentType = ContentType.html;
+//       response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+//
+//       // Cache headers - different for production
+//       if (isProduction) {
+//         response.headers.set(
+//           HttpHeaders.cacheControlHeader,
+//           'public, max-age=300', // 5 minutes for production
+//         );
+//       } else {
+//         response.headers.set(
+//           HttpHeaders.cacheControlHeader,
+//           'no-cache, no-store, must-revalidate, max-age=0',
+//         );
+//       }
+//
+//       response.headers.set(HttpHeaders.pragmaHeader, 'no-cache');
+//       response.headers.set(HttpHeaders.expiresHeader, '0');
+//
+//       // --- Security headers ---
+//       response.headers.set('X-Content-Type-Options', 'nosniff');
+//       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+//       response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+//       response.headers.set('X-XSS-Protection', '1; mode=block');
+//
+//       // Add CSP header in production
+//       // if (isProduction) {
+//       //   response.headers.set(
+//       //       'Content-Security-Policy',
+//       //       "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+//       //   );
+//       // }
+//
+//       // --- CSRF Cookie ---
+//       final csrfToken = await _getOrCreateCsrfToken(this);
+//       final cookie = Cookie('archery_csrf_token', csrfToken)
+//         ..httpOnly = true
+//         ..secure = isProduction
+//         ..sameSite = isProduction ? SameSite.none : SameSite.lax
+//         ..path = '/'
+//         ..maxAge = 3600; // 1 hour
+//
+//       // Set domain in production for cross-subdomain cookies
+//       if (isProduction) {
+//         cookie.domain = '.dartmastery.com'; // Replace with your actual domain
+//       }
+//
+//
+//       return response
+//         ..cookies.add(cookie)
+//         ..write(html)
+//         ..close();
+//     } catch (e, stack) {
+//       if (config.get('app.debug')) {
+//         return response
+//           ..statusCode = HttpStatus.internalServerError
+//           ..write("Error rendering template: $e\n\n$stack")
+//           ..close();
+//       }
+//       // In production, render a friendly error page
+//       return response
+//         ..statusCode = HttpStatus.internalServerError
+//         ..write(engine.render('error', {'message': 'Something went wrong'}))
+//         ..close();
+//     }
+//   }
+//
+//   Future<String> _getOrCreateCsrfToken(HttpRequest request) async {
+//     final sessions = App().tryMake<List<Session>>();
+//     if (sessions != null && sessions.isNotEmpty) {
+//       final requestCookie = request.cookies.firstWhereOrNull(
+//             (cookie) => cookie.name == "archery_guest_session",
+//       );
+//
+//       if (requestCookie != null) {
+//         final session = sessions.firstWhereOrNull(
+//               (session) => session.token == requestCookie.value,
+//         );
+//
+//         if (session != null && session.csrf != null) {
+//           return session.csrf!;
+//         }
+//       }
+//     }
+//
+//     // Generate new token if none exists
+//     return App.generateKey();
+//   }
+// }
