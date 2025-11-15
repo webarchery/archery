@@ -60,35 +60,6 @@ enum HttpMethod {
   patch,
 }
 
-class RoutableRequest {
-  final HttpRequest _request;
-  final String? _spoofMethod;
-  FormRequest? _formRequest;
-
-  RoutableRequest(this._request, this._spoofMethod);
-
-  HttpMethod get method {
-    final baseMethod = _parseMethod(_request.method);
-    return _spoofMethod != null ? _parseMethod(_spoofMethod) : baseMethod;
-  }
-
-  Future<FormRequest> get form async {
-    _formRequest ??= FormRequest(_request);
-    return _formRequest!;
-  }
-
-  // Delegate other HttpRequest methods
-  Uri get uri => _request.uri;
-  HttpHeaders get headers => _request.headers;
-  HttpResponse get response => _request.response;
-
-  HttpMethod _parseMethod(String method) => HttpMethod.values.firstWhere(
-    (m) => m.name.toUpperCase() == method.toUpperCase(),
-    orElse: () => HttpMethod.get,
-  );
-
-  // Add other delegates as needed...
-}
 
 /// Core HTTP router with support for:
 /// - Static and dynamic routes

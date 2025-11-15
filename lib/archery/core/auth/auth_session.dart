@@ -102,7 +102,7 @@ class Session extends Model {
   }
 
   static Map<String, String> columnDefinitions = {
-    'cookie': 'TEXT NOT NULL',
+    'token': 'TEXT NOT NULL',
     'last_activity': "TEXT NOT NULL",
   };
 

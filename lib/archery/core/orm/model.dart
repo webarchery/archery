@@ -91,7 +91,7 @@ abstract class Model {
   /// can be overridden per-class
   /// Can be overridden per-operation.
 
-  static const defaultDisk = Disk.file;
+  static const defaultDisk = Disk.sqlite;
   Disk disk = defaultDisk;
 
   /// Serializes model data (excluding metadata).

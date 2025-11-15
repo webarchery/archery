@@ -18,6 +18,11 @@ Future<void> migrateSQLiteModels() async {
     constructor: Todo.fromJson,
     columnDefinitions: Todo.columnDefinitions,
   );
+
+  await SQLiteModel.migrate<Session>(
+    constructor: Session.fromJson,
+    columnDefinitions: Session.columnDefinitions,
+  );
   await SQLiteModel.migrate<AuthSession>(
     constructor: AuthSession.fromJson,
     columnDefinitions: AuthSession.columnDefinitions,
