@@ -213,11 +213,6 @@ class Router {
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
   void dispatch(HttpRequest request) async {
-    // final spoofMethod = request.uri.queryParameters['_method'];
-    // HttpMethod method = _parseMethod(request.method);
-    // if (spoofMethod != null) {
-    //   method = _parseMethod(spoofMethod);
-    // }
 
     final spoofMethod = request.uri.queryParameters['_method'];
     HttpMethod method = _parseMethod(request.method);
@@ -286,6 +281,9 @@ class Router {
     // 3. Not found
     request.notFound();
   }
+
+
+
 
   /// Current prefix from group stack.
   String get _currentPrefix => _prefixStack.last;
