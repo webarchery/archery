@@ -326,12 +326,12 @@ extension View on HttpRequest {
       response.headers.set('X-XSS-Protection', '1; mode=block');
 
       // Add CSP header in production
-      if (isProduction) {
-        response.headers.set(
-            'Content-Security-Policy',
-            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-        );
-      }
+      // if (isProduction) {
+      //   response.headers.set(
+      //       'Content-Security-Policy',
+      //       "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+      //   );
+      // }
 
       // --- CSRF Cookie ---
       final csrfToken = await _getOrCreateCsrfToken(this);
