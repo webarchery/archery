@@ -136,6 +136,8 @@
 
                 <section class="w-full max-w-sm">
                     <form action="/login" method="post" class="space-y-4 bg-stone-700 px-4 pt-6 pb-4 rounded shadow" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
                         <div class="">
                             <label class="grow">
                                 <input maxlength="255" type="email" name="email"

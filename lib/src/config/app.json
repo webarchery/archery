@@ -1,8 +1,10 @@
 {
   "name": "Archery Web Application",
+  "url": "https://dartmastery.com",
   "version": "1.0.0",
   "timestamp": "2025-10-22T14:45:19.643414Z",
   "key": "zGqDMuuzWtRpPzaEnyxuH2R2_u957dZs4564k5k49II=",
   "id": "072f6fb9-5632-4e01-879f-b9927c4d851e",
-  "debug": true
+  "debug": true,
+  "env": "local"
 }
