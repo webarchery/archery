@@ -344,7 +344,7 @@ extension View on HttpRequest {
 
       // Set domain in production for cross-subdomain cookies
       if (isProduction) {
-        cookie.domain = '.yourdomain.com'; // Replace with your actual domain
+        cookie.domain = '.dartmastery.com'; // Replace with your actual domain
       }
 
       return response
