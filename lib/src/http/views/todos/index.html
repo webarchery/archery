@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Archery • Todos</title>
+
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+    <meta name="apple-mobile-web-app-title" content="Archery"/>
+    <link rel="manifest" href="/site.webmanifest"/>
+
+
+    <meta name="color-scheme" content="dark light"/>
+
+    <style>
+        /* Subtle background grid */
+        .dot-grid {
+            background-image: radial-gradient(currentColor 0.6px, transparent 0.6px);
+            background-size: 18px 18px;
+            opacity: 0.08;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/app.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full antialiased bg-stone-300 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-100 selection:bg-indigo-200/60 dark:selection:bg-indigo-400/25">
+<main x-data="{ task: '' }" id="app" class="relative min-h-full flex xitems-center">
+    <div class=" pointer-events-none absolute inset-0 dot-grid text-zinc-900 dark:text-white"></div>
+
+    <div class="relative mx-auto w-full max-w-3xl px-6 py-8 h-screen flex flex-col overflow-hidden">
+        @include('includes._main-header')
+
+        <section class="mt-8 pb-4">
+            <section class="">
+                <form action="/todos" method="post" class="">
+                    @csrf
+                    <div class="">
+                        <label class="grow">
+                            <input x-model="task" autofocus autocomplete="off" maxlength="255" type="text" name="task"
+                                   class="animate__animated animate__slideInLeft grow w-full focus:ring-0 focus:outline-none focus:border-none py-2 px-4 rounded   placeholder:text-xs"
+                                   placeholder="What needs to be done?">
+                        </label>
+                        <div class="min-h-8">
+                            <div x-show="task.length" class="text-right animate__animated animate__slideInRight pt-1 text-xs opacity-25x  text-indigo-500 dark:text-yellow-400 font-bold" x-text="255 - task.trim().length"></div>
+                        </div>
+                    </div>
+
+                </form>
+            </section>
+
+            <div class="flex items-center justify-between">
+                <div class="flex">
+                    <h1 class="text-3xl sm:text-4xl font-black tracking-tight">
+                        todos
+                    </h1>
+                    <sup class="font-bold text-xs text-indigo-500 dark:text-yellow-400">{{ todos.length }}</sup>
+                </div>
+            </div>
+
+            <p class="mt-2 text-stone-600 dark:text-stone-400 max-w-prose">
+                A simple todo app built with
+                <a href="https://webarchery.dev" class="italic underline dark:text-yellow-400 font-medium">archery</a>
+            </p>
+        </section>
+
+        <div class="grow overflow-hidden overflow-y-scroll ">
+            <div class="mt-4 ">
+                <ul class="space-y-4 ">
+                    @foreach(todos as todo)
+                    <li class=" flex flex-col bg-white dark:bg-stone-800/90 p-4 rounded  text-sm first:border-l-4 first:border-stone-600 dark:first:border-yellow-400">
+                        <span class="text-xs opacity-25 dark:text-white dark:opacity-50">{{ todo.progress }}</span>
+                        <div class="flex items-start justify-between break-words break-all gap-8">
+                            <a href="/todos/{{ todo.uuid }}"
+                               class="text-indigo-500 dark:text-yellow-400 font-medium block break-words">{{ todo.task }}</a>
+                            <form action="/todos/{{todo.uuid}}?_method=delete" method="post" class="">
+                                @csrf
+                                <button type="submit" class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                         class="size-5 dark:text-stone-900 hover:text-red-500">
+                                        <path fill-rule="evenodd"
+                                              d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+
+        @if(todos.length)
+
+        <div class="mt-8 flex">
+            <form action="/todos/truncate?_method=patch" method="post" class="animate__animated animate__slideInUp flex w-full justify-end ">
+                @csrf
+                <button class="text-xs font-medium flex items-center group ">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                         class="size-4 text-red-500  group-hover:scale-110">
+                        <path fill-rule="evenodd"
+                              d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                    <span class="group-hover:font-semibold text-stone-600 dark:text-white">Clear</span>
+
+                </button>
+            </form>
+        </div>
+        @endif
+
+
+        <!-- Footer -->
+        @include('includes._main-footer')
+    </div>
+</main>
+<script src="/js/app.js"></script>
+</body>
+</html>

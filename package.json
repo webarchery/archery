@@ -1,0 +1,32 @@
+{
+  "name": "archery",
+  "version": "1.3.0",
+  "description": "Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.",
+  "main": "bin/server.dart",
+  "scripts": {
+    "serve": "dartmon bin/server.dart --ignore  lib/src/storage/json_file_models/auth_sessions.json,lib/src/storage/json_file_models/sessions.json",
+    "start": "browser-sync start --proxy \"localhost:5501\" --files \"lib/**/*.html,lib/**/*.js,lib/**/*.css,lib/**/*.dart\" --no-notify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webarchery/archery.git"
+  },
+  "keywords": [
+    "dart",
+    "archery"
+  ],
+  "author": "Kwame, III",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/webarchery/archery/issues"
+  },
+  "homepage": "https://webarchery.dev",
+
+
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.0"
+  }
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Container class from the container library, for the Dart programming language.">
+  <title>Container class - container library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_core_container/">archery&#47;core&#47;container.dart</a></li>
+    <li class="self-crumb">Container class</li>
+  </ol>
+  <div class="self-name">Container</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_core_container&#47;archery_core_container-library-sidebar.html"
+    data-below-sidebar="archery_core_container&#47;Container-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">Container</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Concrete implementation of <a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a>.</p>
+<p>Use <a href="../archery_core_container/Container/Container.root.html">Container.root</a> to create the root container.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a></li>
+    </ul>
+  </dd>
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Container.root" class="callable">
+          <span class="name"><a href="../archery_core_container/Container/Container.root.html">Container.root</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Creates the <strong>root container</strong> and auto-registers itself.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="allReady" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/allReady.html">allReady</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Waits for all async initialization tasks.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="bind" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/bind.html">bind</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="bind-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="bind-param-factory"><span>required</span> <span class="type-annotation">T</span> <span class="parameter-name">factory</span>(<span class="parameter" id="param-container"><span class="type-annotation"><a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a></span> <span class="parameter-name">container</span>, </span><span class="parameter" id="param-options"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">options</span></span>)</span>})
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Registers a transient factory.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="bindInstance" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/bindInstance.html">bindInstance</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="bindInstance-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="bindInstance-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span></span>})
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Binds an existing instance.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="contains" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/contains.html">contains</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="contains-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Checks registration in this container and parents.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="dispose" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/dispose.html">dispose</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Disposes resources and runs cleanup callbacks.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="disposeBinding" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/disposeBinding.html">disposeBinding</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="disposeBinding-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  remove a binding from the container
+dispose-&gt; a container
+disposeBinding -&gt; a container-binding
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="initialize" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/initialize.html">initialize</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Initializes eager singletons.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="listRegistrations" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/listRegistrations.html">listRegistrations</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns registration metadata.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="make" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/make.html">make</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="make-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="make-param-options"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">options</span></span>})
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Resolves a service.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="newScope" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/newScope.html">newScope</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a child scope.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="onDispose" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/onDispose.html">onDispose</a></span><span class="signature">(<wbr><span class="parameter" id="onDispose-param-callback"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">callback</span>()</span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Registers a disposal callback.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="singleton" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/singleton.html">singleton</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="singleton-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="singleton-param-factory"><span>required</span> <span class="type-annotation">T</span> <span class="parameter-name">factory</span>(<span class="parameter" id="param-container"><span class="type-annotation"><a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a></span> <span class="parameter-name">container</span>, [</span><span class="parameter" id="param-options"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">options</span></span>]), </span><span class="parameter" id="singleton-param-eager"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">eager</span> = <span class="default-value">false</span></span>})
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Registers a singleton with optional eager loading.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="tryMake" class="callable">
+  <span class="name"><a href="../archery_core_container/Container/tryMake.html">tryMake</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="tryMake-param-name"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">name</span>, </span><span class="parameter" id="tryMake-param-options"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">options</span></span>})
+    <span class="returntype parameter">&#8594; T?</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Safely resolves a service.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_core_container/">container</a></li>
+    <li class="self-crumb">Container class</li>
+</ol>
+
+    <h5>container library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

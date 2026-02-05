@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the queryCursor method from the DatabaseExecutor class, for the Dart programming language.">
+  <title>queryCursor method - DatabaseExecutor class - archery library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
+    <li><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor-class.html">DatabaseExecutor</a></li>
+    <li class="self-crumb">queryCursor abstract method</li>
+  </ol>
+  <div class="self-name">queryCursor</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_archery&#47;DatabaseExecutor-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">queryCursor</span> abstract method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/QueryCursor-class.html">QueryCursor</a></span>&gt;</span></span>
+<span class="name ">queryCursor</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="queryCursor-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, {</span></li>
+<li><span class="parameter" id="queryCursor-param-distinct"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">distinct</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-columns"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">columns</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-where"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">where</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-whereArgs"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">whereArgs</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-groupBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">groupBy</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-having"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">having</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-orderBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">orderBy</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-limit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">limit</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-offset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">offset</span>, </span></li>
+<li><span class="parameter" id="queryCursor-param-bufferSize"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">bufferSize</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>See <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawQueryCursor.html">DatabaseExecutor.rawQueryCursor</a> for details about the argument <code>bufferSize</code>
+See <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/query.html">DatabaseExecutor.query</a> for the other arguments.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;QueryCursor&gt; queryCursor(
+  String table, {
+  bool? distinct,
+  List&lt;String&gt;? columns,
+  String? where,
+  List&lt;Object?&gt;? whereArgs,
+  String? groupBy,
+  String? having,
+  String? orderBy,
+  int? limit,
+  int? offset,
+  int? bufferSize,
+});</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_archery/">archery</a></li>
+    <li><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor-class.html">DatabaseExecutor</a></li>
+    <li class="self-crumb">queryCursor abstract method</li>
+</ol>
+
+    <h5>DatabaseExecutor class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

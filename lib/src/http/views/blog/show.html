@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{{ post.title }} • Archery</title>
+
+
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+    <meta name="apple-mobile-web-app-title" content="Archery"/>
+    <link rel="manifest" href="/site.webmanifest"/>
+
+
+    <meta name="color-scheme" content="dark light"/>
+
+    <style>
+        /* Subtle background grid */
+        .dot-grid {
+            background-image: radial-gradient(currentColor 0.6px, transparent 0.6px);
+            background-size: 18px 18px;
+            opacity: 0.08;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/app.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full antialiased bg-stone-300 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-100 selection:bg-indigo-200/60 dark:selection:bg-indigo-400/25">
+<main  id="app" class="relative min-h-full flex xitems-center">
+    <div class=" pointer-events-none absolute inset-0 dot-grid text-zinc-900 dark:text-white"></div>
+
+    <div class="relative mx-auto w-full max-w-3xl px-6 py-8 h-screen flex flex-col ">
+        @include('includes._main-header')
+
+        <div class="grow flex xitems-center justify-between">
+            <section class="my-16">
+                <p class="opacity-50 text-xs">{{ post.published_at}}</p>
+                <h1 class="text-3xl sm:text-4xl font-black tracking-tight mt-4 mb-1 animate__animated animate__slideInLeft">{{ post.title}}</h1>
+                <div class="flex items-center justify-between">
+                    <p class="opacity-50 flex items-center gap-0.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 inline">
+                        <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                    </svg>
+                        {{ post.author}}
+                    </p>
+                </div>
+                <div class="mt-16 prose break-words">
+                    <p class="">{{ post.content}}</p>
+                </div>
+            </section>
+
+        </div>
+
+
+
+        <!-- Footer -->
+        @include('includes._main-footer')
+    </div>
+</main>
+<script src="/js/app.js"></script>
+</body>
+</html>
+

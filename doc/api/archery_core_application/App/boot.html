@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the boot method from the App class, for the Dart programming language.">
+  <title>boot method - App class - application library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_core_application/">archery&#47;core&#47;application.dart</a></li>
+    <li><a href="../../archery_core_application/App-class.html">App</a></li>
+    <li class="self-crumb">boot method</li>
+  </ol>
+  <div class="self-name">boot</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_core_application&#47;App-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">boot</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">boot</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Boots the application by initializing core services and providers.</p>
+<p>Sets up:</p>
+<ul>
+<li>Default <a href="../../archery_core_http_router/Router-class.html">Router</a></li>
+<li><a href="../../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a> with views and public paths</li>
+<li><a href="../../archery_core_static_files_server/StaticFilesServer-class.html">StaticFilesServer</a></li>
+<li><a href="https://pub.dev/documentation/uuid/4.5.2/uuid/Uuid-class.html">Uuid</a> generator</li>
+<li>SQLite <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database-class.html">Database</a> in <code>lib/src/storage/database.sqlite</code></li>
+</ul>
+<p>Then boots all registered providers and triggers <code>onBooted</code> callbacks.</p>
+<p>Sets <a href="../../archery_core_application/App/status.html">status</a> to <a href="../../archery_core_application/AppStatus.html">AppStatus.ready</a> on success, or <a href="../../archery_core_application/AppStatus.html">AppStatus.error</a> on failure.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; boot() async {
+  status = AppStatus.booting;
+
+  &#47;&#47; Default Router
+  &#47;&#47; container.singleton&lt;Router&gt;(factory: (_,[_]) =&gt; Router(), eager: true);
+  final router = Router();
+  container.bindInstance&lt;Router&gt;(router);
+
+  &#47;&#47; Default View Engine
+  &#47;&#47; final settings = {&quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;, &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;};
+  &#47;&#47; container.singleton&lt;TemplateEngine&gt;(factory: (_,[_]) =&gt; TemplateEngine(viewsDirectory: settings[&#39;viewsPath&#39;]!, publicDirectory: settings[&#39;publicPath&#39;]!), eager: true);
+
+  final settings = {&quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;, &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;};
+
+  final engine = TemplateEngine(viewsDirectory: settings[&#39;viewsPath&#39;]!, publicDirectory: settings[&#39;publicPath&#39;]!);
+
+  &#47;&#47; Enable caching for performance
+  engine.shouldCache = true; &#47;&#47; Enabled by default for performance recommendation
+  &#47;&#47; final config = container.tryMake&lt;AppConfig&gt;();
+  &#47;&#47; engine.shouldCache = config?.get(&#39;view.cache&#39;, true) ?? true;
+
+  container.bindInstance&lt;TemplateEngine&gt;(engine);
+
+  final staticFilesServer = StaticFilesServer();
+  container.bindInstance&lt;StaticFilesServer&gt;(staticFilesServer);
+
+  &#47;&#47; Default UUID Generator
+  final Uuid uuid = Uuid();
+
+  container.bindInstance&lt;Uuid&gt;(uuid);
+  &#47;&#47; container.singleton&lt;Uuid&gt;(factory: (_,[_]) =&gt; Uuid(), eager: true);
+
+  &#47;&#47; Default SQLite DB
+  final Directory dir = Directory(&quot;lib&#47;src&#47;storage&quot;);
+  final file = File(&quot;${dir.absolute.path}&#47;database.sqlite&quot;);
+  final Database database = await databaseFactoryFfi.openDatabase(
+    file.absolute.path,
+    options: OpenDatabaseOptions(
+      version: 1,
+      onCreate: (db, version) async {
+        &#47;&#47; Placeholder for database migrations
+      },
+    ),
+  );
+
+  container.singleton&lt;Database&gt;(factory: (_, [_]) =&gt; database, eager: true);
+
+  await container.initialize();
+
+  try {
+    &#47;&#47; Boot all registered providers
+    for (final provider in _providers) {
+      try {
+        await provider.boot(container);
+      } catch (e, stack) {
+        throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
+      }
+    }
+
+    &#47;&#47; Execute post-boot callbacks
+    for (final callback in _bootedCallbacks) {
+      callback();
+    }
+
+    status = AppStatus.ready;
+  } catch (e, stack) {
+    status = AppStatus.error;
+    print(&#39;[App Boot Error] $e\n$stack&#39;);
+    rethrow; &#47;&#47; Optional: allow external handling
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_core_application/">application</a></li>
+    <li><a href="../../archery_core_application/App-class.html">App</a></li>
+    <li class="self-crumb">boot method</li>
+</ol>
+
+    <h5>App class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

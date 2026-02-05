@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Stream class from the archery library, for the Dart programming language.">
+  <title>Stream class - archery library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery&#47;archery.dart</a></li>
+    <li class="self-crumb">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">Stream</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_archery&#47;archery_archery-library-sidebar.html"
+    data-below-sidebar="archery_archery&#47;Stream-class-sidebar.html">
+    <div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/7c8a3e077e8a3c6209c865301aada26e9fde764a/sdk/lib/async/async.dart#L137"><span class="material-symbols-outlined">description</span></a></div>
+<h1><span class="kind-class">Stream&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class 
+    <a href="https://dart.dev/language/class-modifiers#abstract" class="feature feature-abstract" title="This type can not be directly constructed.">abstract</a>
+    <a href="https://dart.dev/language/mixins" class="feature feature-mixin" title="This class can be used as a class and a mixin.">mixin</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A source of asynchronous data events.</p>
+<p>A Stream provides a way to receive a sequence of events.
+Each event is either a data event, also called an <em>element</em> of the stream,
+or an error event, which is a notification that something has failed.
+When a stream has emitted all its events,
+a single "done" event notifies the listener that the end has been reached.</p>
+<p>You produce a stream by calling an <code>async*</code> function, which then returns
+a stream. Consuming that stream will lead the function to emit events
+until it ends, and the stream closes.
+You consume a stream either using an <code>await for</code> loop, which is available
+inside an <code>async</code> or <code>async*</code> function, or by forwarding its events directly
+using <code>yield*</code> inside an <code>async*</code> function.
+Example:</p>
+<pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; optionalMap&lt;T&gt;(
+    Stream&lt;T&gt; source , [T Function(T)? convert]) async* {
+  if (convert == null) {
+    yield* source;
+  } else {
+    await for (var event in source) {
+      yield convert(event);
+    }
+  }
+}
+</code></pre>
+<p>When this function is called, it immediately returns a <code>Stream&lt;T&gt;</code> object.
+Then nothing further happens until someone tries to consume that stream.
+At that point, the body of the <code>async*</code> function starts running.
+If the <code>convert</code> function was omitted, the <code>yield*</code> will listen to the
+<code>source</code> stream and forward all events, date and errors, to the returned
+stream. When the <code>source</code> stream closes, the <code>yield*</code> is done,
+and the <code>optionalMap</code> function body ends too. This closes the returned
+stream.
+If a <code>convert</code> <em>is</em> supplied, the function instead listens on the source
+stream and enters an <code>await for</code> loop which
+repeatedly waits for the next data event.
+On a data event, it calls <code>convert</code> with the value and emits the result
+on the returned stream.
+If no error events are emitted by the <code>source</code> stream,
+the loop ends when the <code>source</code> stream does,
+then the <code>optionalMap</code> function body completes,
+which closes the returned stream.
+On an error event from the <code>source</code> stream,
+the <code>await for</code> re-throws that error, which breaks the loop.
+The error then reaches the end of the <code>optionalMap</code> function body,
+since it's not caught.
+That makes the error be emitted on the returned stream, which then closes.</p>
+<p>The <code>Stream</code> class also provides functionality which allows you to
+manually listen for events from a stream, or to convert a stream
+into another stream or into a future.</p>
+<p>The <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/forEach.html">forEach</a> function corresponds to the <code>await for</code> loop,
+just as <a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable/forEach.html">Iterable.forEach</a> corresponds to a normal <code>for</code>/<code>in</code> loop.
+Like the loop, it will call a function for each data event and break on an
+error.</p>
+<p>The more low-level <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/listen.html">listen</a> method is what every other method is based on.
+You call <code>listen</code> on a stream to tell it that you want to receive
+events, and to register the callbacks which will receive those events.
+When you call <code>listen</code>, you receive a <a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamSubscription-class.html">StreamSubscription</a> object
+which is the active object providing the events,
+and which can be used to stop listening again,
+or to temporarily pause events from the subscription.</p>
+<p>There are two kinds of streams: "Single-subscription" streams and
+"broadcast" streams.</p>
+<p><em>A single-subscription stream</em> allows only a single listener during the whole
+lifetime of the stream.
+It doesn't start generating events until it has a listener,
+and it stops sending events when the listener is unsubscribed,
+even if the source of events could still provide more.
+The stream created by an <code>async*</code> function is a single-subscription stream,
+but each call to the function creates a new such stream.</p>
+<p>Listening twice on a single-subscription stream is not allowed, even after
+the first subscription has been canceled.</p>
+<p>Single-subscription streams are generally used for streaming chunks of
+larger contiguous data, like file I/O.</p>
+<p><em>A broadcast stream</em> allows any number of listeners, and it fires
+its events when they are ready, whether there are listeners or not.</p>
+<p>Broadcast streams are used for independent events/observers.</p>
+<p>If several listeners want to listen to a single-subscription stream,
+use <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/asBroadcastStream.html">asBroadcastStream</a> to create a broadcast stream on top of the
+non-broadcast stream.</p>
+<p>On either kind of stream, stream transformations, such as <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/where.html">where</a> and
+<a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/skip.html">skip</a>, return the same type of stream as the one the method was called on,
+unless otherwise noted.</p>
+<p>When an event is fired, the listener(s) at that time will receive the event.
+If a listener is added to a broadcast stream while an event is being fired,
+that listener will not receive the event currently being fired.
+If a listener is canceled, it immediately stops receiving events.
+Listening on a broadcast stream can be treated as listening on a new stream
+containing only the events that have not yet been emitted when the <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/listen.html">listen</a>
+call occurs.
+For example the <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/first.html">first</a> getter listens to the stream, then returns the first
+event that listener receives.
+This is not necessarily the first even emitted by the stream, but the first
+of the <em>remaining</em> events of the broadcast stream.</p>
+<p>When the "done" event is fired, subscribers are unsubscribed before
+receiving the event. After the event has been sent, the stream has no
+subscribers. Adding new subscribers to a broadcast stream after this point
+is allowed, but they will just receive a new "done" event as soon
+as possible.</p>
+<p>Stream subscriptions always respect "pause" requests. If necessary they need
+to buffer their input, but often, and preferably they can simply request
+their input to pause too.</p>
+<p>The default implementation of <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/isBroadcast.html">isBroadcast</a> returns false.
+A broadcast stream inheriting from <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a> must override <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/isBroadcast.html">isBroadcast</a>
+to return <code>true</code> if it wants to signal that it behaves like a broadcast
+stream.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+        
+
+          <dt>Implementers</dt>
+          <dd><ul class="comma-separated clazz-relationships">
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-html/CustomStream-class.html">CustomStream</a></li>
+              <li><a href="https://pub.dev/documentation/web/1.1.1/web/ElementStream-class.html">ElementStream</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-html/ElementStream-class.html">ElementStream</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpClientResponse-class.html">HttpClientResponse</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpServer-class.html">HttpServer</a></li>
+              <li><a href="https://pub.dev/documentation/mime/2.0.0/mime/MimeMultipart-class.html">MimeMultipart</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawDatagramSocket-class.html">RawDatagramSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawSecureServerSocket-class.html">RawSecureServerSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawServerSocket-class.html">RawServerSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawSocket-class.html">RawSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/ReadPipe-class.html">ReadPipe</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-isolate/ReceivePort-class.html">ReceivePort</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/SecureServerSocket-class.html">SecureServerSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/ServerSocket-class.html">ServerSocket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/Socket-class.html">Socket</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/Stdin-class.html">Stdin</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamView-class.html">StreamView</a></li>
+              <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/WebSocket-class.html">WebSocket</a></li>
+          </ul></dd>
+
+        
+        
+  <dt>Annotations</dt>
+  <dd>
+    <ul class="annotation-list clazz-relationships">
+        <li>@vmIsolateUnsendable</li>
+    </ul>
+  </dd>
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Stream.new" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.html">Stream</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          
+            <div class="constructor-modifier features">const</div>
+        </dd>
+        <dt id="Stream.empty" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.empty.html">Stream.empty</a></span><span class="signature">({<span class="parameter" id="empty-param-broadcast"><span>@Since.new(&quot;3.2&quot;)</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">broadcast</span></span>})</span>
+        </dt>
+        <dd>
+          Creates an empty broadcast stream.
+            <div class="constructor-modifier features">const</div>
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.error" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.error.html">Stream.error</a></span><span class="signature">(<span class="parameter" id="error-param-error"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">error</span>, [</span><span class="parameter" id="error-param-stackTrace"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/StackTrace-class.html">StackTrace</a>?</span> <span class="parameter-name">stackTrace</span></span>])</span>
+        </dt>
+        <dd>
+          Creates a stream which emits a single error event before completing.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.eventTransformed" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.eventTransformed.html">Stream.eventTransformed</a></span><span class="signature">(<span class="parameter" id="eventTransformed-param-source"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a></span> <span class="parameter-name">source</span>, </span><span class="parameter" id="eventTransformed-param-mapSink"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/EventSink-class.html">EventSink</a></span> <span class="parameter-name">mapSink</span>(<span class="parameter" id="mapSink-param-sink"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/EventSink-class.html">EventSink</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">sink</span></span>)</span>)</span>
+        </dt>
+        <dd>
+          Creates a stream where all events of an existing stream are piped through
+a sink-transformation.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.fromFuture" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.fromFuture.html">Stream.fromFuture</a></span><span class="signature">(<span class="parameter" id="fromFuture-param-future"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">future</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a new single-subscription stream from the future.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.fromFutures" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.fromFutures.html">Stream.fromFutures</a></span><span class="signature">(<span class="parameter" id="fromFutures-param-futures"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">futures</span></span>)</span>
+        </dt>
+        <dd>
+          Create a single-subscription stream from a group of futures.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.fromIterable" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.fromIterable.html">Stream.fromIterable</a></span><span class="signature">(<span class="parameter" id="fromIterable-param-elements"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">elements</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a stream that gets its data from <code>elements</code>.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.multi" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.multi.html">Stream.multi</a></span><span class="signature">(<span class="parameter" id="multi-param-onListen"><span class="type-annotation">void</span> <span class="parameter-name">onListen</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/MultiStreamController-class.html">MultiStreamController</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span></span>), {</span><span class="parameter" id="multi-param-isBroadcast"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isBroadcast</span> = <span class="default-value">false</span></span>})</span>
+        </dt>
+        <dd>
+          Creates a multi-subscription stream.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.periodic" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.periodic.html">Stream.periodic</a></span><span class="signature">(<span class="parameter" id="periodic-param-period"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">period</span>, [</span><span class="parameter" id="periodic-param-computation"><span class="type-annotation">T</span> <span class="parameter-name">computation</span>(<span class="parameter" id="computation-param-computationCount"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">computationCount</span></span>)?</span>])</span>
+        </dt>
+        <dd>
+          Creates a stream that repeatedly emits events at <code>period</code> intervals.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Stream.value" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/Stream.value.html">Stream.value</a></span><span class="signature">(<span class="parameter" id="value-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a stream which emits a single data event before closing.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="first" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/first.html">first</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  The first element of this stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isBroadcast" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/isBroadcast.html">isBroadcast</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Whether this stream is a broadcast stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="isEmpty" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/isEmpty.html">isEmpty</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Whether this stream contains any elements.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="last" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/last.html">last</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  The last element of this stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="length" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/length.html">length</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  The number of elements in this stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="single" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/single.html">single</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  The single element of this stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="any" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/any.html">any</a></span><span class="signature">(<wbr><span class="parameter" id="any-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Checks whether <code>test</code> accepts any element provided by this stream.
+  
+
+</dd>
+
+        <dt id="asBroadcastStream" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/asBroadcastStream.html">asBroadcastStream</a></span><span class="signature">(<wbr>{<span class="parameter" id="asBroadcastStream-param-onListen"><span class="type-annotation">void</span> <span class="parameter-name">onListen</span>(<span class="parameter" id="onListen-param-subscription"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamSubscription-class.html">StreamSubscription</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">subscription</span></span>)?, </span><span class="parameter" id="asBroadcastStream-param-onCancel"><span class="type-annotation">void</span> <span class="parameter-name">onCancel</span>(<span class="parameter" id="onCancel-param-subscription"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamSubscription-class.html">StreamSubscription</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">subscription</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns a multi-subscription stream that produces the same events as this.
+  
+
+</dd>
+
+        <dt id="asyncExpand" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/asyncExpand.html">asyncExpand</a></span><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="asyncExpand-param-convert"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span>?</span> <span class="parameter-name">convert</span>(<span class="parameter" id="convert-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Transforms each element into a sequence of asynchronous events.
+  
+
+</dd>
+
+        <dt id="asyncMap" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/asyncMap.html">asyncMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="asyncMap-param-convert"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span> <span class="parameter-name">convert</span>(<span class="parameter" id="convert-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a new stream with each data event of this stream asynchronously
+mapped to a new event.
+  
+
+</dd>
+
+        <dt id="cast" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/cast.html">cast</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adapt this stream to be a <code>Stream&lt;R&gt;</code>.
+  
+
+</dd>
+
+        <dt id="contains" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/contains.html">contains</a></span><span class="signature">(<wbr><span class="parameter" id="contains-param-needle"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">needle</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns whether <code>needle</code> occurs in the elements provided by this stream.
+  
+
+</dd>
+
+        <dt id="distinct" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/distinct.html">distinct</a></span><span class="signature">(<wbr>[<span class="parameter" id="distinct-param-equals"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">equals</span>(<span class="parameter" id="equals-param-previous"><span class="type-annotation">T</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="equals-param-next"><span class="type-annotation">T</span> <span class="parameter-name">next</span></span>)?</span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Skips data events if they are equal to the previous data event.
+  
+
+</dd>
+
+        <dt id="drain" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/drain.html">drain</a></span><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span><span class="signature">(<wbr>[<span class="parameter" id="drain-param-futureValue"><span class="type-annotation">E?</span> <span class="parameter-name">futureValue</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">E</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Discards all data on this stream, but signals when it is done or an error
+occurred.
+  
+
+</dd>
+
+        <dt id="elementAt" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/elementAt.html">elementAt</a></span><span class="signature">(<wbr><span class="parameter" id="elementAt-param-index"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">index</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the value of the <code>index</code>th data event of this stream.
+  
+
+</dd>
+
+        <dt id="every" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/every.html">every</a></span><span class="signature">(<wbr><span class="parameter" id="every-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Checks whether <code>test</code> accepts all elements provided by this stream.
+  
+
+</dd>
+
+        <dt id="expand" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/expand.html">expand</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="expand-param-convert"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span> <span class="parameter-name">convert</span>(<span class="parameter" id="convert-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Transforms each element of this stream into a sequence of elements.
+  
+
+</dd>
+
+        <dt id="firstWhere" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/firstWhere.html">firstWhere</a></span><span class="signature">(<wbr><span class="parameter" id="firstWhere-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="firstWhere-param-orElse"><span class="type-annotation">T</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Finds the first element of this stream matching <code>test</code>.
+  
+
+</dd>
+
+        <dt id="fold" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/fold.html">fold</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="fold-param-initialValue"><span class="type-annotation">S</span> <span class="parameter-name">initialValue</span>, </span><span class="parameter" id="fold-param-combine"><span class="type-annotation">S</span> <span class="parameter-name">combine</span>(<span class="parameter" id="combine-param-previous"><span class="type-annotation">S</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="combine-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Combines a sequence of values by repeatedly applying <code>combine</code>.
+  
+
+</dd>
+
+        <dt id="forEach" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/forEach.html">forEach</a></span><span class="signature">(<wbr><span class="parameter" id="forEach-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<span class="parameter" id="action-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Executes <code>action</code> on each element of this stream.
+  
+
+</dd>
+
+        <dt id="handleError" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/handleError.html">handleError</a></span><span class="signature">(<wbr><span class="parameter" id="handleError-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">onError</span>, {</span><span class="parameter" id="handleError-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-error"><span class="type-annotation">dynamic</span> <span class="parameter-name">error</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a wrapper Stream that intercepts some errors from this stream.
+  
+
+</dd>
+
+        <dt id="join" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/join.html">join</a></span><span class="signature">(<wbr>[<span class="parameter" id="join-param-separator"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">separator</span> = <span class="default-value">&quot;&quot;</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Combines the string representation of elements into a single string.
+  
+
+</dd>
+
+        <dt id="lastWhere" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/lastWhere.html">lastWhere</a></span><span class="signature">(<wbr><span class="parameter" id="lastWhere-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="lastWhere-param-orElse"><span class="type-annotation">T</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Finds the last element in this stream matching <code>test</code>.
+  
+
+</dd>
+
+        <dt id="listen" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/listen.html">listen</a></span><span class="signature">(<wbr><span class="parameter" id="listen-param-onData"><span class="type-annotation">void</span> <span class="parameter-name">onData</span>(<span class="parameter" id="onData-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)?, {</span><span class="parameter" id="listen-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span>, </span><span class="parameter" id="listen-param-onDone"><span class="type-annotation">void</span> <span class="parameter-name">onDone</span>()?, </span><span class="parameter" id="listen-param-cancelOnError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">cancelOnError</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamSubscription-class.html">StreamSubscription</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds a subscription to this stream.
+  
+
+</dd>
+
+        <dt id="map" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/map.html">map</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="map-param-convert"><span class="type-annotation">S</span> <span class="parameter-name">convert</span>(<span class="parameter" id="convert-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Transforms each element of this stream into a new stream event.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="pipe" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/pipe.html">pipe</a></span><span class="signature">(<wbr><span class="parameter" id="pipe-param-streamConsumer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamConsumer-class.html">StreamConsumer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">streamConsumer</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Pipes the events of this stream into <code>streamConsumer</code>.
+  
+
+</dd>
+
+        <dt id="reduce" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/reduce.html">reduce</a></span><span class="signature">(<wbr><span class="parameter" id="reduce-param-combine"><span class="type-annotation">T</span> <span class="parameter-name">combine</span>(<span class="parameter" id="combine-param-previous"><span class="type-annotation">T</span> <span class="parameter-name">previous</span>, </span><span class="parameter" id="combine-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Combines a sequence of values by repeatedly applying <code>combine</code>.
+  
+
+</dd>
+
+        <dt id="singleWhere" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/singleWhere.html">singleWhere</a></span><span class="signature">(<wbr><span class="parameter" id="singleWhere-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>), {</span><span class="parameter" id="singleWhere-param-orElse"><span class="type-annotation">T</span> <span class="parameter-name">orElse</span>()?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Finds the single element in this stream matching <code>test</code>.
+  
+
+</dd>
+
+        <dt id="skip" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/skip.html">skip</a></span><span class="signature">(<wbr><span class="parameter" id="skip-param-count"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Skips the first <code>count</code> data events from this stream.
+  
+
+</dd>
+
+        <dt id="skipWhile" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/skipWhile.html">skipWhile</a></span><span class="signature">(<wbr><span class="parameter" id="skipWhile-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Skip data events from this stream while they are matched by <code>test</code>.
+  
+
+</dd>
+
+        <dt id="take" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/take.html">take</a></span><span class="signature">(<wbr><span class="parameter" id="take-param-count"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">count</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Provides at most the first <code>count</code> data events of this stream.
+  
+
+</dd>
+
+        <dt id="takeWhile" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/takeWhile.html">takeWhile</a></span><span class="signature">(<wbr><span class="parameter" id="takeWhile-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Forwards data events while <code>test</code> is successful.
+  
+
+</dd>
+
+        <dt id="timeout" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/timeout.html">timeout</a></span><span class="signature">(<wbr><span class="parameter" id="timeout-param-timeLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">timeLimit</span>, {</span><span class="parameter" id="timeout-param-onTimeout"><span class="type-annotation">void</span> <span class="parameter-name">onTimeout</span>(<span class="parameter" id="onTimeout-param-sink"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/EventSink-class.html">EventSink</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">sink</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a new stream with the same events as this stream.
+  
+
+</dd>
+
+        <dt id="toList" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/toList.html">toList</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Collects all elements of this stream in a <a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a>.
+  
+
+</dd>
+
+        <dt id="toSet" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/toSet.html">toSet</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Set-class.html">Set</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Collects the data of this stream in a <a href="https://api.dart.dev/stable/3.10.9/dart-core/Set-class.html">Set</a>.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="transform" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/transform.html">transform</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="transform-param-streamTransformer"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamTransformer-class.html">StreamTransformer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">S</span>&gt;</span></span> <span class="parameter-name">streamTransformer</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Applies <code>streamTransformer</code> to this stream.
+  
+
+</dd>
+
+        <dt id="where" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/where.html">where</a></span><span class="signature">(<wbr><span class="parameter" id="where-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a new stream from this stream that discards some elements.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="castFrom" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/castFrom.html">castFrom</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="castFrom-param-source"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span> <span class="parameter-name">source</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adapts <code>source</code> to be a <code>Stream&lt;T&gt;</code>.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery</a></li>
+    <li class="self-crumb">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+</ol>
+
+    <h5>archery library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

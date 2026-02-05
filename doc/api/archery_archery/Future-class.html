@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Future class from the archery library, for the Dart programming language.">
+  <title>Future class - archery library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery&#47;archery.dart</a></li>
+    <li class="self-crumb">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">Future</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_archery&#47;archery_archery-library-sidebar.html"
+    data-below-sidebar="archery_archery&#47;Future-class-sidebar.html">
+    <div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/7c8a3e077e8a3c6209c865301aada26e9fde764a/sdk/lib/async/async.dart#L229"><span class="material-symbols-outlined">description</span></a></div>
+<h1><span class="kind-class">Future&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class 
+    <a href="https://dart.dev/language/class-modifiers#abstract" class="feature feature-abstract" title="This type can not be directly constructed.">abstract</a>
+    <a href="https://dart.dev/language/class-modifiers#interface" class="feature feature-interface" title="This class can only be implemented (not extended or mixed in).">interface</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>The result of an asynchronous computation.</p>
+<p>An <em>asynchronous computation</em> cannot provide a result immediately
+when it is started, unlike a synchronous computation which does compute
+a result immediately by either returning a value or by throwing.
+An asynchronous computation may need to wait for something external
+to the program (reading a file, querying a database, fetching a web page)
+which takes time.
+Instead of blocking all computation until the result is available,
+the asynchronous computation immediately returns a <code>Future</code>
+which will <em>eventually</em> "complete" with the result.</p>
+<h3 id="asynchronous-programming">Asynchronous programming</h3>
+<p>To perform an asynchronous computation, you use an <code>async</code> function
+which always produces a future.
+Inside such an asynchronous function, you can use the <code>await</code> operation
+to delay execution until another asynchronous computation has a result.
+While execution of the awaiting function is delayed,
+the program is not blocked, and can continue doing other things.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">import "dart:io";
+Future&lt;bool&gt; fileContains(String path, String needle) async {
+   var haystack = await File(path).readAsString();
+   return haystack.contains(needle);
+}
+</code></pre>
+<p>Here the <code>File.readAsString</code> method from <code>dart:io</code> is an asynchronous
+function returning a <code>Future&lt;String&gt;</code>.
+The <code>fileContains</code> function is marked with <code>async</code> right before its body,
+which means that you can use <code>await</code> inside it,
+and that it must return a future.
+The call to <code>File(path).readAsString()</code> initiates reading the file into
+a string and produces a <code>Future&lt;String&gt;</code> which will eventually contain the
+result.
+The <code>await</code> then waits for that future to complete with a string
+(or an error, if reading the file fails).
+While waiting, the program can do other things.
+When the future completes with a string, the <code>fileContains</code> function
+computes a boolean and returns it, which then completes the original
+future that it returned when first called.</p>
+<p>If a future completes with an <em>error</em>, awaiting that future will
+(re-)throw that error. In the example here, we can add error checking:</p>
+<pre class="language-dart"><code class="language-dart">import "dart:io";
+Future&lt;bool&gt; fileContains(String path, String needle) async {
+  try {
+    var haystack = await File(path).readAsString();
+    return haystack.contains(needle);
+  } on FileSystemException catch (exception, stack) {
+    _myLog.logError(exception, stack);
+    return false;
+  }
+}
+</code></pre>
+<p>You use a normal <code>try</code>/<code>catch</code> to catch the failures of awaited
+asynchronous computations.</p>
+<p>In general, when writing asynchronous code, you should always await a
+future when it is produced, and not wait until after another asynchronous
+delay. That ensures that you are ready to receive any error that the
+future might produce, which is important because an asynchronous error
+that no-one is awaiting is an <em>uncaught</em> error and may terminate
+the running program.</p>
+<h3 id="programming-with-the-future-api">Programming with the <code>Future</code> API.</h3>
+<p>The <code>Future</code> class also provides a more direct, low-level functionality
+for accessing the result that it completes with.
+The <code>async</code> and <code>await</code> language features are built on top of this
+functionality, and it sometimes makes sense to use it directly.
+There are things that you cannot do by just <code>await</code>ing one future at
+a time.</p>
+<p>With a <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a>, you can manually register callbacks
+that handle the value, or error, once it is available.
+For example:</p>
+<pre class="language-dart"><code class="language-dart">Future&lt;int&gt; future = getFuture();
+future.then((value) =&gt; handleValue(value))
+      .catchError((error) =&gt; handleError(error));
+</code></pre>
+<p>Since a <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a> can be completed in two ways,
+either with a value (if the asynchronous computation succeeded)
+or with an error (if the computation failed),
+you can install callbacks for either or both cases.</p>
+<p>In some cases we say that a future is completed <em>with another future</em>.
+This is a short way of stating that the future is completed in the same way,
+with the same value or error,
+as the other future once that other future itself completes.
+Most functions in the platform libraries that complete a future
+(for example <a href="https://api.dart.dev/stable/3.10.9/dart-async/Completer/complete.html">Completer.complete</a> or <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.value.html">Future.value</a>),
+also accepts another future, and automatically handles forwarding
+the result to the future being completed.</p>
+<p>The result of registering callbacks is itself a <code>Future</code>,
+which in turn is completed with the result of invoking the
+corresponding callback with the original future's result.
+The new future is completed with an error if the invoked callback throws.
+For example:</p>
+<pre class="language-dart"><code class="language-dart">Future&lt;int&gt; successor = future.then((int value) {
+    // Invoked when the future is completed with a value.
+    return 42;  // The successor is completed with the value 42.
+  },
+  onError: (e) {
+    // Invoked when the future is completed with an error.
+    if (canHandle(e)) {
+      return 499;  // The successor is completed with the value 499.
+    } else {
+      throw e;  // The successor is completed with the error e.
+    }
+  });
+</code></pre>
+<p>If a future does not have any registered handler when it completes
+with an error, it forwards the error to an "uncaught-error handler".
+This behavior ensures that no error is silently dropped.
+However, it also means that error handlers should be installed early,
+so that they are present as soon as a future is completed with an error.
+The following example demonstrates this potential bug:</p>
+<pre class="language-dart"><code class="language-dart">var future = getFuture();
+Timer(const Duration(milliseconds: 5), () {
+  // The error-handler is not attached until 5 ms after the future has
+  // been received. If the future fails before that, the error is
+  // forwarded to the global error-handler, even though there is code
+  // (just below) to eventually handle the error.
+  future.then((value) { useValue(value); },
+              onError: (e) { handleError(e); });
+});
+</code></pre>
+<p>When registering callbacks, it's often more readable to register the two
+callbacks separately, by first using <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/then.html">then</a> with one argument
+(the value handler) and using a second <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/catchError.html">catchError</a> for handling errors.
+Each of these will forward the result that they don't handle
+to their successors, and together they handle both value and error result.
+It has the additional benefit of the <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/catchError.html">catchError</a> handling errors in the
+<a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/then.html">then</a> value callback too.
+Using sequential handlers instead of parallel ones often leads to code that
+is easier to reason about.
+It also makes asynchronous code very similar to synchronous code:</p>
+<pre class="language-dart"><code class="language-dart">// Synchronous code.
+try {
+  int value = foo();
+  return bar(value);
+} catch (e) {
+  return 499;
+}
+</code></pre>
+<p>Equivalent asynchronous code, based on futures:</p>
+<pre class="language-dart"><code class="language-dart">Future&lt;int&gt; asyncValue = Future(foo);  // Result of foo() as a future.
+asyncValue.then((int value) {
+  return bar(value);
+}).catchError((e) {
+  return 499;
+});
+</code></pre>
+<p>Similar to the synchronous code, the error handler (registered with
+<a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/catchError.html">catchError</a>) is handling any errors thrown by either <code>foo</code> or <code>bar</code>.
+If the error-handler had been registered as the <code>onError</code> parameter of
+the <code>then</code> call, it would not catch errors from the <code>bar</code> call.</p>
+<p>Futures can have more than one callback-pair registered. Each successor is
+treated independently and is handled as if it was the only successor.
+The order in which the individual successors are completed is undefined.</p>
+<p>A future may also fail to ever complete. In that case, no callbacks are
+called. That situation should generally be avoided if possible, unless
+it's very clearly documented.</p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+        
+
+
+        
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="https://api.dart.dev/stable/3.10.9/archery_archery/FutureExtensions.html">FutureExtensions</a></li>
+      <li><a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfJSAnyToJSPromise.html">FutureOfJSAnyToJSPromise</a></li>
+      <li><a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfVoidToJSPromise.html">FutureOfVoidToJSPromise</a></li>
+  </ul></dd>
+        
+  <dt>Annotations</dt>
+  <dd>
+    <ul class="annotation-list clazz-relationships">
+        <li>@vmIsolateUnsendable</li>
+    </ul>
+  </dd>
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Future.new" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.html">Future</a></span><span class="signature">(<span class="parameter" id="-param-computation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">computation</span>()</span>)</span>
+        </dt>
+        <dd>
+          Creates a future containing the result of calling <code>computation</code>
+asynchronously with <a href="https://api.dart.dev/stable/3.10.9/dart-async/Timer/run.html">Timer.run</a>.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.delayed" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.delayed.html">Future.delayed</a></span><span class="signature">(<span class="parameter" id="delayed-param-duration"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">duration</span>, [</span><span class="parameter" id="delayed-param-computation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">computation</span>()?</span>])</span>
+        </dt>
+        <dd>
+          Creates a future that runs its computation after a delay.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.error" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.error.html">Future.error</a></span><span class="signature">(<span class="parameter" id="error-param-error"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">error</span>, [</span><span class="parameter" id="error-param-stackTrace"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/StackTrace-class.html">StackTrace</a>?</span> <span class="parameter-name">stackTrace</span></span>])</span>
+        </dt>
+        <dd>
+          Creates a future that completes with an error.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.microtask" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.microtask.html">Future.microtask</a></span><span class="signature">(<span class="parameter" id="microtask-param-computation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">computation</span>()</span>)</span>
+        </dt>
+        <dd>
+          Creates a future containing the result of calling <code>computation</code>
+asynchronously with <a href="https://api.dart.dev/stable/3.10.9/dart-async/scheduleMicrotask.html">scheduleMicrotask</a>.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.sync" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.sync.html">Future.sync</a></span><span class="signature">(<span class="parameter" id="sync-param-computation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">computation</span>()</span>)</span>
+        </dt>
+        <dd>
+          The result of calling <code>computation</code> as a future.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.syncValue" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.syncValue.html">Future.syncValue</a></span><span class="signature">(<span class="parameter" id="syncValue-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a future completed with <code>value</code>.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Future.value" class="callable">
+          <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/Future.value.html">Future.value</a></span><span class="signature">([<span class="parameter" id="value-param-value"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">value</span></span>])</span>
+        </dt>
+        <dd>
+          Creates a future completed with <code>value</code>.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toJS" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfJSAnyToJSPromise/toJS.html">toJS</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/JSPromise-extension-type.html">JSPromise</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfJSAnyToJSPromise.html">FutureOfJSAnyToJSPromise</a> extension</span>
+      </p>
+  A <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/JSPromise-extension-type.html">JSPromise</a> that either resolves with the result of the completed
+<a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a> or rejects with an object that contains its error.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="toJS" class="property">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfVoidToJSPromise/toJS.html">toJS</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/JSPromise-extension-type.html">JSPromise</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/JSAny-extension-type.html">JSAny</a>?</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span>,
+        provided by the <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/FutureOfVoidToJSPromise.html">FutureOfVoidToJSPromise</a> extension</span>
+      </p>
+  A <a href="https://api.dart.dev/stable/3.10.9/dart-js_interop/JSPromise-extension-type.html">JSPromise</a> that either resolves once this <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a> completes or rejects
+with an object that contains its error.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="asStream" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/asStream.html">asStream</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a> containing the result of this future.
+  
+
+</dd>
+
+        <dt id="catchError" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/catchError.html">catchError</a></span><span class="signature">(<wbr><span class="parameter" id="catchError-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">onError</span>, {</span><span class="parameter" id="catchError-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-error"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">error</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Handles errors emitted by this <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a>.
+  
+
+</dd>
+
+        <dt id="ignore" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/FutureExtensions/ignore.html">ignore</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.dart.dev/stable/3.10.9/archery_archery/FutureExtensions.html">FutureExtensions</a> extension</span>
+      </p>
+  Completely ignores this future and its result.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="onError" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/FutureExtensions/onError.html">onError</a></span><span class="signature">&lt;<wbr><span class="type-parameter">E extends <a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="onError-param-handleError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">handleError</span>(<span class="parameter" id="handleError-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span>, </span><span class="parameter" id="handleError-param-stackTrace"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/StackTrace-class.html">StackTrace</a></span> <span class="parameter-name">stackTrace</span></span>), {</span><span class="parameter" id="onError-param-test"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">test</span>(<span class="parameter" id="test-param-error"><span class="type-annotation">E</span> <span class="parameter-name">error</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://api.dart.dev/stable/3.10.9/archery_archery/FutureExtensions.html">FutureExtensions</a> extension</span>
+      </p>
+  Handles errors on this future.
+  
+
+</dd>
+
+        <dt id="then" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/then.html">then</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="then-param-onValue"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">onValue</span>(<span class="parameter" id="onValue-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>), {</span><span class="parameter" id="then-param-onError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Function-class.html">Function</a>?</span> <span class="parameter-name">onError</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Register callbacks to be called when this future completes.
+  
+
+</dd>
+
+        <dt id="timeout" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/timeout.html">timeout</a></span><span class="signature">(<wbr><span class="parameter" id="timeout-param-timeLimit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Duration-class.html">Duration</a></span> <span class="parameter-name">timeLimit</span>, {</span><span class="parameter" id="timeout-param-onTimeout"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">onTimeout</span>()?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Stop waiting for this future after <code>timeLimit</code> has passed.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="whenComplete" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/whenComplete.html">whenComplete</a></span><span class="signature">(<wbr><span class="parameter" id="whenComplete-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">action</span>()</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Registers a function to be called when this future completes.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+  <section class="summary offset-anchor" id="static-methods">
+    <h2>Static Methods</h2>
+    <dl class="callables">
+        <dt id="any" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/any.html">any</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="any-param-futures"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">futures</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns the result of the first future in <code>futures</code> to complete.
+  
+
+</dd>
+
+        <dt id="doWhile" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/doWhile.html">doWhile</a></span><span class="signature">(<wbr><span class="parameter" id="doWhile-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span> <span class="parameter-name">action</span>()</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Performs an operation repeatedly until it returns <code>false</code>.
+  
+
+</dd>
+
+        <dt id="forEach" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/forEach.html">forEach</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="forEach-param-elements"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">elements</span>, </span><span class="parameter" id="forEach-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-async/FutureOr-class.html">FutureOr</a></span> <span class="parameter-name">action</span>(<span class="parameter" id="action-param-element"><span class="type-annotation">T</span> <span class="parameter-name">element</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Performs an action for each element of the iterable, in turn.
+  
+
+</dd>
+
+        <dt id="wait" class="callable">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future/wait.html">wait</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="wait-param-futures"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">futures</span>, {</span><span class="parameter" id="wait-param-eagerError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">eagerError</span> = <span class="default-value">false</span>, </span><span class="parameter" id="wait-param-cleanUp"><span class="type-annotation">void</span> <span class="parameter-name">cleanUp</span>(<span class="parameter" id="cleanUp-param-successValue"><span class="type-annotation">T</span> <span class="parameter-name">successValue</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Waits for multiple futures to complete and collects their results.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery</a></li>
+    <li class="self-crumb">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+</ol>
+
+    <h5>archery library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the wait method from the Future class, for the Dart programming language.">
+  <title>wait method - Future class - archery library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_archery/">archery&#47;archery.dart</a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li class="self-crumb">wait&lt;<wbr><span class="type-parameter">T</span>&gt; static method</li>
+  </ol>
+  <div class="self-name">wait</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_archery&#47;Future-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/7c8a3e077e8a3c6209c865301aada26e9fde764a/sdk/lib/async/async.dart#L496"><span class="material-symbols-outlined">description</span></a></div>
+<h1><span class="kind-method">wait&lt;<wbr><span class="type-parameter">T</span>&gt;</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+<span class="name ">wait</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="wait-param-futures"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">futures</span>, {</span></li>
+<li><span class="parameter" id="wait-param-eagerError"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">eagerError</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="wait-param-cleanUp"><span class="type-annotation">void</span> <span class="parameter-name">cleanUp</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="cleanUp-param-successValue"><span class="type-annotation">T</span> <span class="parameter-name">successValue</span></span></li>
+</ol>)?, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Waits for multiple futures to complete and collects their results.</p>
+<p>Returns a future which will complete once all the provided futures
+have completed, either with their results, or with an error if any
+of the provided futures fail.</p>
+<p>The value of the returned future will be a list of all the values that
+were produced in the order that the futures are provided by iterating
+<code>futures</code>.</p>
+<p>If any future completes with an error,
+then the returned future completes with that error.
+If further futures also complete with errors, those errors are discarded.</p>
+<p>If <code>eagerError</code> is true, the returned future completes with an error
+immediately on the first error from one of the futures. Otherwise all
+futures must complete before the returned future is completed (still with
+the first error; the remaining errors are silently dropped).</p>
+<p>In the case of an error, <code>cleanUp</code> (if provided), is invoked on any
+non-null result of successful futures.
+This makes it possible to <code>cleanUp</code> resources that would otherwise be
+lost (since the returned future does not provide access to these values).
+The <code>cleanUp</code> function is unused if there is no error.</p>
+<p>The call to <code>cleanUp</code> should not throw. If it does, the error will be an
+uncaught asynchronous error.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">void main() async {
+  var value = await Future.wait([delayedNumber(), delayedString()]);
+  print(value); // [2, result]
+}
+
+Future&lt;int&gt; delayedNumber() async {
+  await Future.delayed(const Duration(seconds: 2));
+  return 2;
+}
+
+Future&lt;String&gt; delayedString() async {
+  await Future.delayed(const Duration(seconds: 2));
+  return 'result';
+}
+</code></pre>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; wait&lt;T&gt;(
+  Iterable&lt;Future&lt;T&gt;&gt; futures, {
+  bool eagerError = false,
+  void cleanUp(T successValue)?,
+}) {
+  @pragma(&#39;vm:awaiter-link&#39;)
+  final _Future&lt;List&lt;T&gt;&gt; _future = _Future&lt;List&lt;T&gt;&gt;();
+  List&lt;T?&gt;? values; &#47;&#47; Collects the values. Set to null on error.
+  int remaining = 0; &#47;&#47; How many futures are we waiting for.
+  Object? error; &#47;&#47; The first error from a future.
+  StackTrace? stackTrace; &#47;&#47; The stackTrace that came with the error.
+
+  &#47;&#47; Handle an error from any of the futures.
+  void handleError(Object theError, StackTrace theStackTrace) {
+    var remainingResults = --remaining;
+    List&lt;T?&gt;? valueList = values;
+    if (valueList != null) {
+      &#47;&#47; First error, set state to represent error having already happened.
+      values = null;
+      error = theError;
+      stackTrace = theStackTrace;
+      &#47;&#47; Then clean up any already successfully produced results.
+      if (cleanUp != null) {
+        for (var value in valueList) {
+          if (value != null) {
+            &#47;&#47; Ensure errors from `cleanUp` are uncaught.
+            T cleanUpValue = value;
+            Future.sync(() {
+              cleanUp(cleanUpValue);
+            });
+          }
+        }
+      }
+      if (remainingResults == 0 || eagerError) {
+        _future._completeError(theError, theStackTrace);
+      }
+    } else {
+      &#47;&#47; Not the first error.
+      if (remainingResults == 0 &amp;&amp; !eagerError) {
+        &#47;&#47; Last future completed, non-eagerly report the first error.
+        _future._completeError(error!, stackTrace!);
+      }
+    }
+  }
+
+  try {
+    &#47;&#47; As each future completes, put its value into the corresponding
+    &#47;&#47; position in the list of values.
+    for (var future in futures) {
+      int pos = remaining;
+      future.then((T value) {
+        var remainingResults = --remaining;
+        List&lt;T?&gt;? valueList = values;
+        if (valueList != null) {
+          &#47;&#47; No errors yet.
+          assert(valueList[pos] == null);
+          valueList[pos] = value;
+          if (remainingResults == 0) {
+            _future._completeWithValue([
+              for (var value in valueList) value as T,
+            ]);
+          }
+        } else {
+          &#47;&#47; Prior error, clean-up this value if necessary.
+          if (cleanUp != null &amp;&amp; value != null) {
+            &#47;&#47; Ensure errors from cleanUp are uncaught.
+            Future.sync(() {
+              cleanUp(value);
+            });
+          }
+          if (remainingResults == 0 &amp;&amp; !eagerError) {
+            &#47;&#47; Last future completed, non-eagerly report the first error.
+            _future._completeError(error!, stackTrace!);
+          }
+        }
+      }, onError: handleError);
+      &#47;&#47; Increment the &#39;remaining&#39; after the call to &#39;then&#39;.
+      &#47;&#47; If that call throws, we don&#39;t expect any future callback from
+      &#47;&#47; the future, and we also don&#39;t increment remaining.
+      remaining++;
+    }
+    if (remaining == 0) {
+      &#47;&#47; No elements in iterable.
+      return _future.._completeWithValue(&lt;T&gt;[]);
+    }
+    values = List&lt;T?&gt;.filled(remaining, null);
+  } catch (e, s) {
+    &#47;&#47; The error must have been thrown while iterating over the futures
+    &#47;&#47; list, or while installing a callback handler on the future.
+    &#47;&#47; This is a breach of the `Future` protocol, but we try to handle it
+    &#47;&#47; gracefully.
+    if (remaining == 0 || eagerError) {
+      &#47;&#47; Complete asynchronously to give receiver time to handle
+      &#47;&#47; the result.
+      return _future.._asyncCompleteErrorObject(_interceptCaughtError(e, s));
+    } else {
+      &#47;&#47; Don&#39;t allocate a list for values, thus indicating that there was an
+      &#47;&#47; error.
+      &#47;&#47; Set error to the caught exception.
+      error = e;
+      stackTrace = s;
+    }
+  }
+  return _future;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_archery/">archery</a></li>
+    <li><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li class="self-crumb">wait&lt;<wbr><span class="type-parameter">T</span>&gt; static method</li>
+</ol>
+
+    <h5>Future class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

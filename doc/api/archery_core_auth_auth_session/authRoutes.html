@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the authRoutes function from the auth_session library, for the Dart programming language.">
+  <title>authRoutes function - auth_session library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_core_auth_auth_session/">archery&#47;core&#47;auth&#47;auth_session.dart</a></li>
+    <li class="self-crumb">authRoutes function</li>
+  </ol>
+  <div class="self-name">authRoutes</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="archery_core_auth_auth_session&#47;archery_core_auth_auth_session-library-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-function">authRoutes</span> function 
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+<span class="returntype">void</span>
+<span class="name ">authRoutes</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="authRoutes-param-router"><span class="type-annotation"><a href="../archery_core_http_router/Router-class.html">Router</a></span> <span class="parameter-name">router</span></span></li>
+</ol>)
+
+        
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void authRoutes(Router router) {
+
+  router.get(&#39;&#47;login&#39;, middleware: [Guest.middleware], (request) async {
+    return request.view(&quot;auth.login&quot;);
+  });
+
+  router.get(&#39;&#47;register&#39;, middleware: [Guest.middleware], (request) async {
+    return request.view(&quot;auth.register&quot;);
+  });
+
+  router.post(&#39;&#47;register&#39;, (request) async {
+    try {
+      final form = request.form();
+      final name = await form.input(&#39;name&#39;);
+      final email = await form.input(&#39;email&#39;);
+      final password = await form.input(&#39;password&#39;);
+
+      if (name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
+        return request.redirectBack();
+      }
+
+      final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
+      if (userRecord != null) return request.redirectBack();
+
+      final user = User(name: name, email: email, password: password);
+      await user.save();
+
+      return request.redirectToLogin();
+    } catch (e) {
+      return request.redirectBack();
+    }
+  });
+
+  router.post(&#39;&#47;login&#39;, (request) async {
+    try {
+      final form = request.form();
+      final email = await form.input(&#39;email&#39;);
+      final password = await form.input(&#39;password&#39;);
+
+      if (email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
+        return request.redirectBack();
+      }
+
+      if (await Auth.login(email: email, password: password)) {
+        final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
+          ..httpOnly = true
+          ..secure =
+              true &#47;&#47; only over HTTPS
+          ..sameSite = SameSite.lax;
+
+        final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
+
+        final session = sessions?.firstWhereOrNull((session) =&gt; session.email == email);
+        if (session != null) {
+          session.cookie = cookie;
+          request.response.cookies.add(cookie);
+        }
+        return request.redirectToDashboard();
+      }
+
+      return request.redirectBack();
+    } catch (e) {
+      return request.redirectBack();
+    }
+  });
+
+  router.get(&#39;&#47;logout&#39;, (request) async {
+    await Auth.logout(request);
+    return request.redirectHome();
+  });
+
+  router.group(prefix: &quot;&#47;user&quot;, middleware: [Auth.middleware], routes: () {
+      &#47;&#47; - grouped for profile &amp; dashboard crud
+      router.group(prefix: &quot;&#47;profile&quot;, routes: () {
+          router.get(&quot;&#47;&quot;, (request) async {
+            return request.view(&quot;auth.user.profile&quot;);
+          });
+        },
+      );
+
+      router.group(prefix: &quot;&#47;dashboard&quot;, routes: () {
+          router.get(&quot;&#47;&quot;, (request) async {
+            return request.view(&quot;auth.user.dashboard&quot;);
+          });
+        },
+      );
+    },
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_core_auth_auth_session/">auth_session</a></li>
+    <li class="self-crumb">authRoutes function</li>
+</ol>
+
+    <h5>auth_session library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

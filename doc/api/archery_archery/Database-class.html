@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Database class from the archery library, for the Dart programming language.">
+  <title>Database class - archery library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery&#47;archery.dart</a></li>
+    <li class="self-crumb">Database class</li>
+  </ol>
+  <div class="self-name">Database</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_archery&#47;archery_archery-library-sidebar.html"
+    data-below-sidebar="archery_archery&#47;Database-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">Database</span> class 
+    <a href="https://dart.dev/language/class-modifiers#abstract" class="feature feature-abstract" title="This type can not be directly constructed.">abstract</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Database to send sql commands, created during <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/openDatabase.html">openDatabase</a></p>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor-class.html">DatabaseExecutor</a></li>
+    </ul>
+  </dd>
+        
+
+
+        
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExecutorExt.html">SqfliteDatabaseExecutorExt</a></li>
+      <li><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExt.html">SqfliteDatabaseExt</a></li>
+  </ul></dd>
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Database.new" class="callable">
+          <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/Database.html">Database</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="database" class="property inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/database.html">database</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database-class.html">Database</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  Get the database.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="isOpen" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/isOpen.html">isOpen</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Tell if the database is open, returns false once close has been called
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="path" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/path.html">path</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  
+
+</dt>
+<dd>
+  The path of the database
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="batch" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/batch.html">batch</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Batch-class.html">Batch</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Creates a batch, used for performing multiple operation
+in a single atomic operation.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="close" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/close.html">close</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Close the database. Cannot be accessed anymore
+  
+
+</dd>
+
+        <dt id="delete" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/delete.html">delete</a></span><span class="signature">(<wbr><span class="parameter" id="delete-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, {</span><span class="parameter" id="delete-param-where"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">where</span>, </span><span class="parameter" id="delete-param-whereArgs"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">whereArgs</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Convenience method for deleting rows in the database.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="devInvokeMethod" class="callable">
+  <span class="name deprecated"><a class="deprecated" href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/devInvokeMethod.html">devInvokeMethod</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="devInvokeMethod-param-method"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">method</span>, [</span><span class="parameter" id="devInvokeMethod-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  testing only
+  
+
+</dd>
+
+        <dt id="devInvokeSqlMethod" class="callable">
+  <span class="name deprecated"><a class="deprecated" href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/devInvokeSqlMethod.html">devInvokeSqlMethod</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="devInvokeSqlMethod-param-method"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">method</span>, </span><span class="parameter" id="devInvokeSqlMethod-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="devInvokeSqlMethod-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  testing only
+  
+
+</dd>
+
+        <dt id="execute" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/execute.html">execute</a></span><span class="signature">(<wbr><span class="parameter" id="execute-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="execute-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Execute an SQL query with no return value.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="getVersion" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExecutorExt/getVersion.html">getVersion</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor-class.html">DatabaseExecutor</a>,
+        provided by the <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExecutorExt.html">SqfliteDatabaseExecutorExt</a> extension</span>
+      </p>
+  Get the database inner version
+  
+
+</dd>
+
+        <dt id="insert" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/insert.html">insert</a></span><span class="signature">(<wbr><span class="parameter" id="insert-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, </span><span class="parameter" id="insert-param-values"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="insert-param-nullColumnHack"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">nullColumnHack</span>, </span><span class="parameter" id="insert-param-conflictAlgorithm"><span class="type-annotation"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/sqlite_api/ConflictAlgorithm.html">ConflictAlgorithm</a>?</span> <span class="parameter-name">conflictAlgorithm</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  This method helps insert a map of <code>values</code>
+into the specified <code>table</code> and returns the
+id of the last inserted row.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="query" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/query.html">query</a></span><span class="signature">(<wbr><span class="parameter" id="query-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, {</span><span class="parameter" id="query-param-distinct"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">distinct</span>, </span><span class="parameter" id="query-param-columns"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">columns</span>, </span><span class="parameter" id="query-param-where"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">where</span>, </span><span class="parameter" id="query-param-whereArgs"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">whereArgs</span>, </span><span class="parameter" id="query-param-groupBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">groupBy</span>, </span><span class="parameter" id="query-param-having"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">having</span>, </span><span class="parameter" id="query-param-orderBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">orderBy</span>, </span><span class="parameter" id="query-param-limit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">limit</span>, </span><span class="parameter" id="query-param-offset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">offset</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  This is a helper to query a table and return the items found. All optional
+clauses and filters are formatted as SQL queries
+excluding the clauses' names.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="queryCursor" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/queryCursor.html">queryCursor</a></span><span class="signature">(<wbr><span class="parameter" id="queryCursor-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, {</span><span class="parameter" id="queryCursor-param-distinct"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">distinct</span>, </span><span class="parameter" id="queryCursor-param-columns"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">columns</span>, </span><span class="parameter" id="queryCursor-param-where"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">where</span>, </span><span class="parameter" id="queryCursor-param-whereArgs"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">whereArgs</span>, </span><span class="parameter" id="queryCursor-param-groupBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">groupBy</span>, </span><span class="parameter" id="queryCursor-param-having"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">having</span>, </span><span class="parameter" id="queryCursor-param-orderBy"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">orderBy</span>, </span><span class="parameter" id="queryCursor-param-limit"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">limit</span>, </span><span class="parameter" id="queryCursor-param-offset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">offset</span>, </span><span class="parameter" id="queryCursor-param-bufferSize"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">bufferSize</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/QueryCursor-class.html">QueryCursor</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  See <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawQueryCursor.html">DatabaseExecutor.rawQueryCursor</a> for details about the argument <code>bufferSize</code>
+See <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/query.html">DatabaseExecutor.query</a> for the other arguments.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rawDelete" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawDelete.html">rawDelete</a></span><span class="signature">(<wbr><span class="parameter" id="rawDelete-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="rawDelete-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Executes a raw SQL DELETE query and returns the
+number of changes made.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rawInsert" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawInsert.html">rawInsert</a></span><span class="signature">(<wbr><span class="parameter" id="rawInsert-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="rawInsert-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Executes a raw SQL INSERT query and returns the last inserted row ID.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rawQuery" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawQuery.html">rawQuery</a></span><span class="signature">(<wbr><span class="parameter" id="rawQuery-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="rawQuery-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span></span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Executes a raw SQL SELECT query and returns a list
+of the rows that were found.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rawQueryCursor" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawQueryCursor.html">rawQueryCursor</a></span><span class="signature">(<wbr><span class="parameter" id="rawQueryCursor-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, </span><span class="parameter" id="rawQueryCursor-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span>, {</span><span class="parameter" id="rawQueryCursor-param-bufferSize"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">bufferSize</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/QueryCursor-class.html">QueryCursor</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Executes a raw SQL SELECT with a cursor.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="rawUpdate" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/rawUpdate.html">rawUpdate</a></span><span class="signature">(<wbr><span class="parameter" id="rawUpdate-param-sql"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">sql</span>, [</span><span class="parameter" id="rawUpdate-param-arguments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">arguments</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Executes a raw SQL UPDATE query and returns
+the number of changes made.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="readTransaction" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/readTransaction.html">readTransaction</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="readTransaction-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-txn"><span class="type-annotation"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Transaction-class.html">Transaction</a></span> <span class="parameter-name">txn</span></span>)</span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Read-only transaction (experimental, for now only supported in async_sqlite, use a normal transaction otherwise)
+  
+
+</dd>
+
+        <dt id="setJournalMode" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExt/setJournalMode.html">setJournalMode</a></span><span class="signature">(<wbr><span class="parameter" id="setJournalMode-param-journalMode"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">journalMode</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database-class.html">Database</a>,
+        provided by the <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExt.html">SqfliteDatabaseExt</a> extension</span>
+      </p>
+  On android, the recommended way is to set the journal mode in the
+manifest. if not setting the journal mode using execute will fail
+so rawQuery should be used instead, so this helper hides the issue.
+  
+
+</dd>
+
+        <dt id="setVersion" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExecutorExt/setVersion.html">setVersion</a></span><span class="signature">(<wbr><span class="parameter" id="setVersion-param-version"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">version</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor-class.html">DatabaseExecutor</a>,
+        provided by the <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/SqfliteDatabaseExecutorExt.html">SqfliteDatabaseExecutorExt</a> extension</span>
+      </p>
+  Set the database inner version
+Used internally for open helpers and automatic versioning
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="transaction" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database/transaction.html">transaction</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="transaction-param-action"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">action</span>(<span class="parameter" id="param-txn"><span class="type-annotation"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Transaction-class.html">Transaction</a></span> <span class="parameter-name">txn</span></span>), {</span><span class="parameter" id="transaction-param-exclusive"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">exclusive</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Calls in action must only be done using the transaction object
+using the database will trigger a dead-lock.
+  
+
+</dd>
+
+        <dt id="update" class="callable inherited">
+  <span class="name"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseExecutor/update.html">update</a></span><span class="signature">(<wbr><span class="parameter" id="update-param-table"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">table</span>, </span><span class="parameter" id="update-param-values"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="update-param-where"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">where</span>, </span><span class="parameter" id="update-param-whereArgs"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a>?</span>&gt;</span>?</span> <span class="parameter-name">whereArgs</span>, </span><span class="parameter" id="update-param-conflictAlgorithm"><span class="type-annotation"><a href="https://pub.dev/documentation/sqflite_common/2.5.6/sqlite_api/ConflictAlgorithm.html">ConflictAlgorithm</a>?</span> <span class="parameter-name">conflictAlgorithm</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Convenience method for updating rows in the database. Returns
+the number of changes made
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_archery/">archery</a></li>
+    <li class="self-crumb">Database class</li>
+</ol>
+
+    <h5>archery library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+{
+  "domain": "localhost",
+  "port": 5501,
+  "compress": true
+}

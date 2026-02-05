@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the dispatch method from the Router class, for the Dart programming language.">
+  <title>dispatch method - Router class - router library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_core_http_router/">archery&#47;core&#47;http&#47;router.dart</a></li>
+    <li><a href="../../archery_core_http_router/Router-class.html">Router</a></li>
+    <li class="self-crumb">dispatch method</li>
+  </ol>
+  <div class="self-name">dispatch</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_core_http_router&#47;Router-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">dispatch</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">void</span>
+<span class="name ">dispatch</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="dispatch-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Dispatches an <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to the matching route.</p>
+<p><strong>Matching Priority:</strong></p>
+<ol>
+<li>Exact static routes</li>
+<li>Dynamic routes (regex + type coercion)</li>
+<li>404 Not Found</li>
+</ol>
+<p>Parameters are injected into <a href="https://api.dart.dev/stable/3.10.9/dart-async/Zone-class.html">Zone</a> and accessible via <a href="../../archery_core_http_router/RouteParams-class.html">RouteParams</a>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">void dispatch(HttpRequest request) async {
+  final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
+  HttpMethod method = _parseMethod(request.method);
+
+  if (spoofMethod != null) {
+    method = _parseMethod(spoofMethod);
+  }
+
+  final path = _normalize(request.uri.path);
+
+  &#47;&#47; 1. Static route lookup (fastest)
+  final handler = _routes[method]?[path];
+  &#47;&#47; Get middleware for this specific method+path combination
+  final middleware = _middlewareMap[method]?[path] ?? const [];
+
+  if (handler != null) {
+    _runMiddleware(request, middleware, 0, () async =&gt; await handler(request));
+    return;
+  }
+
+  &#47;&#47; 2. Dynamic route matching
+  final compiled = _dynamicRoutes[method] ?? const [];
+  for (final cr in compiled) {
+    final match = cr.regex.firstMatch(path);
+    if (match == null) continue;
+
+    &#47;&#47; Extract and coerce parameters
+    final params = &lt;String, dynamic&gt;{};
+    var valid = true;
+
+    for (var i = 0; i &lt; cr.paramNames.length; i++) {
+      final raw = match.group(i + 1)!;
+      final typeName = cr.paramTypes[i];
+      final coerced = _coerce(raw, typeName);
+
+      if (coerced is _Coerce &amp;&amp; coerced.value == null) {
+        valid = false;
+        break;
+      }
+      params[cr.paramNames[i]] = coerced is _Coerce ? coerced.value! : coerced;
+    }
+
+    if (!valid) continue;
+
+    &#47;&#47; Execute with params in Zone
+    runZoned(() =&gt; _runMiddleware(request, cr.middleware, 0, () =&gt; cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
+
+    return;
+  }
+
+  &#47;&#47; 3. Not found
+  await request.notFound();
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">archery</a></li>
+    <li><a href="../../archery_core_http_router/">router</a></li>
+    <li><a href="../../archery_core_http_router/Router-class.html">Router</a></li>
+    <li class="self-crumb">dispatch method</li>
+</ol>
+
+    <h5>Router class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.3.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
