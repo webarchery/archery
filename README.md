@@ -248,5 +248,3 @@ These examples double as documentation for how to structure your own app.
 
 **BSD-3-Clause**
 See LICENSE file for details.
-
-```
