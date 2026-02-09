@@ -78,7 +78,7 @@ import 'package:archery/archery/archery.dart';
 /// ```
 abstract class SQLiteModel {
   /// Access to the singleton `Database` instance.
-  static Database get _database => App().make<Database>();
+  static SQLiteDatabase get _database => App().make<SQLiteDatabase>();
 
   /// UUID generator from DI container.
   static Uuid get _uuid => App().make<Uuid>();
@@ -107,7 +107,7 @@ abstract class SQLiteModel {
     instance.updatedAt = DateTime.now().toUtc();
 
     try {
-      final data = {...instance.toJson(), ...instance.toMetaJson(), 'uuid': instance.uuid, 'created_at': instance.createdAt!.toIso8601String(), 'updated_at': instance.updatedAt!.toIso8601String()};
+      final data = {...instance.toMetaJson(), 'uuid': instance.uuid, 'created_at': instance.createdAt!.toIso8601String(), 'updated_at': instance.updatedAt!.toIso8601String()};
 
       final id = await _database.insert(tableName, data);
       if (id > 0) {
@@ -194,10 +194,9 @@ abstract class SQLiteModel {
 
   /// Retrieves all records (ordered by `id DESC`).
   static Future<List<T>> index<T extends Model>() async {
-    final constructor = _jsonConstructors[T];
-    if (constructor == null) return [];
-
     try {
+      final constructor = _jsonConstructors[T];
+      if (constructor == null) return [];
       final maps = await _database.query(_getTableName<T>(), orderBy: 'id DESC');
       return maps.map((map) => constructor(map) as T).toList();
     } catch (e) {
@@ -223,10 +222,10 @@ abstract class SQLiteModel {
 
   /// Finds record by primary key (`id`).
   static Future<T?> find<T extends Model>({required int id}) async {
-    final constructor = _jsonConstructors[T];
-    if (constructor == null) return null;
 
     try {
+      final constructor = _jsonConstructors[T];
+      if (constructor == null) return null;
       final maps = await _database.query(_getTableName<T>(), where: 'id = ?', whereArgs: [id], limit: 1);
 
       if (maps.isNotEmpty) {
@@ -241,14 +240,15 @@ abstract class SQLiteModel {
 
   /// Finds first record where [field] == [value].
   static Future<T?> findBy<T extends Model>({required String field, required dynamic value}) async {
-    final constructor = _jsonConstructors[T];
-    if (constructor == null) return null;
 
     try {
-      final maps = await _database.query(_getTableName<T>(), where: '$field = ?', whereArgs: [value], limit: 1);
+      final constructor = _jsonConstructors[T];
+      if (constructor == null) return null;
 
-      if (maps.isNotEmpty) {
-        return constructor(maps.first) as T;
+      final records = await _database.query(_getTableName<T>(), where: '$field = ?', whereArgs: [value], limit: 1);
+
+      if (records.isNotEmpty) {
+        return constructor(records.first) as T;
       }
       return null;
     } catch (e) {
@@ -259,10 +259,12 @@ abstract class SQLiteModel {
 
   /// Finds record by `uuid`.
   static Future<T?> findByUUID<T extends Model>(String uuid) async {
-    final constructor = _jsonConstructors[T];
-    if (constructor == null) return null;
 
     try {
+
+      final constructor = _jsonConstructors[T];
+      if (constructor == null) return null;
+
       final maps = await _database.query(_getTableName<T>(), where: 'uuid = ?', whereArgs: [uuid], limit: 1);
 
       if (maps.isNotEmpty) {
@@ -279,24 +281,24 @@ abstract class SQLiteModel {
   ///
   /// Supported: `==`, `!=`, `>`, `<`, `>=`, `<=`
   static Future<List<T>> where<T extends Model>({required String field, String comp = "==", required dynamic value}) async {
-    final constructor = _jsonConstructors[T];
-    if (constructor == null) return [];
-
-    const allowedOps = ['=', '==', '!=', '<', '>', '<=', '>=', 'LIKE'];
-    if (!allowedOps.contains(comp.toUpperCase()) && comp != "==") {
-      // Todo- Look out for quirks / inconsistent results before changing
-      // "==" is usually handled as "=" in SQL or logic
-      // Adjust logic if "==" is strictly Dart side or SQL side. SQLite uses "=".
-      if (comp == "==") {
-        comp = "=";
-      } else {
-        throw ArgumentError("Invalid SQL operator: $comp");
-      }
-    } else if (comp == "==") {
-      comp = "=";
-    }
 
     try {
+      final constructor = _jsonConstructors[T];
+      if (constructor == null) return [];
+
+      const allowedOps = ['=', '==', '!=', '<', '>', '<=', '>=', 'LIKE'];
+      if (!allowedOps.contains(comp.toUpperCase()) && comp != "==") {
+        // Todo- Look out for quirks / inconsistent results before changing
+        // "==" is usually handled as "=" in SQL or logic
+        // Adjust logic if "==" is strictly Dart side or SQL side. SQLite uses "=".
+        if (comp == "==") {
+          comp = "=";
+        } else {
+          throw ArgumentError("Invalid SQL operator: $comp");
+        }
+      } else if (comp == "==") {
+        comp = "=";
+      }
       final maps = await _database.query(_getTableName<T>(), where: '$field $comp ?', whereArgs: [value]);
 
       return maps.map((map) => constructor(map) as T).toList();
@@ -343,7 +345,6 @@ abstract class SQLiteModel {
     if (constructor == null) return null;
 
     try {
-      // Prevent injection of protected fields
       fromJson
         ..remove('id')
         ..remove('uuid')
@@ -354,7 +355,7 @@ abstract class SQLiteModel {
 
       final instance = constructor({...fromJson, ...defaults}) as T;
 
-      if (await instance.save()) {
+      if (await instance.save(disk: .sqlite)) {
         return instance;
       }
       return null;
@@ -402,7 +403,8 @@ abstract class SQLiteModel {
     try {
       withJson
         ..remove('id')
-        ..remove('uuid');
+        ..remove('uuid')
+        ..remove('created_at');
 
       final current = instance.toMetaJson()..addAll(withJson);
       final updated = constructor(current) as T;

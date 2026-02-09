@@ -31,6 +31,9 @@
 
 library;
 
+import 'package:postgres/postgres.dart'  ;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 export 'dart:io';
 export 'dart:convert';
 export 'dart:math';
@@ -43,6 +46,7 @@ export 'package:sqflite_common_ffi/sqflite_ffi.dart';
 export 'package:intl/intl.dart';
 export 'dart:typed_data';
 export 'package:mime/mime.dart';
+
 
 //**********************************
 export './core/container.dart'
@@ -82,10 +86,25 @@ export './core/orm/model.dart';
 export './core/orm/json_file_model.dart';
 //***********************************
 
+export './core/orm/s3_json_file_model.dart';
+//***********************************
+
 export './core/orm/sqlite_model.dart';
+
+//***********************************
+
+export './core/orm/postgres_model.dart';
 
 //***********************************
 export 'core/http/http.dart';
 export 'core/http/middleware/csrf_middleware.dart';
 
 export 'core/auth/auth_session.dart';
+
+
+//*************************************
+export './packages/s3_client.dart';
+
+
+typedef SQLiteDatabase = Database;
+typedef PostgresDatabase = Connection;

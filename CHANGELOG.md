@@ -34,3 +34,9 @@
 - Redesign of FormRequest to address request body stream consumption
 - @csrf directive for view templates
 - csrf token
+
+- Initial version.
+## 1.3.1
+- Postgres and s3 models
+- minor fixes for file uploads
+- cors middleware

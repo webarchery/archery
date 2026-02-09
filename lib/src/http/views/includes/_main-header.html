@@ -81,13 +81,11 @@
     </div>
 
     <nav class="space-x-2 uppercase">
-        <a href="/blog" class="text-indigo-500 font-bold dark:text-white text-xs">Blog</a>
         @if(user)
         <a href="/user/dashboard" class="text-xs font-bold text-indigo-500 dark:text-yellow-400">Dashboard</a>
 
-        <a href="/todos" class="bg-yellow-400 dark:text-stone-600 p-1.5 rounded border border-stone-600 font-bold text-xs">Todos</a>
         @else
-        <a href="/todos" class="text-indigo-500 font-bold dark:text-white text-xs">Todos</a>
+        <a href="/register" class="text-indigo-500 font-bold dark:text-white text-xs">Register</a>
 
 
         <a href="/login" class="bg-yellow-400 dark:text-stone-600 p-1.5 rounded border border-stone-600 font-bold text-xs">Login</a>

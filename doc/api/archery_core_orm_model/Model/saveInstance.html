@@ -56,7 +56,7 @@
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
 <span class="name ">saveInstance</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="saveInstance-param-instance"><span>required</span> <span class="type-annotation">T</span> <span class="parameter-name">instance</span>, </span></li>
-<li><span class="parameter" id="saveInstance-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/Disk.html">Disk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
+<li><span class="parameter" id="saveInstance-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
 </ol>})
 
       
@@ -72,22 +72,33 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; saveInstance&lt;T extends Model&gt;({required T instance, Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; saveInstance&lt;T extends Model&gt;({required T instance, DatabaseDisk disk = Model.defaultDisk}) async {
   switch (disk) {
-    case Disk.file:
+    case DatabaseDisk.file:
       try {
         return await JsonFileModel.save&lt;T&gt;(instance);
       } catch (e) {
         return false;
       }
-    case Disk.sqlite:
+    case DatabaseDisk.sqlite:
       try {
         return await SQLiteModel.save&lt;T&gt;(instance);
       } catch (e) {
         return false;
       }
-    case Disk.s3:
-      return false; &#47;&#47; Not implemented
+    case DatabaseDisk.s3:
+      try {
+        return await S3JsonFileModel.save&lt;T&gt;(instance);
+      } catch (e) {
+        return false;
+      }
+    case DatabaseDisk.pgsql:
+      try {
+        return  await PostgresModel.save&lt;T&gt;(instance);
+
+      } catch (e) {
+        return false;
+      }
   }
 }</code></pre>
 </section>
@@ -117,7 +128,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

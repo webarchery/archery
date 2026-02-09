@@ -72,17 +72,20 @@
 
   uuid = json[&#39;uuid&#39;] as String?;
 
+
   if (json[&#39;created_at&#39;] != null) {
+    &#47;&#47;  try here for DateTime.parse
     try {
-      createdAt = DateTime.parse(json[&#39;created_at&#39;] as String);
+      createdAt = json[&#39;created_at&#39;];
     } catch (e) {
       createdAt = null;
     }
   }
 
   if (json[&#39;updated_at&#39;] != null) {
+    &#47;&#47;  try here for DateTime.parse
     try {
-      updatedAt = DateTime.parse(json[&#39;updated_at&#39;] as String);
+      updatedAt = json[&#39;updated_at&#39;];
     } catch (e) {
       updatedAt = null;
     }
@@ -115,7 +118,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

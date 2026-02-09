@@ -72,12 +72,18 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; create&lt;T extends Model&gt;(Map&lt;String, dynamic&gt; json) async {
   if (json.isEmpty) return null;
+  json
+    ..remove(&#39;id&#39;)
+    ..remove(&#39;uuid&#39;)
+    ..remove(&#39;created_at&#39;)
+    ..remove(&#39;updated_at&#39;);
+
   final constructor = _jsonConstructors[T];
   if (constructor == null) return null;
 
   try {
     final instance = constructor(json) as T;
-    if (!await instance.save()) return null;
+    if (!await instance.save(disk: .file)) return null;
     return instance;
   } catch (e) {
     return null;
@@ -110,7 +116,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

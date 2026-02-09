@@ -7,4 +7,5 @@ lib/src/config/env.json
 lib/src/storage/database.sqlite
 lib/src/storage/json_file_models
 lib/src/storage/logs.log
+
 node_modules

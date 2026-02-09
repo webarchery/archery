@@ -82,6 +82,8 @@
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; boot() async {
   status = AppStatus.booting;
 
+  final config = container.tryMake&lt;AppConfig&gt;();
+
   &#47;&#47; Default Router
   &#47;&#47; container.singleton&lt;Router&gt;(factory: (_,[_]) =&gt; Router(), eager: true);
   final router = Router();
@@ -97,11 +99,11 @@
 
   &#47;&#47; Enable caching for performance
   engine.shouldCache = true; &#47;&#47; Enabled by default for performance recommendation
-  &#47;&#47; final config = container.tryMake&lt;AppConfig&gt;();
   &#47;&#47; engine.shouldCache = config?.get(&#39;view.cache&#39;, true) ?? true;
 
   container.bindInstance&lt;TemplateEngine&gt;(engine);
 
+  &#47;&#47; Default Static Files Server
   final staticFilesServer = StaticFilesServer();
   container.bindInstance&lt;StaticFilesServer&gt;(staticFilesServer);
 
@@ -114,7 +116,7 @@
   &#47;&#47; Default SQLite DB
   final Directory dir = Directory(&quot;lib&#47;src&#47;storage&quot;);
   final file = File(&quot;${dir.absolute.path}&#47;database.sqlite&quot;);
-  final Database database = await databaseFactoryFfi.openDatabase(
+  final SQLiteDatabase database = await databaseFactoryFfi.openDatabase(
     file.absolute.path,
     options: OpenDatabaseOptions(
       version: 1,
@@ -124,7 +126,37 @@
     ),
   );
 
-  container.singleton&lt;Database&gt;(factory: (_, [_]) =&gt; database, eager: true);
+  container.singleton&lt;SQLiteDatabase&gt;(factory: (_, [_]) =&gt; database, eager: true);
+
+
+  try {
+    final postgresConnection = await PostgresDatabase.open(
+      Endpoint(
+        host: &#39;localhost&#39;,
+        database: &#39;archery&#39;,
+        username: &#39;sinna&#39;,
+        password: &#39;&#39;,
+      ),
+      &#47;&#47; The postgres server hosted locally doesn&#39;t have SSL by default. If you&#39;re
+      &#47;&#47; accessing a postgres server over the Internet, the server should support
+      &#47;&#47; SSL and you should swap out the mode with `SslMode.verifyFull`.
+      settings: ConnectionSettings(sslMode: SslMode.disable),
+    );
+
+    container.bindInstance&lt;PostgresDatabase&gt;(postgresConnection);
+
+    print(postgresConnection.info);
+  } catch(e,s) {
+    print(e);
+    print(s);
+  }
+
+
+
+  &#47;&#47;
+  final s3Config = S3Config.fromMap(config?.get(&#39;env.aws&#39;, {}));
+  final s3Client = S3Client(s3Config, debug: true);
+  container.bindInstance&lt;S3Client&gt;(s3Client);
 
   await container.initialize();
 
@@ -177,7 +209,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

@@ -271,6 +271,21 @@ abstract class JsonFileModel {
     }
   }
 
+  /// Finds first record where [field] == [value].
+  static Future<T?> findByUUID<T extends Model>(String uuid) async {
+    final constructor = _jsonConstructors[T];
+    if (constructor == null) return null;
+
+    try {
+      final records = await jsonIndex<T>();
+      final record = records.firstWhereOrNull((r) => r['uuid'] == uuid);
+      if (record == null) return null;
+      return constructor(record) as T;
+    } catch (e) {
+      return null;
+    }
+  }
+
   /// Returns raw JSON record by UUID.
   static Future<Map<String, dynamic>?> jsonFind<T extends Model>(String uuid) async {
     try {
@@ -352,12 +367,18 @@ abstract class JsonFileModel {
   /// Creates a new record from [json].
   static Future<T?> create<T extends Model>(Map<String, dynamic> json) async {
     if (json.isEmpty) return null;
+    json
+      ..remove('id')
+      ..remove('uuid')
+      ..remove('created_at')
+      ..remove('updated_at');
+
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
     try {
       final instance = constructor(json) as T;
-      if (!await instance.save()) return null;
+      if (!await instance.save(disk: .file)) return null;
       return instance;
     } catch (e) {
       return null;

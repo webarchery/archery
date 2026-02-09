@@ -60,7 +60,7 @@
     </ol>
   </div>
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
-<span class="name ">save</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="save-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/Disk.html">Disk</a>?</span> <span class="parameter-name">disk</span>, </span></li>
+<span class="name ">save</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="save-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span>, </span></li>
 </ol>})
 
       <div class="features"><span class="feature">override</span></div>
@@ -76,7 +76,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-Future&lt;bool&gt; save({Disk? disk}) async =&gt; await Model.saveInstance&lt;Session&gt;(instance: this, disk: disk ?? this.disk);</code></pre>
+Future&lt;bool&gt; save({DatabaseDisk? disk}) async =&gt; await Model.saveInstance&lt;Session&gt;(instance: this, disk: disk ?? this.disk);</code></pre>
 </section>
 
 
@@ -104,7 +104,7 @@ Future&lt;bool&gt; save({Disk? disk}) async =&gt; await Model.saveInstance&lt;Se
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

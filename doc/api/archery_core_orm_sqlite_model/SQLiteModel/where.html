@@ -74,24 +74,24 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({required String field, String comp = &quot;==&quot;, required dynamic value}) async {
-  final constructor = _jsonConstructors[T];
-  if (constructor == null) return [];
-
-  const allowedOps = [&#39;=&#39;, &#39;==&#39;, &#39;!=&#39;, &#39;&lt;&#39;, &#39;&gt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39;, &#39;LIKE&#39;];
-  if (!allowedOps.contains(comp.toUpperCase()) &amp;&amp; comp != &quot;==&quot;) {
-    &#47;&#47; Todo- Look out for quirks &#47; inconsistent results before changing
-    &#47;&#47; &quot;==&quot; is usually handled as &quot;=&quot; in SQL or logic
-    &#47;&#47; Adjust logic if &quot;==&quot; is strictly Dart side or SQL side. SQLite uses &quot;=&quot;.
-    if (comp == &quot;==&quot;) {
-      comp = &quot;=&quot;;
-    } else {
-      throw ArgumentError(&quot;Invalid SQL operator: $comp&quot;);
-    }
-  } else if (comp == &quot;==&quot;) {
-    comp = &quot;=&quot;;
-  }
 
   try {
+    final constructor = _jsonConstructors[T];
+    if (constructor == null) return [];
+
+    const allowedOps = [&#39;=&#39;, &#39;==&#39;, &#39;!=&#39;, &#39;&lt;&#39;, &#39;&gt;&#39;, &#39;&lt;=&#39;, &#39;&gt;=&#39;, &#39;LIKE&#39;];
+    if (!allowedOps.contains(comp.toUpperCase()) &amp;&amp; comp != &quot;==&quot;) {
+      &#47;&#47; Todo- Look out for quirks &#47; inconsistent results before changing
+      &#47;&#47; &quot;==&quot; is usually handled as &quot;=&quot; in SQL or logic
+      &#47;&#47; Adjust logic if &quot;==&quot; is strictly Dart side or SQL side. SQLite uses &quot;=&quot;.
+      if (comp == &quot;==&quot;) {
+        comp = &quot;=&quot;;
+      } else {
+        throw ArgumentError(&quot;Invalid SQL operator: $comp&quot;);
+      }
+    } else if (comp == &quot;==&quot;) {
+      comp = &quot;=&quot;;
+    }
     final maps = await _database.query(_getTableName&lt;T&gt;(), where: &#39;$field $comp ?&#39;, whereArgs: [value]);
 
     return maps.map((map) =&gt; constructor(map) as T).toList();
@@ -127,7 +127,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

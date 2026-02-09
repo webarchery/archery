@@ -175,11 +175,12 @@ stream.</p>
           <dt>Implementers</dt>
           <dd><ul class="comma-separated clazz-relationships">
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-html/CustomStream-class.html">CustomStream</a></li>
-              <li><a href="https://pub.dev/documentation/web/1.1.1/web/ElementStream-class.html">ElementStream</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-html/ElementStream-class.html">ElementStream</a></li>
+              <li><a href="https://pub.dev/documentation/web/1.1.1/web/ElementStream-class.html">ElementStream</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpClientResponse-class.html">HttpClientResponse</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpServer-class.html">HttpServer</a></li>
+              <li><a href="https://pub.dev/documentation/async/2.13.0/async/LazyStream-class.html">LazyStream</a></li>
               <li><a href="https://pub.dev/documentation/mime/2.0.0/mime/MimeMultipart-class.html">MimeMultipart</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawDatagramSocket-class.html">RawDatagramSocket</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawSecureServerSocket-class.html">RawSecureServerSocket</a></li>
@@ -187,15 +188,22 @@ stream.</p>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/RawSocket-class.html">RawSocket</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/ReadPipe-class.html">ReadPipe</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-isolate/ReceivePort-class.html">ReceivePort</a></li>
+              <li><a href="https://pub.dev/documentation/postgres/3.5.9/postgres/ResultStream-class.html">ResultStream</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/SecureServerSocket-class.html">SecureServerSocket</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/ServerSocket-class.html">ServerSocket</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/Socket-class.html">Socket</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/Stdin-class.html">Stdin</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamView-class.html">StreamView</a></li>
+              <li><a href="https://pub.dev/documentation/async/2.13.0/async/StreamZip-class.html">StreamZip</a></li>
+              <li><a href="https://pub.dev/documentation/async/2.13.0/async/SubscriptionStream-class.html">SubscriptionStream</a></li>
               <li><a href="https://api.dart.dev/stable/3.10.9/dart-io/WebSocket-class.html">WebSocket</a></li>
           </ul></dd>
 
         
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions.html">StreamExtensions</a></li>
+  </ul></dd>
         
   <dt>Annotations</dt>
   <dd>
@@ -300,6 +308,23 @@ a sink-transformation.
 </dt>
 <dd>
   The first element of this stream.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="firstOrNull" class="property">
+  <span class="name"><a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions/firstOrNull.html">firstOrNull</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions.html">StreamExtensions</a> extension</span>
+      </p>
+  A future which completes with the first event of this stream, or with
+<code>null</code>.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -633,6 +658,23 @@ occurred.
 
 </dd>
 
+        <dt id="listenAndBuffer" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions/listenAndBuffer.html">listenAndBuffer</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions.html">StreamExtensions</a> extension</span>
+      </p>
+  Eagerly listens to this stream and buffers events until needed.
+  
+
+</dd>
+
         <dt id="map" class="callable">
   <span class="name"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream/map.html">map</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="map-param-convert"><span class="type-annotation">S</span> <span class="parameter-name">convert</span>(<span class="parameter" id="convert-param-event"><span class="type-annotation">T</span> <span class="parameter-name">event</span></span>)</span>)
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
@@ -720,6 +762,23 @@ occurred.
 </dt>
 <dd>
   Skip data events from this stream while they are matched by <code>test</code>.
+  
+
+</dd>
+
+        <dt id="slices" class="callable">
+  <span class="name"><a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions/slices.html">slices</a></span><span class="signature">(<wbr><span class="parameter" id="slices-param-length"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span> <span class="parameter-name">length</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>,
+        provided by the <a href="https://pub.dev/documentation/async/2.13.0/async/StreamExtensions.html">StreamExtensions</a> extension</span>
+      </p>
+  Creates a stream whose elements are contiguous slices of <code>this</code>.
   
 
 </dd>
@@ -896,7 +955,7 @@ occurred.
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

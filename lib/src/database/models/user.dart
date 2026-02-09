@@ -35,11 +35,11 @@ final class User extends Model {
   static Map<String, String> columnDefinitions = {'name': 'TEXT NOT NULL', 'email': 'TEXT NOT NULL UNIQUE', 'password': 'TEXT'};
 
   @override
-  Future<bool> save({Disk? disk}) async => await Model.saveInstance<User>(instance: this, disk: disk ?? this.disk);
+  Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<User>(instance: this, disk: disk ?? this.disk);
 
   @override
-  Future<bool> delete({Disk? disk}) async => await Model.deleteInstance<User>(instance: this, disk: disk ?? this.disk);
+  Future<bool> delete({DatabaseDisk? disk}) async => await Model.deleteInstance<User>(instance: this, disk: disk ?? this.disk);
 
   @override
-  Future<bool> update({Disk? disk}) async => await Model.updateInstance<User>(instance: this, withJson: toMetaJson(), disk: disk ?? this.disk);
+  Future<bool> update({DatabaseDisk? disk}) async => await Model.updateInstance<User>(instance: this, withJson: toMetaJson(), disk: disk ?? this.disk);
 }

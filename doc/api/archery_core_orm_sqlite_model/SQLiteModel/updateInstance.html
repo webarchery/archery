@@ -78,7 +78,8 @@
   try {
     withJson
       ..remove(&#39;id&#39;)
-      ..remove(&#39;uuid&#39;);
+      ..remove(&#39;uuid&#39;)
+      ..remove(&#39;created_at&#39;);
 
     final current = instance.toMetaJson()..addAll(withJson);
     final updated = constructor(current) as T;
@@ -116,7 +117,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

@@ -70,10 +70,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; index&lt;T extends Model&gt;() async {
-  final constructor = _jsonConstructors[T];
-  if (constructor == null) return [];
-
   try {
+    final constructor = _jsonConstructors[T];
+    if (constructor == null) return [];
     final maps = await _database.query(_getTableName&lt;T&gt;(), orderBy: &#39;id DESC&#39;);
     return maps.map((map) =&gt; constructor(map) as T).toList();
   } catch (e) {
@@ -108,7 +107,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

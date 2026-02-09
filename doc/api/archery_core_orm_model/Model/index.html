@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
-<span class="name ">index</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="index-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/Disk.html">Disk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
+<span class="name ">index</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="index-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
 </ol>})
 
       
@@ -70,32 +70,32 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; index&lt;T extends Model&gt;({Disk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; index&lt;T extends Model&gt;({DatabaseDisk disk = Model.defaultDisk}) async {
   switch (disk) {
-    case Disk.file:
+    case DatabaseDisk.file:
       try {
-        final models = await JsonFileModel.index&lt;T&gt;();
-        if (models.isNotEmpty) {
-          models.map((model) =&gt; model.disk = .file);
-          return models;
-        }
-        return [];
+        return await JsonFileModel.index&lt;T&gt;();
       } catch (e) {
         return [];
       }
-    case Disk.sqlite:
+    case DatabaseDisk.sqlite:
       try {
-        final models = await SQLiteModel.index&lt;T&gt;();
-        if (models.isNotEmpty) {
-          models.map((model) =&gt; model.disk = .sqlite);
-          return models;
-        }
-        return [];
+        return await SQLiteModel.index&lt;T&gt;();
       } catch (e) {
         return [];
       }
-    case Disk.s3:
-      return [];
+    case DatabaseDisk.s3:
+      try {
+        return await S3JsonFileModel.index&lt;T&gt;();
+      } catch (e) {
+        return [];
+      }
+    case DatabaseDisk.pgsql:
+      try {
+        return await PostgresModel.index&lt;T&gt;();
+      } catch (e) {
+        return [];
+      }
   }
 }</code></pre>
 </section>
@@ -125,7 +125,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

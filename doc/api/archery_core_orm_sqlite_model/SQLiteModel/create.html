@@ -77,7 +77,6 @@
   if (constructor == null) return null;
 
   try {
-    &#47;&#47; Prevent injection of protected fields
     fromJson
       ..remove(&#39;id&#39;)
       ..remove(&#39;uuid&#39;)
@@ -88,7 +87,7 @@
 
     final instance = constructor({...fromJson, ...defaults}) as T;
 
-    if (await instance.save()) {
+    if (await instance.save(disk: .sqlite)) {
       return instance;
     }
     return null;
@@ -124,7 +123,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.0
+      0.0.0-unknown
   </span>
   
 </footer>

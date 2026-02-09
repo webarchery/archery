@@ -104,7 +104,7 @@ Default server config lives in `lib/src/config/server.json`:
 
 Visit your app at:
 
-**[http://localhost:5501](http://localhost:5501)**
+**localhost port 5501**
 
 ### 3. (Optional) Enable live reload
 Install dartmon_cli for reloading server

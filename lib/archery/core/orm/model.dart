@@ -32,12 +32,13 @@
 import 'package:archery/archery/archery.dart';
 
 /// Storage backends for model persistence.
-enum Disk {
+enum DatabaseDisk {
   /// JSON files in `storage/json_file_models/`
   file,
 
   /// SQLite database -> storage/database.sqlite
   sqlite,
+  pgsql,
 
   /// AWS S3 (planned)
   s3,
@@ -90,8 +91,8 @@ abstract class Model {
   /// Default storage backend for all models.
   /// can be overridden per-class
   /// Can be overridden per-operation.
-  static const defaultDisk = Disk.sqlite;
-  Disk disk = defaultDisk;
+  static const defaultDisk = DatabaseDisk.file;
+  DatabaseDisk disk = defaultDisk;
 
   /// Serializes model data (excluding metadata).
   ///
@@ -111,17 +112,20 @@ abstract class Model {
 
     uuid = json['uuid'] as String?;
 
+
     if (json['created_at'] != null) {
+      //  try here for DateTime.parse
       try {
-        createdAt = DateTime.parse(json['created_at'] as String);
+        createdAt = json['created_at'];
       } catch (e) {
         createdAt = null;
       }
     }
 
     if (json['updated_at'] != null) {
+      //  try here for DateTime.parse
       try {
-        updatedAt = DateTime.parse(json['updated_at'] as String);
+        updatedAt = json['updated_at'];
       } catch (e) {
         updatedAt = null;
       }
@@ -143,13 +147,13 @@ abstract class Model {
   // ──────────────────────────────────────────────────────────────────────
 
   /// Saves the current instance.
-  Future<bool> save({Disk disk = Model.defaultDisk});
+  Future<bool> save({DatabaseDisk disk = Model.defaultDisk});
 
   /// Deletes the current instance.
-  Future<bool> delete({Disk disk = Model.defaultDisk});
+  Future<bool> delete({DatabaseDisk disk = Model.defaultDisk});
 
   /// Updates the current instance with new data.
-  Future<bool> update({Disk disk = Model.defaultDisk});
+  Future<bool> update({DatabaseDisk disk = Model.defaultDisk});
 
   // ──────────────────────────────────────────────────────────────────────
   // Static CRUD API (disk-agnostic)
@@ -158,208 +162,288 @@ abstract class Model {
   /// Saves an [instance] to the specified [disk].
   ///
   /// Returns `true` on success.
-  static Future<bool> saveInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> saveInstance<T extends Model>({required T instance, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.save<T>(instance);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.save<T>(instance);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false; // Not implemented
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.save<T>(instance);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return  await PostgresModel.save<T>(instance);
+
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Deletes an [instance] by UUID.
-  static Future<bool> deleteInstance<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> deleteInstance<T extends Model>({required T instance, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.delete<T>(uuid: instance.uuid!);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.delete<T>(instance.id);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.delete<T>( uuid: instance.uuid!);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.delete<T>(id: instance.id!);
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Updates an [instance] with [withJson] data.
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson, Disk disk = Disk.file}) async {
+  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson, DatabaseDisk disk = DatabaseDisk.file}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.updateInstance<T>(instance: instance, withJson: withJson);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.updateInstance<T>(instance: instance, withJson: withJson);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.updateInstance<T>(instance: instance, withJson: withJson);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.updateInstance<T>(instance: instance, withJson: withJson);
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Returns all instances of type [T].
   ///
   /// Alias for `index<T>()`.
-  static Future<List<T>> all<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<List<T>> all<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
     return index<T>(disk: disk);
   }
 
   /// Retrieves all instances of type [T].
-  static Future<List<T>> index<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<List<T>> index<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
-          final models = await JsonFileModel.index<T>();
-          if (models.isNotEmpty) {
-            models.map((model) => model.disk = .file);
-            return models;
-          }
-          return [];
+          return await JsonFileModel.index<T>();
         } catch (e) {
           return [];
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
-          final models = await SQLiteModel.index<T>();
-          if (models.isNotEmpty) {
-            models.map((model) => model.disk = .sqlite);
-            return models;
-          }
-          return [];
+          return await SQLiteModel.index<T>();
         } catch (e) {
           return [];
         }
-      case Disk.s3:
-        return [];
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.index<T>();
+        } catch (e) {
+          return [];
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.index<T>();
+        } catch (e) {
+          return [];
+        }
     }
   }
 
   /// Counts total instances of type [T].
-  static Future<int> count<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<int> count<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.count<T>();
         } catch (e) {
           return 0;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.count<T>();
         } catch (e) {
           return 0;
         }
-      case Disk.s3:
-        return 0;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.count<T>();
+        } catch (e) {
+          return 0;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.count<T>();
+        } catch (e) {
+          return 0;
+        }
     }
   }
 
   /// Checks if a record with [id] exists.
-  static Future<bool> exists<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> exists<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.exists<T>(id: id);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.exists<T>(id: id);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.exists<T>(id: id);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.exists<T>(id: id);
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Finds a record by [id] (UUID or primary key).
-  static Future<T?> find<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> find<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
-          final model = await JsonFileModel.find<T>(uuid: id);
-          if (model != null) {
-            model.disk = .file;
-            return model;
-          }
-          return null;
+          return await JsonFileModel.find<T>(uuid: id);
         } catch (e) {
           return null;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
-          final model = await SQLiteModel.find<T>(id: id);
-          if (model != null) {
-            model.disk = .sqlite;
-            return model;
-          }
-          return null;
+          return await SQLiteModel.find<T>(id: id);
         } catch (e) {
           return null;
         }
-      case Disk.s3:
-        return null;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.find<T>(uuid: id);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.find<T>(id: id);
+        } catch (e) {
+          return null;
+        }
     }
   }
 
   /// Finds first record where [field] matches [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async  {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
-          final model = await JsonFileModel.findBy<T>(field: field, value: value);
-          if (model != null) {
-            model.disk = .file;
-            return model;
-          }
-          return null;
+          return await JsonFileModel.findBy<T>(field: field, value: value);
         } catch (e) {
           return null;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
-          final model = await SQLiteModel.findBy<T>(field: field, value: value);
-          if (model != null) {
-            model.disk = .sqlite;
-            return model;
-          }
-          return null;
+          return await SQLiteModel.findBy<T>(field: field, value: value);
         } catch (e) {
           return null;
         }
-      case Disk.s3:
-        return null;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.findBy<T>(field: field, value: value);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.findBy<T>(field: field, value: value);
+        } catch (e) {
+          return null;
+        }
+    }
+  }
+
+  static Future<T?> findByUUID<T extends Model>({required String uuid, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async  {
+    switch (disk) {
+      case DatabaseDisk.file:
+        try {
+          return await JsonFileModel.findByUUID<T>(uuid);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.sqlite:
+        try {
+          return await SQLiteModel.findByUUID<T>(uuid);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.findByUUID<T>(uuid);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.findByUUID<T>(uuid);
+        } catch (e) {
+          return null;
+        }
     }
   }
 
   /// Filters records where [field] [comp] [value].
   ///
   /// Supported [comp]: `==`, `!=`, `>`, `<`, `>=`, `<=`, `contains`
-  static Future<List<T>> where<T extends Model>({required String field, required dynamic value, String comp = "==", Disk disk = Disk.file}) async {
+  static Future<List<T>> where<T extends Model>({required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           final models = await JsonFileModel.where<T>(field: field, value: value, comp: comp);
           if (models.isNotEmpty) {
@@ -370,7 +454,7 @@ abstract class Model {
         } catch (e) {
           return [];
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           final models = await SQLiteModel.where<T>(field: field, value: value, comp: comp);
           if (models.isNotEmpty) {
@@ -381,15 +465,35 @@ abstract class Model {
         } catch (e) {
           return [];
         }
-      case Disk.s3:
-        return [];
+      case DatabaseDisk.s3:
+        try {
+          final models = await S3JsonFileModel.where<T>(field: field, value: value, comp: comp);
+          if (models.isNotEmpty) {
+            models.map((model) => model.disk = .s3);
+            return models;
+          }
+          return [];
+        } catch (e) {
+          return [];
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          final models = await PostgresModel.where<T>(field: field, value: value, comp: comp);
+          if (models.isNotEmpty) {
+            models.map((model) => model.disk = .pgsql);
+            return models;
+          }
+          return [];
+        } catch (e) {
+          return [];
+        }
     }
   }
 
   /// Returns first record matching `where()` condition.
-  static Future<T?> firstWhere<T extends Model>({required String field, required dynamic value, String comp = "==", Disk disk = Model.defaultDisk}) async {
+  static Future<T?> firstWhere<T extends Model>({required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           final model = await JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
           if (model != null) {
@@ -400,7 +504,7 @@ abstract class Model {
         } catch (e) {
           return null;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           final model = await SQLiteModel.firstWhere<T>(field: field, value: value, comp: comp);
           if (model != null) {
@@ -411,106 +515,156 @@ abstract class Model {
         } catch (e) {
           return null;
         }
-      case Disk.s3:
-        return null;
+      case DatabaseDisk.s3:
+        try {
+          final model = await S3JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .s3;
+            return model;
+          }
+          return null;
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          final model = await PostgresModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .pgsql;
+            return model;
+          }
+          return null;
+        } catch (e) {
+          return null;
+        }
     }
   }
 
   /// Creates a new record from [fromJson].
-  static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, Disk disk = Model.defaultDisk}) async {
+  static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, DatabaseDisk disk = Model.defaultDisk}) async {
     if (fromJson['password'] != null) {
       fromJson['password'] = Hasher.hashPassword(fromJson['password']);
     }
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
-          final model = await JsonFileModel.create<T>(fromJson);
-          if (model != null) {
-            model.disk = .file;
-            return model;
-          }
-          return null;
+          return await JsonFileModel.create<T>(fromJson);
         } catch (e) {
           return null;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
-          final model = await SQLiteModel.create<T>(fromJson);
-          if (model != null) {
-            model.disk = .file;
-            return model;
-          }
-          return null;
+          return await SQLiteModel.create<T>(fromJson);
         } catch (e) {
           return null;
         }
-      case Disk.s3:
-        return null;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.create<T>(fromJson);
+        } catch (e) {
+          return null;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.create<T>(fromJson);
+        } catch (e) {
+          return null;
+        }
     }
   }
 
   /// Alias for `saveInstance`.
-  static Future<bool> store<T extends Model>({required T instance, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> store<T extends Model>({required T instance, DatabaseDisk disk = Model.defaultDisk}) async {
     return await saveInstance<T>(instance: instance, disk: disk);
   }
 
   /// Updates a single field of a record by [id].
-  static Future<bool> patch<T extends Model>({required dynamic id, required String field, required dynamic value, Disk disk = Disk.file}) async {
+  static Future<bool> patch<T extends Model>({required dynamic id, required String field, required dynamic value, DatabaseDisk disk = DatabaseDisk.file}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.update<T>(id: id, field: field, value: value);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.update<T>(id: id, field: field, value: value);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.update<T>(id: id, field: field, value: value);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.update<T>(id: id, field: field, value: value);
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Deletes a record by [id].
-  static Future<bool> destroy<T extends Model>({required dynamic id, Disk disk = Model.defaultDisk}) async {
+  static Future<bool> destroy<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.delete<T>(uuid: id);
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.delete<T>(id);
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.delete<T>(uuid: id);
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.delete<T>(id: id);
+        } catch (e) {
+          return false;
+        }
     }
   }
 
   /// Deletes all records of type [T].
-  static Future<bool> truncate<T extends Model>({Disk disk = Model.defaultDisk}) async {
+  static Future<bool> truncate<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
-      case Disk.file:
+      case DatabaseDisk.file:
         try {
           return await JsonFileModel.truncate<T>();
         } catch (e) {
           return false;
         }
-      case Disk.sqlite:
+      case DatabaseDisk.sqlite:
         try {
           return await SQLiteModel.truncate<T>();
         } catch (e) {
           return false;
         }
-      case Disk.s3:
-        return false;
+      case DatabaseDisk.s3:
+        try {
+          return await S3JsonFileModel.truncate<T>();
+        } catch (e) {
+          return false;
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          return await PostgresModel.truncate<T>();
+        } catch (e) {
+          return false;
+        }
     }
   }
 }

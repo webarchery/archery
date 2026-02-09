@@ -30,6 +30,7 @@
 // https://webarchery.dev
 
 import 'package:archery/archery/archery.dart';
+import 'package:postgres/postgres.dart';
 
 /// Enum representing the lifecycle status of the [App] instance.
 enum AppStatus {
@@ -56,7 +57,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.0.0";
+  static final String version = "1.3.0";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
@@ -127,6 +128,8 @@ class App {
   Future<void> boot() async {
     status = AppStatus.booting;
 
+    final config = container.tryMake<AppConfig>();
+
     // Default Router
     // container.singleton<Router>(factory: (_,[_]) => Router(), eager: true);
     final router = Router();
@@ -142,11 +145,11 @@ class App {
 
     // Enable caching for performance
     engine.shouldCache = true; // Enabled by default for performance recommendation
-    // final config = container.tryMake<AppConfig>();
     // engine.shouldCache = config?.get('view.cache', true) ?? true;
 
     container.bindInstance<TemplateEngine>(engine);
 
+    // Default Static Files Server
     final staticFilesServer = StaticFilesServer();
     container.bindInstance<StaticFilesServer>(staticFilesServer);
 
@@ -159,7 +162,7 @@ class App {
     // Default SQLite DB
     final Directory dir = Directory("lib/src/storage");
     final file = File("${dir.absolute.path}/database.sqlite");
-    final Database database = await databaseFactoryFfi.openDatabase(
+    final SQLiteDatabase database = await databaseFactoryFfi.openDatabase(
       file.absolute.path,
       options: OpenDatabaseOptions(
         version: 1,
@@ -169,7 +172,37 @@ class App {
       ),
     );
 
-    container.singleton<Database>(factory: (_, [_]) => database, eager: true);
+    container.singleton<SQLiteDatabase>(factory: (_, [_]) => database, eager: true);
+
+
+    try {
+      final postgresConnection = await PostgresDatabase.open(
+        Endpoint(
+          host: 'localhost',
+          database: 'archery',
+          username: 'sinna',
+          password: '',
+        ),
+        // The postgres server hosted locally doesn't have SSL by default. If you're
+        // accessing a postgres server over the Internet, the server should support
+        // SSL and you should swap out the mode with `SslMode.verifyFull`.
+        settings: ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      container.bindInstance<PostgresDatabase>(postgresConnection);
+
+      print(postgresConnection.info);
+    } catch(e,s) {
+      print(e);
+      print(s);
+    }
+
+
+
+    //
+    final s3Config = S3Config.fromMap(config?.get('env.aws', {}));
+    final s3Client = S3Client(s3Config, debug: true);
+    container.bindInstance<S3Client>(s3Client);
 
     await container.initialize();
 
