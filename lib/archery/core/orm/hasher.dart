@@ -50,7 +50,7 @@ import 'package:archery/archery/archery.dart';
 /// final hash = Hasher.hashPassword('mySecret123');
 /// final isValid = Hasher.verifyPassword('mySecret123', hash); // true
 /// ```
-class Hasher {
+base class Hasher {
   /// Length of the random salt in bytes.
   static const int _saltLength = 16;
 

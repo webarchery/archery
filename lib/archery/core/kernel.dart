@@ -43,7 +43,7 @@ import 'package:archery/archery/archery.dart';
 /// ```
 /// [AppKernel] → [middleware[0]] → [middleware[1]] → ... → [Router.dispatch]
 /// ```
-class AppKernel {
+base class AppKernel {
   /// List of global middleware applied to **every** request.
   ///
   /// Executed in order. Each calls `next()` to continue.
@@ -75,6 +75,7 @@ class AppKernel {
   /// ```
   void handle(HttpRequest request) async {
     await Session.init(request);
+
 
     // Buffer the request body to prevent "stream has already been listened to" errors.
     // This allows multiple components (CSRF, Logging, Controllers) to read the body.

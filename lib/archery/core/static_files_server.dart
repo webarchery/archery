@@ -53,7 +53,7 @@ import 'package:archery/archery/archery.dart';
 /// // In middleware:
 /// if (await staticServer.tryServe(request)) return;
 /// ```
-class StaticFilesServer {
+base class StaticFilesServer {
   /// Root directory to serve files from.
   ///
   /// Defaults to `lib/src/http/public`.

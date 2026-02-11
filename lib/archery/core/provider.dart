@@ -39,7 +39,7 @@ import 'package:archery/archery/archery.dart';
 /// - Failed `boot()`
 ///
 /// Provides structured context for debugging initialization issues.
-class ProviderException implements Exception {
+base class ProviderException implements Exception {
   /// The [Provider] type that caused the exception.
   final Type type;
 
@@ -125,7 +125,7 @@ abstract class Provider {
   /// Called **synchronously** during app initialization.
   ///
   /// Should **not** perform async operations or depend on booted services.
-  void register(ServiceContainer container);
+  Future<void> register(ServiceContainer container) async {}
 
   /// Performs asynchronous boot-time initialization.
   ///

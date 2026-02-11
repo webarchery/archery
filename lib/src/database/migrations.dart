@@ -13,11 +13,7 @@ Future<void> migrateS3JsonFileModels() async {
 
 }
 
-Future<void> migrateSQLiteModels() async {
-  await SQLiteModel.migrate<User>(constructor: User.fromJson, columnDefinitions: User.columnDefinitions);
-  await SQLiteModel.migrate<Session>(constructor: Session.fromJson, columnDefinitions: Session.columnDefinitions);
-  await SQLiteModel.migrate<AuthSession>(constructor: AuthSession.fromJson, columnDefinitions: AuthSession.columnDefinitions);
-}
+
 
 Future<void> migratePostgresModels() async {
 
@@ -25,4 +21,10 @@ Future<void> migratePostgresModels() async {
   await PostgresModel.migrate<Session>(constructor: Session.fromJson, columnDefinitions: Session.columnDefinitions);
   await PostgresModel.migrate<AuthSession>(constructor: AuthSession.fromJson, columnDefinitions: AuthSession.columnDefinitions);
 
+}
+
+Future<void> migrateSQLiteModels() async {
+  await SQLiteModel.migrate<User>(constructor: User.fromJson, columnDefinitions: User.columnDefinitions);
+  await SQLiteModel.migrate<Session>(constructor: Session.fromJson, columnDefinitions: Session.columnDefinitions);
+  await SQLiteModel.migrate<AuthSession>(constructor: AuthSession.fromJson, columnDefinitions: AuthSession.columnDefinitions);
 }

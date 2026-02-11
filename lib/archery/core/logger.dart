@@ -80,7 +80,7 @@ enum LogLevel {
 /// - Message
 /// - Context (inherited from logger)
 /// - Optional metadata (per-log)
-class LogEntry {
+final class LogEntry {
   /// UTC timestamp when the log was created.
   final DateTime timestamp;
 
@@ -147,7 +147,7 @@ abstract class LogTransport {
 /// final logger = Logger(transports: [ConsoleTransport()]);
 /// await logger.info('Server started', {'port': 8080});
 /// ```
-class Logger {
+final class Logger {
   /// Registered transports that receive every log entry.
   final List<LogTransport> _transports;
 
@@ -218,7 +218,7 @@ class Logger {
 /// - ANSI colors
 /// - Pretty or JSON formatting
 /// - Timestamp + level + message + context + metadata
-class ConsoleTransport implements LogTransport {
+final class ConsoleTransport implements LogTransport {
   /// Enables ANSI color codes in output.
   final bool useColors;
 
@@ -334,7 +334,7 @@ class ConsoleTransport implements LogTransport {
 /// ```json
 /// {"level":"INFO","code":3,"timestamp":"2025-04-05T12:00:00.000Z","message":"Start"}
 /// ```
-class LogFileTransport implements LogTransport {
+base class LogFileTransport implements LogTransport {
   /// Path to the log file (e.g., `storage/logs/app.log`).
   final String filePath;
 

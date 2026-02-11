@@ -5,25 +5,48 @@ import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 
 Future<void> main(List<String> args) async {
+
   // init application
   final app = App();
+  await App().container.initialize();
   app.setKeys();
 
-  // parse config and attach to app
+  // parse config folder and attach to container
   final config = await AppConfig.create();
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
-  await app.boot();
 
-  // db migrations
-  await migrateJsonFileModels();
-  await migrateSQLiteModels();
+  app.registerGroup("globals", [
+    // uncomment when you have s3 keys in config
+    // S3ClientProvider(),
+  ]);
 
-  // Todo - run these when you are sure you have them in place
-  // await migrateS3JsonFileModels();
-  // await migratePostgresModels();
 
-  // router
+  await app.boot().then((_) async {
+
+
+    /// db migrations
+    /// [Model.defaultDisk] is set to .file
+    // run these when you are sure you have them in place
+    // await migrateS3JsonFileModels();
+    // await migratePostgresModels();
+
+    // these files are auto-created for you
+    await migrateJsonFileModels();
+    await migrateSQLiteModels();
+
+    // make sure there's a bag for sessions
+    app.container.bindInstance<List<Session>>([]);
+    app.container.bindInstance<List<AuthSession>>([]);
+
+  });
+
+
+
+  // HTTP Server
+  // ----------------
+
+  // routes
   final router = app.make<Router>();
   authRoutes(router);
   webRoutes(router);
@@ -38,9 +61,7 @@ Future<void> main(List<String> args) async {
     ],
   );
 
-  // make sure there's a bag for sessions
-  app.container.bindInstance<List<Session>>([]);
-  app.container.bindInstance<List<AuthSession>>([]);
+
 
   // init server with static files
   final port = config.get('server.port') ?? 5502;
@@ -52,7 +73,6 @@ Future<void> main(List<String> args) async {
       server.autoCompress = config.get('server.compress', true);
 
       print('🔥 Archery server running at http://localhost:$port');
-
       await for (HttpRequest request in server) {
         if (await staticFilesServer.tryServe(request)) continue;
         kernel.handle(request);
@@ -60,6 +80,7 @@ Future<void> main(List<String> args) async {
     });
   } catch (e, stack) {
     print("Error booting server: $e\n$stack");
+    App().archeryLogger.error("Error booting server", {"error": e.toString(), "stack": stack.toString()});
     await app.shutdown().then(
       (_) => print("App has shut down from a server initialization error"),
     );

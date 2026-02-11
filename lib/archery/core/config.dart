@@ -41,7 +41,7 @@ import 'package:archery/archery/archery.dart';
 /// config.set('database.host', 'localhost');
 /// config.get('database.host'); // -> 'localhost'
 /// ```
-class ConfigRepository {
+final class ConfigRepository {
   /// Internal storage for configuration values.
   final Map<String, dynamic> _items;
 
@@ -158,7 +158,7 @@ class ConfigRepository {
 /// and merges all JSON content into a single nested map.
 ///
 /// File: `lib/src/config/database/connection.json` → Key: `database.connection`
-class _ConfigFilesLoader {
+base class _ConfigFilesLoader {
   /// Root directory path to scan for `.json` config files.
   final String path;
 
@@ -269,7 +269,7 @@ class _ConfigFilesLoader {
 /// final config = await AppConfig.create();
 /// print(config.get('app.name'));
 /// ```
-class AppConfig {
+base class AppConfig {
   /// Underlying in-memory configuration store.
   final ConfigRepository _repository;
 

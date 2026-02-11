@@ -33,7 +33,7 @@ import 'package:archery/archery/archery.dart';
 
 abstract class S3JsonFileModel {
   static S3Client get _s3client => App().make<S3Client>();
-  static AppConfig get config => App().make<AppConfig>();
+  static AppConfig get _config => App().make<AppConfig>();
 
   static Uuid get _uuid => App().make<Uuid>();
 
@@ -55,7 +55,7 @@ abstract class S3JsonFileModel {
   // s3 path key for model data
   static String _getS3TableKey<T>() {
     final tableName = _getTableName<T>();
-    return "archery/web/app-${config.get('app.id', _uuid.v4())}/storage/s3_json_file_models/$tableName.json";
+    return "archery/web/app-${_config.get('app.id', _uuid.v4())}/storage/s3_json_file_models/$tableName.json";
   }
 
   /// Creates a new record with UUID and timestamps.
@@ -390,9 +390,6 @@ abstract class S3JsonFileModel {
   static Future<bool> saveInstance<T extends Model>({required T instance}) async {
     return await save<T>(instance);
   }
-
-
-
 
 
 }

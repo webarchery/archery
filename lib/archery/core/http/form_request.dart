@@ -31,7 +31,7 @@
 
 import 'package:archery/archery/archery.dart';
 
-class FormRequest {
+base class FormRequest {
   final HttpRequest _request;
   final Map<String, dynamic> _fields;
   final Map<String, UploadedFile> _files;

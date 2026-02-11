@@ -72,7 +72,7 @@ enum HttpMethod {
 /// ```
 ///
 /// **Supported Parameter Types:** `int`, `double`, `uuid`, `string`
-class Router {
+base class Router {
   /// Public view of registered static routes (for debugging).
   Map<HttpMethod, Map<String, Handler>> get routes => _routes;
 
@@ -159,6 +159,7 @@ class Router {
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
   void dispatch(HttpRequest request) async {
+
     final spoofMethod = request.uri.queryParameters['_method'];
     HttpMethod method = _parseMethod(request.method);
 
@@ -322,7 +323,7 @@ class Router {
 }
 
 /// Basic route definition structure.
-class Route {
+base class Route {
   /// HTTP method.
   HttpMethod method;
 
@@ -343,7 +344,7 @@ class Route {
 ///
 /// Parameters are available via [Zone] values during request dispatch.
 /// Supports type-safe retrieval with generics.
-class RouteParams {
+base class RouteParams {
   /// Private zone key for storing route parameters.
   static final Object _key = Object();
 
@@ -370,7 +371,7 @@ class RouteParams {
 /// Internal representation of a compiled dynamic route.
 ///
 /// Contains regex pattern, parameter metadata, and execution pipeline.
-class _CompiledRoute {
+base class _CompiledRoute {
   const _CompiledRoute({required this.method, required this.regex, required this.paramNames, required this.paramTypes, required this.middleware, required this.handler});
 
   /// HTTP method this route matches.
@@ -393,7 +394,7 @@ class _CompiledRoute {
 }
 
 /// Internal wrapper for type coercion results.
-class _Coerce {
+base class _Coerce {
   const _Coerce(this.value);
 
   /// Successfully coerced value.

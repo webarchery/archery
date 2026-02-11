@@ -299,3 +299,14 @@ extension HttpRequestFormExtension on HttpRequest {
     return _formRequestCache[this]!;
   }
 }
+
+
+extension FirstOrFail on HttpRequest {
+  Future<dynamic> firstOrFail<T extends Model>({required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
+    return await Model.firstOrFail<T>(request: this, field: field, value: value, disk: disk);
+  }
+
+  Future<dynamic> findOrFail<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
+    return await Model.findOrFail<T>(request: this, id: id, disk: disk);
+  }
+}

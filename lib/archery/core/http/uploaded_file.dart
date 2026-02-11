@@ -32,7 +32,7 @@
 
 import 'package:archery/archery/archery.dart';
 
-class UploadedFile {
+base class UploadedFile {
   final String filename;
   final String contentType;
   final Future<Uint8List> _cachedBytes;

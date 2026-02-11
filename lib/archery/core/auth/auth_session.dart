@@ -300,6 +300,11 @@ void authRoutes(Router router) {
       final email = await form.input('email');
       final password = await form.input('password');
 
+      // Todo- form.validate(field as [.email, .phone, .name, .])
+      // or use a FormValidator.validate()
+      // opt 1 gives easy prototyping option
+      // add a method on FormRequest
+      // avoid extending Request, use buffered content and _request in FormRequest
       if (name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
         return request.redirectBack();
       }

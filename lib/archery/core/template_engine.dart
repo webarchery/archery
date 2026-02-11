@@ -31,7 +31,7 @@
 import 'package:archery/archery/archery.dart';
 
 /// Exception thrown by [TemplateEngine] during rendering.
-class TemplateEngineException implements Exception {
+base class TemplateEngineException implements Exception {
   String? message;
 
   TemplateEngineException(this.message);
@@ -54,7 +54,7 @@ class TemplateEngineException implements Exception {
 ///
 /// **Async Support:** render() and internal processing are now asynchronous
 /// to prevent blocking the event loop on file I/O.
-class TemplateEngine {
+base class TemplateEngine {
   /// Directory containing `.html` view templates.
   final String viewsDirectory;
 

@@ -55,7 +55,7 @@ export './core/container.dart'
 //***********************************
 export './core/provider.dart' show Provider, ProviderException;
 //***********************************
-export './core/application.dart' show ContainerOperations, AppStatus, App;
+export './core/application.dart' show ContainerOperations, AppStatus, App, GetConfig, GetLoggers, Boot, CurrentRequest;
 
 //***********************************
 export './core/config.dart' show ConfigRepository, AppConfig;

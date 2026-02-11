@@ -208,7 +208,7 @@ abstract class ServiceContainer {
 typedef FactoryFunction<T> = T Function(ServiceContainer container, [Map<String, dynamic>? options]);
 
 /// Exception thrown by [ServiceContainer] operations.
-class ServiceContainerException implements Exception {
+base class ServiceContainerException implements Exception {
   final Type type;
   final String? name;
   final String? message;
@@ -238,7 +238,7 @@ class ServiceContainerException implements Exception {
 /// Concrete implementation of [ServiceContainer].
 ///
 /// Use [Container.root] to create the root container.
-class Container implements ServiceContainer {
+base class Container implements ServiceContainer {
   final Container? _parent;
   final List<Future<void>> _ready = [];
   final Map<String, Object> _singletons = {};

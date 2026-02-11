@@ -57,7 +57,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.3.0";
+  static final String version = "1.3.1";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
@@ -113,122 +113,6 @@ class App {
     _bootedCallbacks.add(callback);
   }
 
-  /// Boots the application by initializing core services and providers.
-  ///
-  /// Sets up:
-  /// - Default [Router]
-  /// - [TemplateEngine] with views and public paths
-  /// - [StaticFilesServer]
-  /// - [Uuid] generator
-  /// - SQLite [Database] in `lib/src/storage/database.sqlite`
-  ///
-  /// Then boots all registered providers and triggers `onBooted` callbacks.
-  ///
-  /// Sets [status] to [AppStatus.ready] on success, or [AppStatus.error] on failure.
-  Future<void> boot() async {
-    status = AppStatus.booting;
-
-    final config = container.tryMake<AppConfig>();
-
-    // Default Router
-    // container.singleton<Router>(factory: (_,[_]) => Router(), eager: true);
-    final router = Router();
-    container.bindInstance<Router>(router);
-
-    // Default View Engine
-    // final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
-    // container.singleton<TemplateEngine>(factory: (_,[_]) => TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!), eager: true);
-
-    final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
-
-    final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!);
-
-    // Enable caching for performance
-    engine.shouldCache = true; // Enabled by default for performance recommendation
-    // engine.shouldCache = config?.get('view.cache', true) ?? true;
-
-    container.bindInstance<TemplateEngine>(engine);
-
-    // Default Static Files Server
-    final staticFilesServer = StaticFilesServer();
-    container.bindInstance<StaticFilesServer>(staticFilesServer);
-
-    // Default UUID Generator
-    final Uuid uuid = Uuid();
-
-    container.bindInstance<Uuid>(uuid);
-    // container.singleton<Uuid>(factory: (_,[_]) => Uuid(), eager: true);
-
-    // Default SQLite DB
-    final Directory dir = Directory("lib/src/storage");
-    final file = File("${dir.absolute.path}/database.sqlite");
-    final SQLiteDatabase database = await databaseFactoryFfi.openDatabase(
-      file.absolute.path,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: (db, version) async {
-          // Placeholder for database migrations
-        },
-      ),
-    );
-
-    container.singleton<SQLiteDatabase>(factory: (_, [_]) => database, eager: true);
-
-
-    try {
-      final postgresConnection = await PostgresDatabase.open(
-        Endpoint(
-          host: 'localhost',
-          database: 'archery',
-          username: 'sinna',
-          password: '',
-        ),
-        // The postgres server hosted locally doesn't have SSL by default. If you're
-        // accessing a postgres server over the Internet, the server should support
-        // SSL and you should swap out the mode with `SslMode.verifyFull`.
-        settings: ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      container.bindInstance<PostgresDatabase>(postgresConnection);
-
-      print(postgresConnection.info);
-    } catch(e,s) {
-      print(e);
-      print(s);
-    }
-
-
-
-    //
-    final s3Config = S3Config.fromMap(config?.get('env.aws', {}));
-    final s3Client = S3Client(s3Config, debug: true);
-    container.bindInstance<S3Client>(s3Client);
-
-    await container.initialize();
-
-    try {
-      // Boot all registered providers
-      for (final provider in _providers) {
-        try {
-          await provider.boot(container);
-        } catch (e, stack) {
-          throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
-        }
-      }
-
-      // Execute post-boot callbacks
-      for (final callback in _bootedCallbacks) {
-        callback();
-      }
-
-      status = AppStatus.ready;
-    } catch (e, stack) {
-      status = AppStatus.error;
-      print('[App Boot Error] $e\n$stack');
-      rethrow; // Optional: allow external handling
-    }
-  }
-
   /// Initiates graceful shutdown of the application.
   ///
   /// Currently logs shutdown message. Extend to close DB connections,
@@ -276,6 +160,99 @@ class App {
   }
 }
 
+extension Boot on App {
+  /// Boots the application by initializing core services and providers.
+  ///
+  /// Sets up:
+  /// - Default [Router]
+  /// - [TemplateEngine] with views and public paths
+  /// - [StaticFilesServer]
+  /// - [Uuid] generator
+  /// - SQLite [Database] in `lib/src/storage/database.sqlite`
+  ///
+  /// Then boots all registered providers and triggers `onBooted` callbacks.
+  ///
+  /// Sets [status] to [AppStatus.ready] on success, or [AppStatus.error] on failure.
+  Future<void> boot() async {
+    status = AppStatus.booting;
+
+    // Default Router
+    final router = Router();
+    container.bindInstance<Router>(router);
+
+    // Default View Engine
+    final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
+    final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!);
+
+    // Enable caching for performance
+    engine.shouldCache = true; // Enabled by default for performance recommendation
+    // engine.shouldCache = config?.get('view.cache', true) ?? true;
+    container.bindInstance<TemplateEngine>(engine);
+
+    // Default Static Files Server
+    final staticFilesServer = StaticFilesServer();
+    container.bindInstance<StaticFilesServer>(staticFilesServer);
+
+    // Default UUID Generator
+    final Uuid uuid = Uuid();
+    container.bindInstance<Uuid>(uuid);
+
+    // Default SQLite DB
+    final Directory dir = Directory("lib/src/storage");
+    final file = File("${dir.absolute.path}/database.sqlite");
+    final SQLiteDatabase sqliteDatabase = await databaseFactoryFfi.openDatabase(
+      file.absolute.path,
+      options: OpenDatabaseOptions(
+        version: 1,
+        onCreate: (db, version) async {
+          // Placeholder for database migrations
+        },
+      ),
+    );
+    container.singleton<SQLiteDatabase>(factory: (_, [_]) => sqliteDatabase, eager: true);
+
+    // Default Postgres DB
+    try {
+      final postgresConnection = await PostgresDatabase.open(
+        Endpoint(host: config.get('db.pgsql.host', ''), database: config.get('db.pgsql.database', ''), username: config.get('db.pgsql.username', ''), password: config.get('db.pgsql.password', '')),
+        // The postgres server hosted locally doesn't have SSL by default. If you're
+        // accessing a postgres server over the Internet, the server should support
+        // SSL and you should swap out the mode with `SslMode.verifyFull`.
+        settings: ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      container.bindInstance<PostgresDatabase>(postgresConnection);
+
+    } catch (e, s) {
+      App().archeryLogger.error("Postgres DB Init Error", {"origin": "App.boot()", "error": e.toString(), "stack": config.get('app.debug') != null && config.get('app.debug') == true ? s.toString() : ''});
+    }
+
+    await container.initialize();
+
+    try {
+      // Boot all registered providers
+      for (final provider in _providers) {
+        try {
+          await provider.boot(container);
+        } catch (e, stack) {
+          throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
+        }
+      }
+
+      // Execute post-boot callbacks
+      for (final callback in _bootedCallbacks) {
+        callback();
+      }
+
+      status = AppStatus.ready;
+    } catch (e, stack) {
+      status = AppStatus.error;
+      print('[App Boot Error] $e\n$stack');
+      rethrow; // Optional: allow external handling
+    }
+  }
+}
+
 /// Extension on [App] providing syntactic sugar for dependency resolution and binding.
 extension ContainerOperations on App {
   /// Resolves a registered instance of type [T].
@@ -313,4 +290,35 @@ extension ContainerOperations on App {
   void bindInstance<T>(T instance) {
     container.bindInstance<T>(instance);
   }
+}
+
+extension GetConfig on App {
+  AppConfig get config => container.make<AppConfig>();
+}
+
+extension GetLoggers on App {
+  Logger get archeryLogger => Logger(
+    transports: [config.get('app.debug') != null && config.get('app.debug') == true ? ConsoleTransport(formatJson: true) : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
+    context: {"logger": "Archery Framework Logger"},
+  );
+
+  /// Global Loggers for easy messaging
+  Logger get fileLogger => Logger(
+    transports: [LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
+    context: {"logger": "App().fileLogger"},
+  );
+
+  Logger get consoleLogger => Logger(transports: [ConsoleTransport(formatJson: true)], context: {"logger": "App().consoleLogger"});
+
+  Logger get consoleFileLogger => Logger(
+    transports: [
+      LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
+      ConsoleTransport(formatJson: true),
+    ],
+    context: {"logger": "App().consoleFileLogger"},
+  );
+}
+
+extension CurrentRequest on App {
+  HttpRequest get request => container.make<HttpRequest>();
 }

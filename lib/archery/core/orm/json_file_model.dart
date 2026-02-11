@@ -84,7 +84,7 @@ import 'package:archery/archery/archery.dart';
 /// ```
 abstract class JsonFileModel {
   /// Base directory for JSON model files.
-  static final String dir = "lib/src/storage/json_file_models/";
+  static final String _dir = "lib/src/storage/json_file_models/";
 
   /// Access to UUID generator from DI container.
   static Uuid get _uuid => App().make<Uuid>();
@@ -128,7 +128,7 @@ abstract class JsonFileModel {
 
   /// Persists [instance] to its JSON file (create or update).
   static Future<bool> _saveToFile<T extends Model>(T instance) async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     final allRecords = await _loadJsonFileRecords(file);
 
     if (instance.uuid == null) return false;
@@ -173,7 +173,7 @@ abstract class JsonFileModel {
   /// JsonFileModel.migrate<User>((json) => User.fromJson(json));
   /// ```
   static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
 
     if (!await file.exists()) await file.create(recursive: true);
 
@@ -192,7 +192,7 @@ abstract class JsonFileModel {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
 
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     if (!await file.exists()) return [];
 
     try {
@@ -209,7 +209,7 @@ abstract class JsonFileModel {
 
   /// Returns raw JSON records (no model instantiation).
   static Future<List<Map<String, dynamic>>> jsonIndex<T extends Model>() async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     if (!await file.exists()) return [];
 
     try {
@@ -396,7 +396,7 @@ abstract class JsonFileModel {
 
   /// Updates a single field by UUID.
   static Future<bool> update<T extends Model>({required dynamic id, required String field, required dynamic value}) async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     if (!await file.exists()) return false;
 
     try {
@@ -416,7 +416,7 @@ abstract class JsonFileModel {
 
   /// Deletes record by UUID.
   static Future<bool> delete<T extends Model>({required String uuid}) async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     if (!await file.exists()) return false;
 
     try {
@@ -457,7 +457,7 @@ abstract class JsonFileModel {
 
   /// Empties the table file.
   static Future<bool> truncate<T extends Model>() async {
-    final file = File("$dir/${_getTableName<T>()}.json");
+    final file = File("$_dir/${_getTableName<T>()}.json");
     if (await file.exists()) {
       await file.writeAsString('[]', flush: true);
       return true;

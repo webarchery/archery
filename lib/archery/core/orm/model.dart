@@ -91,7 +91,7 @@ abstract class Model {
   /// Default storage backend for all models.
   /// can be overridden per-class
   /// Can be overridden per-operation.
-  static const defaultDisk = DatabaseDisk.file;
+  static const defaultDisk = DatabaseDisk.sqlite;
   DatabaseDisk disk = defaultDisk;
 
   /// Serializes model data (excluding metadata).
@@ -112,22 +112,31 @@ abstract class Model {
 
     uuid = json['uuid'] as String?;
 
-
     if (json['created_at'] != null) {
       //  try here for DateTime.parse
       try {
-        createdAt = json['created_at'];
+        createdAt = DateTime.parse(json['created_at']);
       } catch (e) {
-        createdAt = null;
+        // Todo - more tests needed here to decide on created_at/updated_at formats
+        // Postgres returns a string which doesnt parse to date
+        // a string wont have datetime props and methods.
+        // considering a get createdAt =>
+        // first test seem to be passing... leaving for redundancy
+        // key your eye on datetime format behaviors from different dbs
+        //datetime might not be able to parse it!
+        createdAt = json['created_at'];
       }
     }
 
     if (json['updated_at'] != null) {
       //  try here for DateTime.parse
       try {
-        updatedAt = json['updated_at'];
+        // updatedAt = json['updated_at'];
+        updatedAt = DateTime.parse(json['updated_at']);
       } catch (e) {
-        updatedAt = null;
+        // Todo - more tests needed here to decide on created_at/updated_at formats
+        // Postgres returns a string which doesnt parse to date
+        updatedAt = json['updated_at'];
       }
     }
   }
@@ -184,8 +193,7 @@ abstract class Model {
         }
       case DatabaseDisk.pgsql:
         try {
-          return  await PostgresModel.save<T>(instance);
-
+          return await PostgresModel.save<T>(instance);
         } catch (e) {
           return false;
         }
@@ -209,7 +217,7 @@ abstract class Model {
         }
       case DatabaseDisk.s3:
         try {
-          return await S3JsonFileModel.delete<T>( uuid: instance.uuid!);
+          return await S3JsonFileModel.delete<T>(uuid: instance.uuid!);
         } catch (e) {
           return false;
         }
@@ -379,8 +387,57 @@ abstract class Model {
     }
   }
 
+  static Future<dynamic> findOrFail<T extends Model>({required HttpRequest request, required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
+    switch (disk) {
+      case DatabaseDisk.file:
+        try {
+          final model = await JsonFileModel.find<T>(uuid: id);
+          if (model != null) {
+            model.disk = .file;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.sqlite:
+        try {
+          final model = await SQLiteModel.find<T>(id: id);
+          if (model != null) {
+            model.disk = .sqlite;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.s3:
+        try {
+          final model = await S3JsonFileModel.find<T>(uuid: id);
+          if (model != null) {
+            model.disk = .s3;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          final model = await PostgresModel.find<T>(id: id);
+          if (model != null) {
+            model.disk = .pgsql;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+    }
+  }
+
   /// Finds first record where [field] matches [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async  {
+  static Future<T?> findBy<T extends Model>({required String field, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
       case DatabaseDisk.file:
         try {
@@ -409,7 +466,7 @@ abstract class Model {
     }
   }
 
-  static Future<T?> findByUUID<T extends Model>({required String uuid, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async  {
+  static Future<T?> findByUUID<T extends Model>({required String uuid, required dynamic value, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
       case DatabaseDisk.file:
         try {
@@ -536,6 +593,55 @@ abstract class Model {
           return null;
         } catch (e) {
           return null;
+        }
+    }
+  }
+
+  static Future<dynamic> firstOrFail<T extends Model>({required HttpRequest request, required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
+    switch (disk) {
+      case DatabaseDisk.file:
+        try {
+          final model = await JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .file;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.sqlite:
+        try {
+          final model = await SQLiteModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .sqlite;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.s3:
+        try {
+          final model = await S3JsonFileModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .s3;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
+        }
+      case DatabaseDisk.pgsql:
+        try {
+          final model = await PostgresModel.firstWhere<T>(field: field, value: value, comp: comp);
+          if (model != null) {
+            model.disk = .pgsql;
+            return model;
+          }
+          return request.notFound();
+        } catch (e) {
+          return request.notFound();
         }
     }
   }

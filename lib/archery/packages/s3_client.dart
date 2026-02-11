@@ -31,7 +31,7 @@
 
 import 'package:archery/archery/archery.dart';
 
-class S3Config {
+base class S3Config {
   final String key;
   final String secret;
   final String bucket;
@@ -45,7 +45,7 @@ class S3Config {
   }
 }
 
-class S3Client {
+base class S3Client {
   final S3Config config;
   final String _service = 's3';
   final bool debug;
@@ -160,7 +160,7 @@ class S3Client {
   }
 }
 
-class S3HttpResponse {
+base class S3HttpResponse {
   final int statusCode;
   final Uint8List body;
   final HttpHeaders headers;

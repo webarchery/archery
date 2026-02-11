@@ -1,0 +1,1 @@
+{"level":"ERROR","code":0,"timestamp":"2026-02-10T23:53:14.134273Z","message":"Postgres DB Init Error","context":{"logger":"Archery Framework Logger"},"metadata":{"origin":"App.boot()","error":"Severity.fatal 28000: role \"postgresd\" does not exist","stack":""}},

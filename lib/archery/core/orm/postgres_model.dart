@@ -52,30 +52,36 @@ abstract class PostgresModel {
 
   static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor, Map<String, String>? columnDefinitions}) async {
     _jsonConstructors[T] = constructor;
+    
+    try {
+      if (columnDefinitions != null && columnDefinitions.isNotEmpty) {
+        final tableName = _getTableName<T>();
+        final allColumns = {..._columnDefinitions, ...columnDefinitions};
 
-    if (columnDefinitions != null && columnDefinitions.isNotEmpty) {
-      final tableName = _getTableName<T>();
-      final allColumns = {..._columnDefinitions, ...columnDefinitions};
+        final columnsDef = allColumns.entries.map((e) => '${e.key} ${e.value}').join(', ');
 
-      final columnsDef = allColumns.entries.map((e) => '${e.key} ${e.value}').join(', ');
-
-      await _database.execute('''
+        await _database.execute('''
         CREATE TABLE IF NOT EXISTS $tableName (
           $columnsDef
         )
       ''');
 
-      // Performance indexes
-      await _database.execute('''
+        // Performance indexes
+        await _database.execute('''
         CREATE INDEX IF NOT EXISTS idx_${tableName}_uuid 
         ON $tableName (uuid)
       ''');
 
-      await _database.execute('''
+        await _database.execute('''
         CREATE INDEX IF NOT EXISTS idx_${tableName}_created_at 
         ON $tableName (created_at)
       ''');
+      }
+    }catch(e, s) {
+      App().archeryLogger.error("Migration Error", {"origin": "PostgresModel.migrate", "error": e.toString(), "stack": s.toString()});
     }
+
+    
   }
   static Future<List<Map<String, dynamic>>> jsonIndex<T extends Model>() async {
 
@@ -368,12 +374,6 @@ abstract class PostgresModel {
     return await find<T>(id: id) != null;
   }
 
-
-
-
-
-
-
   static Future<bool> truncate<T extends Model>() async {
     try {
       final tableName = _getTableName<T>();
@@ -384,7 +384,6 @@ abstract class PostgresModel {
       return false;
     }
   }
-
 
   static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson}) async {
 
