@@ -44,4 +44,3 @@
 - types safe Request/Route Model binding
 - s3 client provider
 - update landing pages
-- 

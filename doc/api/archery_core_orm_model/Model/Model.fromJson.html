@@ -72,22 +72,31 @@
 
   uuid = json[&#39;uuid&#39;] as String?;
 
-
   if (json[&#39;created_at&#39;] != null) {
     &#47;&#47;  try here for DateTime.parse
     try {
-      createdAt = json[&#39;created_at&#39;];
+      createdAt = DateTime.parse(json[&#39;created_at&#39;]);
     } catch (e) {
-      createdAt = null;
+      &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
+      &#47;&#47; Postgres returns a string which doesnt parse to date
+      &#47;&#47; a string wont have datetime props and methods.
+      &#47;&#47; considering a get createdAt =&gt;
+      &#47;&#47; first test seem to be passing... leaving for redundancy
+      &#47;&#47; key your eye on datetime format behaviors from different dbs
+      &#47;&#47;datetime might not be able to parse it!
+      createdAt = json[&#39;created_at&#39;];
     }
   }
 
   if (json[&#39;updated_at&#39;] != null) {
     &#47;&#47;  try here for DateTime.parse
     try {
-      updatedAt = json[&#39;updated_at&#39;];
+      &#47;&#47; updatedAt = json[&#39;updated_at&#39;];
+      updatedAt = DateTime.parse(json[&#39;updated_at&#39;]);
     } catch (e) {
-      updatedAt = null;
+      &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
+      &#47;&#47; Postgres returns a string which doesnt parse to date
+      updatedAt = json[&#39;updated_at&#39;];
     }
   }
 }</code></pre>
@@ -118,7 +127,7 @@
 <footer>
   <span class="no-break">
     archery
-      0.0.0-unknown
+      1.3.2
   </span>
   
 </footer>

@@ -78,6 +78,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void dispatch(HttpRequest request) async {
+
   final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
   HttpMethod method = _parseMethod(request.method);
 
@@ -157,7 +158,7 @@
 <footer>
   <span class="no-break">
     archery
-      0.0.0-unknown
+      1.3.2
   </span>
   
 </footer>

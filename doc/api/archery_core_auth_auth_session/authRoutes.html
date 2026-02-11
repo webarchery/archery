@@ -84,6 +84,11 @@
       final email = await form.input(&#39;email&#39;);
       final password = await form.input(&#39;password&#39;);
 
+      &#47;&#47; Todo- form.validate(field as [.email, .phone, .name, .])
+      &#47;&#47; or use a FormValidator.validate()
+      &#47;&#47; opt 1 gives easy prototyping option
+      &#47;&#47; add a method on FormRequest
+      &#47;&#47; avoid extending Request, use buffered content and _request in FormRequest
       if (name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
         return request.redirectBack();
       }
@@ -182,7 +187,7 @@
 <footer>
   <span class="no-break">
     archery
-      0.0.0-unknown
+      1.3.2
   </span>
   
 </footer>

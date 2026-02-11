@@ -72,7 +72,11 @@ and configuration management.</p>
         
   <dt>Available extensions</dt>
   <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="../archery_core_application/Boot.html">Boot</a></li>
       <li><a href="../archery_core_application/ContainerOperations.html">ContainerOperations</a></li>
+      <li><a href="../archery_core_application/CurrentRequest.html">CurrentRequest</a></li>
+      <li><a href="../archery_core_application/GetConfig.html">GetConfig</a></li>
+      <li><a href="../archery_core_application/GetLoggers.html">GetLoggers</a></li>
   </ul></dd>
         
 
@@ -99,6 +103,70 @@ and configuration management.</p>
       id="instance-properties">
     <h2>Properties</h2>
     <dl class="properties">
+        <dt id="archeryLogger" class="property">
+  <span class="name"><a href="../archery_core_application/GetLoggers/archeryLogger.html">archeryLogger</a></span>
+  <span class="signature">&#8594; <a href="../archery_core_logger/Logger-class.html">Logger</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/GetLoggers.html">GetLoggers</a> extension</span>
+      </p>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="config" class="property">
+  <span class="name"><a href="../archery_core_application/GetConfig/config.html">config</a></span>
+  <span class="signature">&#8594; <a href="../archery_core_config/AppConfig-class.html">AppConfig</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/GetConfig.html">GetConfig</a> extension</span>
+      </p>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="consoleFileLogger" class="property">
+  <span class="name"><a href="../archery_core_application/GetLoggers/consoleFileLogger.html">consoleFileLogger</a></span>
+  <span class="signature">&#8594; <a href="../archery_core_logger/Logger-class.html">Logger</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/GetLoggers.html">GetLoggers</a> extension</span>
+      </p>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="consoleLogger" class="property">
+  <span class="name"><a href="../archery_core_application/GetLoggers/consoleLogger.html">consoleLogger</a></span>
+  <span class="signature">&#8594; <a href="../archery_core_logger/Logger-class.html">Logger</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/GetLoggers.html">GetLoggers</a> extension</span>
+      </p>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
         <dt id="container" class="property">
   <span class="name"><a href="../archery_core_application/App/container.html">container</a></span>
   <span class="signature">&#8594; <a href="../archery_core_container/ServiceContainer-class.html">ServiceContainer</a></span>
@@ -111,6 +179,22 @@ and configuration management.</p>
 
 </dd>
 
+        <dt id="fileLogger" class="property">
+  <span class="name"><a href="../archery_core_application/GetLoggers/fileLogger.html">fileLogger</a></span>
+  <span class="signature">&#8594; <a href="../archery_core_logger/Logger-class.html">Logger</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/GetLoggers.html">GetLoggers</a> extension</span>
+      </p>
+  Global Loggers for easy messaging
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
@@ -120,6 +204,22 @@ and configuration management.</p>
 <dd class="inherited">
   The hash code for this object.
   <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="request" class="property">
+  <span class="name"><a href="../archery_core_application/CurrentRequest/request.html">request</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/CurrentRequest.html">CurrentRequest</a> extension</span>
+      </p>
+  
+  <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
 
@@ -191,13 +291,17 @@ and configuration management.</p>
 </dd>
 
         <dt id="boot" class="callable">
-  <span class="name"><a href="../archery_core_application/App/boot.html">boot</a></span><span class="signature">(<wbr>)
+  <span class="name"><a href="../archery_core_application/Boot/boot.html">boot</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_application/App-class.html">App</a>,
+        provided by the <a href="../archery_core_application/Boot.html">Boot</a> extension</span>
+      </p>
   Boots the application by initializing core services and providers.
   
 
@@ -481,7 +585,7 @@ and configuration management.</p>
 <footer>
   <span class="no-break">
     archery
-      0.0.0-unknown
+      1.3.2
   </span>
   
 </footer>
