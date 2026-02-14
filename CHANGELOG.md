@@ -44,3 +44,7 @@
 - types safe Request/Route Model binding
 - s3 client provider
 - update landing pages
+
+## 1.3.3
+- mixin for Model instance db operations
+- rm default pgsql init in App boot

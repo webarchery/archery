@@ -162,7 +162,7 @@ abstract class Model {
   Future<bool> delete({DatabaseDisk disk = Model.defaultDisk});
 
   /// Updates the current instance with new data.
-  Future<bool> update({DatabaseDisk disk = Model.defaultDisk});
+  Future<bool> update({required Map<String, dynamic> withJson, DatabaseDisk disk = Model.defaultDisk});
 
   // ──────────────────────────────────────────────────────────────────────
   // Static CRUD API (disk-agnostic)
@@ -773,4 +773,15 @@ abstract class Model {
         }
     }
   }
+}
+
+mixin InstanceDatabaseOps<T extends Model> on Model {
+  @override
+  Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<T>(instance: this as T, disk: disk ?? this.disk);
+
+  @override
+  Future<bool> delete({DatabaseDisk? disk}) async => await Model.deleteInstance<T>(instance: this as T, disk: disk ?? this.disk);
+
+  @override
+  Future<bool> update({required Map<String, dynamic> withJson, DatabaseDisk? disk}) async => await Model.updateInstance<T>(instance: this as T, withJson: withJson, disk: disk ?? this.disk);
 }

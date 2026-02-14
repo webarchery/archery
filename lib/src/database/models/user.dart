@@ -1,6 +1,6 @@
 import 'package:archery/archery/archery.dart';
 
-final class User extends Model {
+final class User extends Model with InstanceDatabaseOps<User> {
   late String name;
   late String email;
   String? password;
@@ -33,13 +33,4 @@ final class User extends Model {
   }
 
   static Map<String, String> columnDefinitions = {'name': 'TEXT NOT NULL', 'email': 'TEXT NOT NULL UNIQUE', 'password': 'TEXT'};
-
-  @override
-  Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<User>(instance: this, disk: disk ?? this.disk);
-
-  @override
-  Future<bool> delete({DatabaseDisk? disk}) async => await Model.deleteInstance<User>(instance: this, disk: disk ?? this.disk);
-
-  @override
-  Future<bool> update({DatabaseDisk? disk}) async => await Model.updateInstance<User>(instance: this, withJson: toMetaJson(), disk: disk ?? this.disk);
 }

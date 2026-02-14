@@ -212,20 +212,22 @@ extension Boot on App {
     container.singleton<SQLiteDatabase>(factory: (_, [_]) => sqliteDatabase, eager: true);
 
     // Default Postgres DB
-    try {
-      final postgresConnection = await PostgresDatabase.open(
-        Endpoint(host: config.get('db.pgsql.host', ''), database: config.get('db.pgsql.database', ''), username: config.get('db.pgsql.username', ''), password: config.get('db.pgsql.password', '')),
-        // The postgres server hosted locally doesn't have SSL by default. If you're
-        // accessing a postgres server over the Internet, the server should support
-        // SSL and you should swap out the mode with `SslMode.verifyFull`.
-        settings: ConnectionSettings(sslMode: SslMode.disable),
-      );
+    // Todo - uncomment to init postgres when you config is set
 
-      container.bindInstance<PostgresDatabase>(postgresConnection);
-
-    } catch (e, s) {
-      App().archeryLogger.error("Postgres DB Init Error", {"origin": "App.boot()", "error": e.toString(), "stack": config.get('app.debug') != null && config.get('app.debug') == true ? s.toString() : ''});
-    }
+    // try {
+    //   final postgresConnection = await PostgresDatabase.open(
+    //     Endpoint(host: config.get('db.pgsql.host', ''), database: config.get('db.pgsql.database', ''), username: config.get('db.pgsql.username', ''), password: config.get('db.pgsql.password', '')),
+    //     // The postgres server hosted locally doesn't have SSL by default. If you're
+    //     // accessing a postgres server over the Internet, the server should support
+    //     // SSL and you should swap out the mode with `SslMode.verifyFull`.
+    //     settings: ConnectionSettings(sslMode: SslMode.disable),
+    //   );
+    //
+    //   container.bindInstance<PostgresDatabase>(postgresConnection);
+    //
+    // } catch (e, s) {
+    //   App().archeryLogger.error("Postgres DB Init Error", {"origin": "App.boot()", "error": e.toString(), "stack": config.get('app.debug') != null && config.get('app.debug') == true ? s.toString() : ''});
+    // }
 
     await container.initialize();
 

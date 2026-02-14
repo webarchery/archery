@@ -186,10 +186,12 @@ Handles:
 
 ### ORM
 
-Two backends:
+Four backends:
 
 * **JsonFileModel** — fast prototyping
-* **SQLiteModel** — SQLite persistence (via `sqflite_common_ffi`)
+* **SQLiteModel**   — SQLite persistence (via `sqflite_common_ffi`)
+* **PostgresModel** — Postgres persistence (via `postgres`)
+* **S3JsonModel**   — S3 persistence (via `archery_s3_client`)
 
 Models implement:
 
@@ -223,8 +225,6 @@ Located in `archery/auth/auth_session.dart`:
 
 ## Example Features Included
 
-* Blog demo (`/blog`)
-* Todos demo (`/todos`) with full CRUD
 * Auth pages and dashboard
 * Welcome screen
 * Asset pipeline via `public/`
@@ -236,11 +236,9 @@ These examples double as documentation for how to structure your own app.
 ## Roadmap
 
 * CLI: `archery new <app>`
-* View macros & control structures
 * ORM relations
 * Mailer
 * Queue workers
-* Testing utilities
 
 ---
 

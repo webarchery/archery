@@ -1,14 +1,11 @@
 import 'package:archery/archery/archery.dart';
 import 'package:archery/archery/core/http/middleware/cors_middleware.dart';
-import 'package:archery/src/database/migrations.dart';
-import 'package:archery/src/http/routes/api.dart';
-import 'package:archery/src/http/routes/web.dart';
+
 
 Future<void> main(List<String> args) async {
 
   // init application
   final app = App();
-  await App().container.initialize();
   app.setKeys();
 
   // parse config folder and attach to container
@@ -16,30 +13,8 @@ Future<void> main(List<String> args) async {
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
 
-  app.registerGroup("globals", [
-    // uncomment when you have s3 keys in config
-    // S3ClientProvider(),
-  ]);
-
-
   await app.boot().then((_) async {
 
-
-    /// db migrations
-    /// [Model.defaultDisk] is set to .sqlite
-    // run these when you are sure you have them in place
-    // await migrateS3JsonFileModels();
-    // await migratePostgresModels();
-
-    // these files are auto-created for you
-    // lib/src/storage/json_file_models
-    await migrateJsonFileModels();
-    // lib/src/storage/database.sqlite
-    await migrateSQLiteModels();
-
-    // make sure there's a bag for sessions
-    app.container.bindInstance<List<Session>>([]);
-    app.container.bindInstance<List<AuthSession>>([]);
 
   });
 
@@ -50,10 +25,10 @@ Future<void> main(List<String> args) async {
 
   // routes
   final router = app.make<Router>();
-  authRoutes(router);
-  webRoutes(router);
-  apiRoutes(router);
 
+  router.get('/', (request) async {
+    return request.text("Hello world!");
+  });
   // pass router to kernel
   final kernel = AppKernel(
     router: router,
@@ -84,7 +59,7 @@ Future<void> main(List<String> args) async {
     print("Error booting server: $e\n$stack");
     App().archeryLogger.error("Error booting server", {"error": e.toString(), "stack": stack.toString()});
     await app.shutdown().then(
-      (_) => print("App has shut down from a server initialization error"),
+          (_) => print("App has shut down from a server initialization error"),
     );
   }
 }

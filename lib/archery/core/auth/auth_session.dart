@@ -35,7 +35,7 @@ import 'package:archery/archery/archery.dart';
 typedef Auth = AuthSession;
 typedef Guest = GuestSession;
 
-class Session extends Model {
+class Session extends Model with InstanceDatabaseOps<Session> {
   late String token;
   late DateTime lastActivity = DateTime.now();
 
@@ -115,14 +115,8 @@ class Session extends Model {
     return {"id": id, "uuid": uuid, "token": token, 'last_activity': lastActivity.toIso8601String(), "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
   }
 
-  @override
-  Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<Session>(instance: this, disk: disk ?? this.disk);
 
-  @override
-  Future<bool> delete({DatabaseDisk? disk}) async => await Model.deleteInstance<Session>(instance: this, disk: disk ?? this.disk);
 
-  @override
-  Future<bool> update({DatabaseDisk? disk}) async => await Model.updateInstance<Session>(instance: this, disk: disk ?? this.disk, withJson: toMetaJson());
 }
 class GuestSession {
   static Future<dynamic> middleware(HttpRequest request, void Function() next) async {
@@ -142,7 +136,7 @@ class GuestSession {
 }
 
 
-class AuthSession extends Model {
+class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
   late String email;
   late String token;
   late DateTime lastActivity = DateTime.now();
@@ -267,15 +261,6 @@ class AuthSession extends Model {
     session.lastActivity = DateTime.now();
     return next();
   }
-
-  @override
-  Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<AuthSession>(instance: this, disk: disk ?? this.disk);
-
-  @override
-  Future<bool> delete({DatabaseDisk? disk}) async => await Model.deleteInstance<AuthSession>(instance: this, disk: disk ?? this.disk);
-
-  @override
-  Future<bool> update({DatabaseDisk? disk}) async => await Model.updateInstance<AuthSession>(instance: this, disk: disk ?? this.disk, withJson: toMetaJson());
 
   static bool _validateSession(AuthSession session) {
     final currentTime = DateTime.now();
