@@ -118,20 +118,22 @@
   container.singleton&lt;SQLiteDatabase&gt;(factory: (_, [_]) =&gt; sqliteDatabase, eager: true);
 
   &#47;&#47; Default Postgres DB
-  try {
-    final postgresConnection = await PostgresDatabase.open(
-      Endpoint(host: config.get(&#39;db.pgsql.host&#39;, &#39;&#39;), database: config.get(&#39;db.pgsql.database&#39;, &#39;&#39;), username: config.get(&#39;db.pgsql.username&#39;, &#39;&#39;), password: config.get(&#39;db.pgsql.password&#39;, &#39;&#39;)),
-      &#47;&#47; The postgres server hosted locally doesn&#39;t have SSL by default. If you&#39;re
-      &#47;&#47; accessing a postgres server over the Internet, the server should support
-      &#47;&#47; SSL and you should swap out the mode with `SslMode.verifyFull`.
-      settings: ConnectionSettings(sslMode: SslMode.disable),
-    );
+  &#47;&#47; Todo - uncomment to init postgres when you config is set
 
-    container.bindInstance&lt;PostgresDatabase&gt;(postgresConnection);
-
-  } catch (e, s) {
-    App().archeryLogger.error(&quot;Postgres DB Init Error&quot;, {&quot;origin&quot;: &quot;App.boot()&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: config.get(&#39;app.debug&#39;) != null &amp;&amp; config.get(&#39;app.debug&#39;) == true ? s.toString() : &#39;&#39;});
-  }
+  &#47;&#47; try {
+  &#47;&#47;   final postgresConnection = await PostgresDatabase.open(
+  &#47;&#47;     Endpoint(host: config.get(&#39;db.pgsql.host&#39;, &#39;&#39;), database: config.get(&#39;db.pgsql.database&#39;, &#39;&#39;), username: config.get(&#39;db.pgsql.username&#39;, &#39;&#39;), password: config.get(&#39;db.pgsql.password&#39;, &#39;&#39;)),
+  &#47;&#47;     &#47;&#47; The postgres server hosted locally doesn&#39;t have SSL by default. If you&#39;re
+  &#47;&#47;     &#47;&#47; accessing a postgres server over the Internet, the server should support
+  &#47;&#47;     &#47;&#47; SSL and you should swap out the mode with `SslMode.verifyFull`.
+  &#47;&#47;     settings: ConnectionSettings(sslMode: SslMode.disable),
+  &#47;&#47;   );
+  &#47;&#47;
+  &#47;&#47;   container.bindInstance&lt;PostgresDatabase&gt;(postgresConnection);
+  &#47;&#47;
+  &#47;&#47; } catch (e, s) {
+  &#47;&#47;   App().archeryLogger.error(&quot;Postgres DB Init Error&quot;, {&quot;origin&quot;: &quot;App.boot()&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: config.get(&#39;app.debug&#39;) != null &amp;&amp; config.get(&#39;app.debug&#39;) == true ? s.toString() : &#39;&#39;});
+  &#47;&#47; }
 
   await container.initialize();
 
@@ -184,7 +186,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.2
+      1.3.3
   </span>
   
 </footer>

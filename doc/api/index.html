@@ -186,10 +186,12 @@ await app.boot();
 <li>Multipart forms + file uploads (<code>UploadedFile</code>)</li>
 </ul>
 <h3 id="orm">ORM</h3>
-<p>Two backends:</p>
+<p>Four backends:</p>
 <ul>
 <li><strong>JsonFileModel</strong> — fast prototyping</li>
-<li><strong>SQLiteModel</strong> — SQLite persistence (via <code>sqflite_common_ffi</code>)</li>
+<li><strong>SQLiteModel</strong>   — SQLite persistence (via <code>sqflite_common_ffi</code>)</li>
+<li><strong>PostgresModel</strong> — Postgres persistence (via <code>postgres</code>)</li>
+<li><strong>S3JsonModel</strong>   — S3 persistence (via <code>archery_s3_client</code>)</li>
 </ul>
 <p>Models implement:</p>
 <pre class="language-dart"><code class="language-dart">static fromJson(Map json)
@@ -230,8 +232,6 @@ Map&lt;String, String&gt; columnDefinitions
 <hr>
 <h2 id="example-features-included">Example Features Included</h2>
 <ul>
-<li>Blog demo (<code>/blog</code>)</li>
-<li>Todos demo (<code>/todos</code>) with full CRUD</li>
 <li>Auth pages and dashboard</li>
 <li>Welcome screen</li>
 <li>Asset pipeline via <code>public/</code></li>
@@ -241,11 +241,9 @@ Map&lt;String, String&gt; columnDefinitions
 <h2 id="roadmap">Roadmap</h2>
 <ul>
 <li>CLI: <code>archery new &lt;app&gt;</code></li>
-<li>View macros &amp; control structures</li>
 <li>ORM relations</li>
 <li>Mailer</li>
 <li>Queue workers</li>
-<li>Testing utilities</li>
 </ul>
 <hr>
 <h2 id="license">License</h2>
@@ -475,7 +473,7 @@ See LICENSE file for details.</p>
 <footer>
   <span class="no-break">
     archery
-      1.3.2
+      1.3.3
   </span>
   
 </footer>

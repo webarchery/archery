@@ -30,7 +30,6 @@
 // https://webarchery.dev
 
 import 'package:archery/archery/archery.dart';
-import 'package:postgres/postgres.dart';
 
 /// Enum representing the lifecycle status of the [App] instance.
 enum AppStatus {
