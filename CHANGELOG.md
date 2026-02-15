@@ -50,4 +50,4 @@
 - rm default pgsql init in App boot
 
 ## 1.3.4
-- 
+- HasOne, HasMany, BelongsTo on Model
