@@ -75,7 +75,8 @@ enum DatabaseDisk {
 ///   };
 /// }
 /// ```
-abstract class Model {
+abstract class Model
+{
   /// Primary key (auto-incremented by backend).
   int? id;
 
@@ -163,6 +164,26 @@ abstract class Model {
 
   /// Updates the current instance with new data.
   Future<bool> update({required Map<String, dynamic> withJson, DatabaseDisk disk = Model.defaultDisk});
+
+  static String _getTableName<T>() {
+    final typeName = T.toString();
+    final snakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    return '${snakeCase.toLowerCase()}s';
+  }
+
+  String _getInstanceTableName() {
+    final typeName = runtimeType.toString();
+    final snakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    return '${snakeCase.toLowerCase()}s';
+  }
+
+
+
+
+
+
+
+
 
   // ──────────────────────────────────────────────────────────────────────
   // Static CRUD API (disk-agnostic)
@@ -784,4 +805,86 @@ mixin InstanceDatabaseOps<T extends Model> on Model {
 
   @override
   Future<bool> update({required Map<String, dynamic> withJson, DatabaseDisk? disk}) async => await Model.updateInstance<T>(instance: this as T, withJson: withJson, disk: disk ?? this.disk);
+}
+
+extension Relationships on Model {
+  Future<T?> hasOne<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
+
+    try {
+      final tableName = _getInstanceTableName();
+      final foreignTableSingular = tableName.substring(0, tableName.length - 1);
+      final data = toMetaJson();
+
+      switch (disk) {
+        case DatabaseDisk.file:
+        case DatabaseDisk.s3:
+          final foreignUuidKey = "${foreignTableSingular}_uuid";
+          return Model.firstWhere<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
+
+        case DatabaseDisk.sqlite:
+        case DatabaseDisk.pgsql:
+          final foreignIdKey = "${foreignTableSingular}_id";
+          return Model.firstWhere<T>(field: foreignIdKey, value: data['id'], disk: disk);
+      }
+
+    }catch(e) {
+      return null;
+    }
+
+  }
+
+  Future<List<T>> hasMany<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
+
+    try {
+      final tableName = _getInstanceTableName();
+      final foreignTableSingular = tableName.substring(0, tableName.length - 1);
+      final data = toMetaJson();
+
+      switch (disk) {
+        case DatabaseDisk.file:
+        case DatabaseDisk.s3:
+          final foreignUuidKey = "${foreignTableSingular}_uuid";
+          return Model.where<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
+
+        case DatabaseDisk.sqlite:
+        case DatabaseDisk.pgsql:
+          final foreignIdKey = "${foreignTableSingular}_id";
+          return Model.where<T>(field: foreignIdKey, value: data['id'], disk: disk);
+      }
+
+    }catch(e) {
+      return [];
+    }
+
+  }
+
+  Future<T?> belongsTo<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
+    try {
+      final tableName = Model._getTableName<T>();
+      final foreignTableSingular = tableName.substring(0, tableName.length - 1);
+      final data = toMetaJson();
+
+      switch (disk) {
+        case DatabaseDisk.file:
+        case DatabaseDisk.s3:
+          final foreignUuidKey = "${foreignTableSingular}_uuid";
+          final val = data[foreignUuidKey];
+          if (val == null) return null;
+          return Model.firstWhere<T>(field: "uuid", value: val, disk: disk);
+
+        case DatabaseDisk.sqlite:
+        case DatabaseDisk.pgsql:
+          final foreignIdKey = "${foreignTableSingular}_id";
+          final val = data[foreignIdKey];
+          if (val == null) return null;
+          return Model.firstWhere<T>(field: "id", value: val, disk: disk);
+      }
+
+    }catch(e) {
+      return null;
+    }
+
+  }
+
+
 }

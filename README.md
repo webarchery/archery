@@ -236,7 +236,6 @@ These examples double as documentation for how to structure your own app.
 ## Roadmap
 
 * CLI: `archery new <app>`
-* ORM relations
 * Mailer
 * Queue workers
 

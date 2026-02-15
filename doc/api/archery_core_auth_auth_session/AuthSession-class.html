@@ -78,6 +78,10 @@
 
 
         
+  <dt>Available extensions</dt>
+  <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="../archery_core_orm_model/Relationships.html">Relationships</a></li>
+  </ul></dd>
         
 
 
@@ -249,6 +253,23 @@
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="belongsTo" class="callable">
+  <span class="name"><a href="../archery_core_orm_model/Relationships/belongsTo.html">belongsTo</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsTo-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
         <dt id="delete" class="callable inherited">
   <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/delete.html">delete</a></span><span class="signature">(<wbr>{<span class="parameter" id="delete-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
@@ -259,6 +280,40 @@
 <dd class="inherited">
   Deletes the current instance.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hasMany" class="callable">
+  <span class="name"><a href="../archery_core_orm_model/Relationships/hasMany.html">hasMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
+        <dt id="hasOne" class="callable">
+  <span class="name"><a href="../archery_core_orm_model/Relationships/hasOne.html">hasOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+      </p>
+  
+  
 
 </dd>
 
@@ -477,7 +532,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.3
+      1.3.4
   </span>
   
 </footer>

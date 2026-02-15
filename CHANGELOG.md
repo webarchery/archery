@@ -48,3 +48,6 @@
 ## 1.3.3
 - mixin for Model instance db operations
 - rm default pgsql init in App boot
+
+## 1.3.4
+- 
