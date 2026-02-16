@@ -73,32 +73,34 @@ base class AppKernel {
   ///   server.listen(kernel.handle);
   /// });
   /// ```
-  void handle(HttpRequest request) async {
-    await Session.init(request);
-
+  Future<void> handle(HttpRequest request) async {
 
     // Buffer the request body to prevent "stream has already been listened to" errors.
     // This allows multiple components (CSRF, Logging, Controllers) to read the body.
-    try {
-      await request.form().buffer();
-    } catch (e) {
-      print("Error buffering request body: $e");
+    // Only buffer body if content exists to prevent stream issues
+    // For GET/HEAD requests with no body, we skip buffering to improve performance
+    if (request.contentLength > 0) {
+      try {
+        await request.form().buffer();
+      } catch (e) {
+        App().archeryLogger.error("Error buffering request body", {"origin": "Kernel.handle()", "error": e.toString()});
+      }
     }
 
-    _runMiddleware(request, 0);
+    await _runMiddleware(request, 0);
   }
 
   /// Recursively executes the global middleware chain.
   ///
   /// - If more middleware exists: run current and pass `next`
   /// - If at end: dispatch to [router]
-  void _runMiddleware(HttpRequest request, int index) {
+  Future<void> _runMiddleware(HttpRequest request, int index) async {
     if (index < middleware.length) {
       // Call current middleware with `next` callback
       middleware[index](request, () => _runMiddleware(request, index + 1));
     } else {
       // All middleware passed → route the request
-      router.dispatch(request);
+      await router.dispatch(request);
     }
   }
 }

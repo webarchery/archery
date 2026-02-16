@@ -53,6 +53,17 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Relationship helpers for Archery ORM models.</p>
+<p>Archery infers foreign keys based on the current model’s table name:</p>
+<ul>
+<li>File/S3 disks: uses UUID-based keys like <code>&lt;model&gt;_uuid</code></li>
+<li>SQLite/Postgres disks: uses integer keys like <code>&lt;model&gt;_id</code></li>
+</ul>
+<p>Example:
+<code>Post.hasMany&lt;Comment&gt;()</code> will query comments using <code>post_id</code> (SQL) or
+<code>post_uuid</code> (file/S3), depending on the disk.</p>
+</section>
 
     <section>
       <dl class="dl-horizontal">

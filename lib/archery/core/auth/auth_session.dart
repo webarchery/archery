@@ -32,9 +32,23 @@
 
 import 'package:archery/archery/archery.dart';
 
+/// Alias for [AuthSession].
+///
+/// This allows concise usage at call sites: `Auth.user(request)`, `Auth.check(request)`.
 typedef Auth = AuthSession;
+
+/// Alias for [GuestSession].
+///
+/// This is typically used as a middleware guard for pages like login/register
+/// (redirect authenticated users away from guest-only pages).
 typedef Guest = GuestSession;
 
+
+/// Guest session record used for unauthenticated visitors.
+///
+/// Archery uses this model to track a visitor session token (stored in the
+/// `archery_guest_session` cookie) and last activity timestamp. This guest
+/// session is also used as the binding point for CSRF token association.
 class Session extends Model with InstanceDatabaseOps<Session> {
   late String token;
   late DateTime lastActivity = DateTime.now();
@@ -118,24 +132,35 @@ class Session extends Model with InstanceDatabaseOps<Session> {
 
 
 }
+
+/// Middleware guard for routes intended only for *guests* (unauthenticated users).
+///
+/// If an auth session exists for the current request, the request is redirected
+/// to the dashboard. Otherwise the request continues.
 class GuestSession {
-  static Future<dynamic> middleware(HttpRequest request, void Function() next) async {
+  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
     final authSessions = App().tryMake<List<AuthSession>>();
 
     if (cookie == null || authSessions == null || authSessions.isEmpty) {
-      return next();
+      await next();
+      return;
     }
 
     final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
 
     if (session != null) return request.redirectToDashboard();
 
-    return next();
+    await next();
   }
 }
 
-
+/// Authenticated session record.
+///
+/// This model backs Archery's session-based authentication. A successful login
+/// creates an in-memory session entry and persists a record keyed by email/token.
+/// The request is considered authenticated when its `archery_session` cookie
+/// matches an active auth session and the session is still valid.
 class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
   late String email;
   late String token;
@@ -241,7 +266,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     }
   }
 
-  static Future<dynamic> middleware(HttpRequest request, void Function() next) async {
+  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
     final authSessions = App().tryMake<List<AuthSession>>();
 
@@ -259,7 +284,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     }
 
     session.lastActivity = DateTime.now();
-    return next();
+    await next();
   }
 
   static bool _validateSession(AuthSession session) {
@@ -268,6 +293,18 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     return difference.inHours < 1;
   }
 }
+
+
+/// Registers Archery's built-in authentication routes onto the provided [router].
+///
+/// Routes include:
+/// - `GET  /login` (guest-only)
+/// - `POST /login`
+/// - `GET  /register` (guest-only)
+/// - `POST /register`
+///
+/// These routes assume the bundled auth views exist (e.g. `auth.login`, `auth.register`)
+/// and that the `User` model is available for persistence.
 void authRoutes(Router router) {
 
   router.get('/login', middleware: [Guest.middleware], (request) async {

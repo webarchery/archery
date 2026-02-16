@@ -796,6 +796,12 @@ abstract class Model
   }
 }
 
+
+/// Instance-level persistence helpers for [Model] types.
+///
+/// This mixin forwards instance operations (`save`, `update`, `delete`) to the
+/// static Archery ORM functions while respecting the model's configured [disk]
+/// (or an explicitly provided disk override).
 mixin InstanceDatabaseOps<T extends Model> on Model {
   @override
   Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<T>(instance: this as T, disk: disk ?? this.disk);
@@ -807,6 +813,15 @@ mixin InstanceDatabaseOps<T extends Model> on Model {
   Future<bool> update({required Map<String, dynamic> withJson, DatabaseDisk? disk}) async => await Model.updateInstance<T>(instance: this as T, withJson: withJson, disk: disk ?? this.disk);
 }
 
+/// Relationship helpers for Archery ORM models.
+///
+/// Archery infers foreign keys based on the current model’s table name:
+/// - File/S3 disks: uses UUID-based keys like `<model>_uuid`
+/// - SQLite/Postgres disks: uses integer keys like `<model>_id`
+///
+/// Example:
+/// `Post.hasMany<Comment>()` will query comments using `post_id` (SQL) or
+/// `post_uuid` (file/S3), depending on the disk.
 extension Relationships on Model {
   Future<T?> hasOne<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
 

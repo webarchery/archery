@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the middleware method from the GuestSession class, for the Dart programming language.">
-  <title>middleware method - GuestSession class - auth_session library - Dart API</title>
+  <meta name="description" content="API docs for the middleware method from the StartSession class, for the Dart programming language.">
+  <title>middleware method - StartSession class - session_middleware library - Dart API</title>
 
 
   
@@ -25,8 +25,8 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">archery</a></li>
-    <li><a href="../../archery_core_auth_auth_session/">archery&#47;core&#47;auth&#47;auth_session.dart</a></li>
-    <li><a href="../../archery_core_auth_auth_session/GuestSession-class.html">GuestSession</a></li>
+    <li><a href="../../archery_core_http_middleware_session_middleware/">archery&#47;core&#47;http&#47;middleware&#47;session_middleware.dart</a></li>
+    <li><a href="../../archery_core_http_middleware_session_middleware/StartSession-class.html">StartSession</a></li>
     <li class="self-crumb">middleware static method</li>
   </ol>
   <div class="self-name">middleware</div>
@@ -46,7 +46,7 @@
 <div
     id="dartdoc-main-content"
     class="main-content"
-    data-above-sidebar="archery_core_auth_auth_session&#47;GuestSession-class-sidebar.html"
+    data-above-sidebar="archery_core_http_middleware_session_middleware&#47;StartSession-class-sidebar.html"
     data-below-sidebar="">
     <div>
 <h1><span class="kind-method">middleware</span> static method 
@@ -69,18 +69,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
-  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
-  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
-
-  if (cookie == null || authSessions == null || authSessions.isEmpty) {
-    await next();
-    return;
-  }
-
-  final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
-
-  if (session != null) return request.redirectToDashboard();
-
+  await Session.init(request);
   await next();
 }</code></pre>
 </section>
@@ -96,12 +85,12 @@
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">archery</a></li>
-    <li><a href="../../archery_core_auth_auth_session/">auth_session</a></li>
-    <li><a href="../../archery_core_auth_auth_session/GuestSession-class.html">GuestSession</a></li>
+    <li><a href="../../archery_core_http_middleware_session_middleware/">session_middleware</a></li>
+    <li><a href="../../archery_core_http_middleware_session_middleware/StartSession-class.html">StartSession</a></li>
     <li class="self-crumb">middleware static method</li>
 </ol>
 
-    <h5>GuestSession class</h5>
+    <h5>StartSession class</h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">

@@ -44,206 +44,292 @@
       
 <section class="desc markdown">
   <hr>
-<h1 id="archery---a-full-stack-web-framework-for-dart">Archery - A Full-Stack Web Framework for Dart</h1>
-<p>Laravel-inspired developer flow. Dart-native performance.<br>
-A readable, minimal, batteries-included backend framework for <strong>Dart 3</strong>.</p>
-<hr>
-<h2 id="why-archery">Why Archery</h2>
-<p>Archery reimagines backend development in Dart with a small set of predictable building blocks:</p>
+<h1 id="archery">Archery</h1>
+<p>A Laravel-inspired, Dart-native web framework built directly on <code>dart:io</code>.</p>
+<p>Archery is a <strong>stable alpha / early-production framework</strong> focused on clarity, explicit architecture, and batteries-included fundamentals:</p>
 <ul>
-<li>Predictable – explicit, type‑safe APIs. No hidden magic.</li>
-<li>Minimal – keep the surface area tiny; build only what’s needed.</li>
-<li>Composable – IoC container + providers let features snap together.</li>
-<li>Fast – built directly on dart:io for zero overhead</li>
+<li>IoC container</li>
+<li>Provider-based lifecycle</li>
+<li>HTTP kernel + middleware pipeline</li>
+<li>Router with groups and typed parameters</li>
+<li>Blade-style templating</li>
+<li>Multi-driver ORM (JSON, SQLite, Postgres, S3)</li>
+<li>Session-based authentication</li>
+<li>CSRF protection</li>
+<li>Static file serving</li>
+</ul>
+<p>Archery is suitable for real deployments, and is still actively hardening and evolving toward a 2.0 production-focused milestone.</p>
+<hr>
+<h2 id="philosophy">Philosophy</h2>
+<p>Archery aims to be:</p>
+<ul>
+<li><strong>Explicit over magical</strong></li>
+<li><strong>Framework, not micro-router</strong></li>
+<li><strong>Dart-native</strong></li>
+<li><strong>Readable and hackable</strong></li>
+<li><strong>Opinionated but small</strong></li>
+</ul>
+<p>It does not wrap another server framework. It is built directly on <code>dart:io</code>.</p>
+<hr>
+<h1 id="architecture-overview">Architecture Overview</h1>
+<p>Archery follows a layered request lifecycle:</p>
+<pre class="language-dart"><code>Incoming Request
+   ↓
+dart:io HTTP Server
+   ↓
+HTTP Kernel
+   ↓
+Middleware Pipeline
+   ↓
+Router
+   ↓
+Controller
+   ↓
+Response
+</code></pre>
+<p>Core architectural components:</p>
+<ul>
+<li><strong>Application</strong> – central orchestrator</li>
+<li><strong>Service Providers</strong> – register and boot services</li>
+<li><strong>IoC Container</strong> – dependency resolution</li>
+<li><strong>HTTP Kernel</strong> – request handling entry point</li>
+<li><strong>Middleware</strong> – request/response pipeline</li>
+<li><strong>Router</strong> – route matching and dispatch</li>
+<li><strong>Controllers</strong> – application logic</li>
+<li><strong>Models</strong> – ORM-backed data layer</li>
+<li><strong>Views</strong> – templated HTML rendering</li>
 </ul>
 <hr>
-<h2 id="features">Features</h2>
+<h1 id="core-features">Core Features</h1>
+<h2 id="http-layer">HTTP Layer</h2>
 <ul>
-<li><strong>IoC Container</strong> - simple, predictable dependency resolution</li>
-<li><strong>HTTP Kernel &amp; Router</strong> - controllers, middleware, groups, typed params</li>
-<li><strong>HTML Templating Engine</strong> - Blade-style includes &amp; layouts</li>
-<li><strong>ORM (JSON + SQLite)</strong> - migrations, models, CRUD helpers</li>
-<li><strong>Auth System</strong> - login, register, sessions, middleware</li>
-<li><strong>Static File Server</strong> - safe MIME mapping, caching, SPA fallback</li>
-<li><strong>Config Loader</strong> - JSON configs with dot-notation access</li>
-<li><strong>Example App</strong> - routes, controllers, auth views, blog, todos</li>
+<li>Route definitions by method</li>
+<li>Route groups</li>
+<li>Middleware chaining</li>
+<li>Typed route parameters</li>
+<li>Static file serving</li>
+<li>CORS middleware</li>
 </ul>
-<p>Archery aims to stay small, explicit, and easy to read, without sacrificing the comforts of a real framework.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">router.get('/users/{id:int}', (req) async {
+  final id = RouteParam.get&lt;int&gt;('id');
+  return Response.json({'id': id});
+});
+</code></pre>
 <hr>
-<h2 id="project-structure">Project Structure</h2>
-<pre class="language-dart"><code>lib/
-    archery/                            # Framework core
-        core/
-            application.dart            # App lifecycle &amp; provider registry
-            container.dart              # ServiceContainer (DI)
-            config.dart                 # JSON config loader
-            kernel.dart                 # HTTP kernel
-            provider.dart               # Provider base class
-            template_engine.dart        # HTML templating engine
-            static_files_server.dart
-    
-            http/
-              router.dart               # Routes, groups, params, middleware
-              body_parser.dart          # Form-data, URL-encoded, JSON, file uploads
-              extensions.dart           # request.view(), request.json(), redirects
+<h2 id="service-providers--ioc-container">Service Providers &amp; IoC Container</h2>
+<p>Archery uses a provider model similar to Laravel:</p>
+<pre class="language-dart"><code class="language-dart">class SomeServiceProvider extends Provider {
+  @override
+  void register() {
+    container.bind&lt;SomeService&gt;((c) =&gt; SomeService());
+  }
 
-            orm/
-              model.dart                # Base Model API
-              json_file_model.dart
-              sqlite_model.dart
-              hasher.dart
-
-            auth/
-              auth_session.dart         # Sessions, login/logout, auth middleware
-              
-    src/                                # project source code
-        config/                         # app.json, server.json
-        database/                       # User model + migrations
-        http/
-            routes/                     # web.dart, api.dart
-            controllers/
-            views/                      # HTML templates
-            public/                     # css/js/img
-        apps/
-            todos.dart                  # Todo model + routes
-
-</code></pre>
-<h2 id="getting-started">Getting Started</h2>
-<h3 id="1-install-dependencies">1. Install dependencies</h3>
-<pre class="language-bash"><code class="language-bash">git clone https://github.com/webarchery/archery
-cd archery
-dart pub get
-</code></pre>
-<h3 id="2-run-the-server">2. Run the server</h3>
-<pre class="language-bash"><code class="language-bash">dart run bin/server.dart
-</code></pre>
-<p>Default server config lives in <code>lib/src/config/server.json</code>:</p>
-<pre class="language-json"><code class="language-json">{
-  "domain": "localhost",
-  "port": 5501,
-  "compress": true
+  @override
+  void boot() {
+    // Runs after all providers are registered
+  }
 }
 </code></pre>
-<p>Visit your app at:</p>
-<p><strong>localhost port 5501</strong></p>
-<h3 id="3-optional-enable-live-reload">3. (Optional) Enable live reload</h3>
-<p>Install dartmon_cli for reloading server</p>
-<pre class="language-bash"><code class="language-bash">dart pub global activate dartmon_cli
+<p>The container supports dependency resolution across the framework.</p>
+<hr>
+<h2 id="authentication">Authentication</h2>
+<p>Archery includes session-based authentication:</p>
+<ul>
+<li>Password hashing: <strong>PBKDF2-HMAC-SHA256</strong></li>
+<li>Versioned hash format (<code>pbkdf2-sha256$iterations$salt$hash</code>)</li>
+<li>Constant-time hash comparison</li>
+<li>Login / logout helpers</li>
+<li>Auth session cookie</li>
+</ul>
+<p>Authentication is built into the framework and integrated with sessions.</p>
+<hr>
+<h2 id="sessions">Sessions</h2>
+<p>Archery supports:</p>
+<ul>
+<li>Guest sessions</li>
+<li>Authenticated sessions</li>
+<li>Server-side session storage</li>
+<li>Cookie-based session identifiers</li>
+</ul>
+<p>Sessions are used for:</p>
+<ul>
+<li>Authentication</li>
+<li>CSRF token binding</li>
+<li>Flash data (if implemented)</li>
+</ul>
+<hr>
+<h2 id="csrf-protection">CSRF Protection</h2>
+<p>Archery includes CSRF middleware:</p>
+<ul>
+<li>Automatic token generation</li>
+<li>Token stored in session</li>
+<li>Token validation on state-changing requests</li>
+<li><code>@csrf</code> template directive</li>
+</ul>
+<p>Example:</p>
+<pre class="language-html"><code class="language-html">&lt;form method="POST"&gt;
+  @csrf
+  ...
+&lt;/form&gt;
+</code></pre>
+<hr>
+<h2 id="orm">ORM</h2>
+<p>Archery includes a built-in ORM with multiple drivers:</p>
+<h3 id="supported-drivers">Supported Drivers</h3>
+<ul>
+<li>JSON (file-based)</li>
+<li>SQLite</li>
+<li>Postgres</li>
+<li>S3-backed model storage</li>
+</ul>
+<h3 id="features">Features</h3>
+<ul>
+<li>
+<p>CRUD operations</p>
+</li>
+<li>
+<p>Relationships:</p>
+<ul>
+<li><code>belongsTo</code></li>
+<li><code>hasMany</code></li>
+<li><code>hasOne</code></li>
+</ul>
+</li>
+<li>
+<p>Model mixins</p>
+</li>
+<li>
+<p>Adapter-based storage abstraction</p>
+</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">class User extends Model {}
 
-dartmon run bin/server.dart
+// uses default disk. in this e.g =&gt; .file
+final user = Model.find&lt;User&gt;(id: 1);
 
+final user2 = Model.find&lt;User&gt;(id: 1, disk: .sqlite);
+
+final user3 = Model.find&lt;User&gt;(id: 1, disk: .s3);
+
+final user4 = Model.find&lt;User&gt;(id: 1, disk: .pgsql);
+
+final user5 = User(name: "Archer", email: "archer@example.com", passwprd: "password");
+
+await user5.save();
+await user5.save(disk: .sqlite);
 </code></pre>
-<p>BrowserSync watches HTML/CSS/JS/Dart files.</p>
-<pre class="language-bash"><code class="language-bash">npm install
-npm run start
+<p>Archery’s ORM is functional and production-capable, though still evolving in terms of advanced query features and edge-case coverage.</p>
+<hr>
+<h2 id="templating-engine">Templating Engine</h2>
+<p>Blade-inspired templating:</p>
+<ul>
+<li>Layouts</li>
+<li>Includes</li>
+<li>Directives</li>
+<li>Escaped output</li>
+<li><code>@csrf</code> directive</li>
+</ul>
+<p>Designed for server-rendered applications.</p>
+<hr>
+<h1 id="security-model-current-state">Security Model (Current State)</h1>
+<p>Archery currently provides:</p>
+<ul>
+<li>PBKDF2-based password hashing</li>
+<li>Constant-time hash comparison</li>
+<li>Session-based CSRF protection</li>
+<li>HttpOnly auth cookies</li>
+<li>Middleware-based request validation</li>
+</ul>
+<h3 id="production-recommendations">Production Recommendations</h3>
+<p>When deploying:</p>
+<ul>
+<li>Run behind HTTPS</li>
+<li>Enable secure cookie flags</li>
+<li>Use Postgres for production databases</li>
+<li>Configure body size limits</li>
+<li>Use reverse proxy (NGINX, Caddy, etc.)</li>
+</ul>
+<p>Security hardening is an active focus toward the 2.0 milestone.</p>
+<hr>
+<h1 id="database-guidance">Database Guidance</h1>
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Recommended Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSON</td>
+<td>Local dev, small apps</td>
+</tr>
+<tr>
+<td>SQLite</td>
+<td>Small to medium apps</td>
+</tr>
+<tr>
+<td>Postgres</td>
+<td>Production workloads</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Backups 0/ Experimental / Niche</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="minimal-application-example">Minimal Application Example</h1>
+<pre class="language-dart"><code class="language-dart">Future&lt;void&gt; main() async {
+  final app = App();
+  
+  await app.boot();
+  
+  final router = app.container.make&lt;Router&gt;();
+
+  router.get('/', (req) async {
+    return req.text('hello world');
+  });
+
+
+  final kernel = AppKernel(
+    router: router,
+  );
+
+  try {
+    HttpServer.bind(InternetAddress.loopbackIPv4, 5501).then((server) async {
+
+      await for (HttpRequest request in server) {
+        kernel.handle(request);
+      }
+    });
+  } catch (e, stack) {
+    print("Error booting server: $e\n$stack");
+    await app.shutdown();
+  }
+  
+  
+
+}
 </code></pre>
 <hr>
-<h2 id="core-concepts">Core Concepts</h2>
-<h3 id="app--container">App &amp; Container</h3>
-<p><code>App</code> bootstraps the framework and exposes a DI container:</p>
-<pre class="language-dart"><code class="language-dart">final app = App();
-await app.boot();
-</code></pre>
-<p>The container supports:</p>
+<h1 id="production-status">Production Status</h1>
+<p>Archery is currently:</p>
+<p><strong>Stable Alpha / Early Production</strong></p>
+<p>This means:</p>
 <ul>
-<li><code>bind</code> (transient)</li>
-<li><code>singleton</code></li>
-<li><code>bindInstance</code></li>
-<li>scoped containers</li>
-<li>disposal callbacks</li>
+<li>Suitable for real deployments</li>
+<li>API mostly stable</li>
+<li>Internals still evolving</li>
+<li>Security hardening and test expansion ongoing</li>
+<li>ORM and middleware features expanding</li>
 </ul>
-<h3 id="routing">Routing</h3>
-<ul>
-<li>GET/POST/PUT/PATCH/DELETE</li>
-<li>Route groups and middleware</li>
-<li>Typed params: <code>{id:int}</code>, <code>{slug:string}</code></li>
-<li><code>RouteParams.get&lt;T&gt;()</code> for safe access</li>
-</ul>
-<pre class="language-dart"><code class="language-dart">router.get('/blog/{slug:string}', BlogPagesController.show);
-</code></pre>
-<h3 id="templates">Templates</h3>
-<p>Blade-style templates in <code>lib/src/http/views</code>:</p>
-<pre class="language-dart"><code class="language-dart">@include('includes._main-header')
-&lt;h1&gt;{{ title }}&lt;/h1&gt;
-@include('includes._main-footer')
-</code></pre>
-<p>Render in controllers:</p>
-<pre class="language-dart"><code class="language-dart">return request.view('welcome', {'title': 'Hello'});
-</code></pre>
-<h3 id="request-helpers">Request Helpers</h3>
-<ul>
-<li><code>request.input('field')</code></li>
-<li><code>request.file('avatar')</code></li>
-<li><code>request.files()</code></li>
-<li><code>request.json(data)</code></li>
-<li><code>request.view(template, data)</code></li>
-<li><code>request.redirectToLogin()</code> / <code>redirectBack()</code></li>
-</ul>
-<p>Handles:</p>
-<ul>
-<li>JSON</li>
-<li>URL-encoded forms</li>
-<li>Multipart forms + file uploads (<code>UploadedFile</code>)</li>
-</ul>
-<h3 id="orm">ORM</h3>
-<p>Four backends:</p>
-<ul>
-<li><strong>JsonFileModel</strong> — fast prototyping</li>
-<li><strong>SQLiteModel</strong>   — SQLite persistence (via <code>sqflite_common_ffi</code>)</li>
-<li><strong>PostgresModel</strong> — Postgres persistence (via <code>postgres</code>)</li>
-<li><strong>S3JsonModel</strong>   — S3 persistence (via <code>archery_s3_client</code>)</li>
-</ul>
-<p>Models implement:</p>
-<pre class="language-dart"><code class="language-dart">static fromJson(Map json)
-toJson(),    // for public api fields
-toMetaJson() // for private db fields
-Map&lt;String, String&gt; columnDefinitions
-</code></pre>
-<p>Migrations are plain Dart functions (<code>lib/src/database/migrations.dart</code>).</p>
-<h3 id="auth">Auth</h3>
-<p>Located in <code>archery/auth/auth_session.dart</code>:</p>
-<ul>
-<li>
-<p>Cookie-based sessions</p>
-</li>
-<li>
-<p>1-hour expiration</p>
-</li>
-<li>
-<p><code>Auth.user(request)</code> returns  User?</p>
-</li>
-<li>
-<p><code>Auth.check(request)</code> returns bool</p>
-</li>
-<li>
-<p><code>Auth.middleware</code> / <code>Guest.middleware</code></p>
-</li>
-<li>
-<p>Auth routes + views included:</p>
-<ul>
-<li><code>/login</code></li>
-<li><code>/register</code></li>
-<li><code>/logout</code></li>
-<li><code>/user/profile</code></li>
-<li><code>/user/dashboard</code></li>
-</ul>
-</li>
-</ul>
+<p>If you are building mission-critical infrastructure, evaluate carefully and follow production recommendations.</p>
 <hr>
-<h2 id="example-features-included">Example Features Included</h2>
-<ul>
-<li>Auth pages and dashboard</li>
-<li>Welcome screen</li>
-<li>Asset pipeline via <code>public/</code></li>
-</ul>
-<p>These examples double as documentation for how to structure your own app.</p>
-<hr>
-<h2 id="roadmap">Roadmap</h2>
-<ul>
-<li>CLI: <code>archery new &lt;app&gt;</code></li>
-<li>Mailer</li>
-<li>Queue workers</li>
-</ul>
+<h1 id="contributing">Contributing</h1>
+<p>Archery is actively evolving. Contributions, issues, and design discussions are welcome.</p>
 <hr>
 <h2 id="license">License</h2>
 <p><strong>BSD-3-Clause</strong>
@@ -319,6 +405,13 @@ See LICENSE file for details.</p>
 
           <dt id="csrf_middleware">
   <span class="name"><a href="archery_core_http_middleware_csrf_middleware/">archery/core/http/middleware/csrf_middleware</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="session_middleware">
+  <span class="name"><a href="archery_core_http_middleware_session_middleware/">archery/core/http/middleware/session_middleware</a></span> 
 
 </dt>
 <dd>
@@ -449,6 +542,7 @@ See LICENSE file for details.</p>
       <li><a href="archery_core_http_http/">archery/core/http/http</a></li>
       <li><a href="archery_core_http_middleware_cors_middleware/">archery/core/http/middleware/cors_middleware</a></li>
       <li><a href="archery_core_http_middleware_csrf_middleware/">archery/core/http/middleware/csrf_middleware</a></li>
+      <li><a href="archery_core_http_middleware_session_middleware/">archery/core/http/middleware/session_middleware</a></li>
       <li><a href="archery_core_http_router/">archery/core/http/router</a></li>
       <li><a href="archery_core_http_uploaded_file/">archery/core/http/uploaded_file</a></li>
       <li><a href="archery_core_kernel/">archery/core/kernel</a></li>

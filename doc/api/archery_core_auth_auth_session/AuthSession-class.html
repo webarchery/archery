@@ -53,6 +53,13 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Authenticated session record.</p>
+<p>This model backs Archery's session-based authentication. A successful login
+creates an in-memory session entry and persists a record keyed by email/token.
+The request is considered authenticated when its <code>archery_session</code> cookie
+matches an active auth session and the session is still valid.</p>
+</section>
 
 
     <section>
@@ -480,7 +487,7 @@
 </dd>
 
         <dt id="middleware" class="callable">
-  <span class="name"><a href="../archery_core_auth_auth_session/AuthSession/middleware.html">middleware</a></span><span class="signature">(<wbr><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="middleware-param-next"><span class="type-annotation">void</span> <span class="parameter-name">next</span>()</span>)
+  <span class="name"><a href="../archery_core_auth_auth_session/AuthSession/middleware.html">middleware</a></span><span class="signature">(<wbr><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="middleware-param-next"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span>)
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
   </span>
   

@@ -31,6 +31,14 @@
 
 import 'package:archery/archery/archery.dart';
 
+/// S3-backed JSON-file driver for Archery ORM.
+///
+/// This driver stores each model "table" as a JSON document in S3 under an
+/// application-specific prefix. It maintains a constructor registry via
+/// `migrate<T>()` so records can be hydrated back into model instances.
+///
+/// This is useful for niche workflows and lightweight persistence, but it has
+/// different consistency and performance characteristics than SQL drivers.
 abstract class S3JsonFileModel {
   static S3Client get _s3client => App().make<S3Client>();
   static AppConfig get _config => App().make<AppConfig>();

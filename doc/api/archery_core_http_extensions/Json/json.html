@@ -63,7 +63,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Sends JSON response with security headers and XSRF cookie.</p>
+  <p>Sends JSON response with security headers.</p>
 </section>
 
 
@@ -71,28 +71,13 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;HttpResponse&gt; json([dynamic data]) async {
-
-  &#47;&#47; --- Performance headers ---
   response.headers.contentType = ContentType.json;
-  response.headers.set(HttpHeaders.cacheControlHeader, &#39;public, max-age=300, must-revalidate&#39;);
-  response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
-
-  &#47;&#47; --- Security headers ---
-  response.headers.set(&#39;X-Content-Type-Options&#39;, &#39;nosniff&#39;);
-  response.headers.set(&#39;X-Frame-Options&#39;, &#39;SAMEORIGIN&#39;);
-  response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
-  response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
-
-  final csrfCookie = cookies.firstWhereOrNull((c) =&gt; c.name == &#39;archery_csrf_token&#39;);
-  final cookie = Cookie(&#39;archery_csrf_token&#39;, csrfCookie?.value ?? App.generateKey())
-    ..httpOnly = true
-    ..secure = true
-    ..sameSite = SameSite.lax
-    ..path = &#39;&#47;&#39;;
+  _defaultHeaders.forEach((key, value) {
+    response.headers.set(key, value);
+  });
 
   return response
     ..statusCode = HttpStatus.ok
-    ..cookies.add(cookie)
     ..write(jsonEncode(data))
     ..close();
 }</code></pre>

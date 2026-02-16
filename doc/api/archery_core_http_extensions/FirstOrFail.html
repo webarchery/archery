@@ -53,6 +53,12 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Model retrieval helpers that map to Archery ORM "or fail" methods.</p>
+<p>These helpers forward to <code>Model.firstOrFail</code> / <code>Model.findOrFail</code> and pass
+through the current request (so the ORM can generate appropriate failure
+responses).</p>
+</section>
 
     <section>
       <dl class="dl-horizontal">

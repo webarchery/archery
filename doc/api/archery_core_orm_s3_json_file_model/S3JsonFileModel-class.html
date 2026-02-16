@@ -54,6 +54,14 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>S3-backed JSON-file driver for Archery ORM.</p>
+<p>This driver stores each model "table" as a JSON document in S3 under an
+application-specific prefix. It maintains a constructor registry via
+<code>migrate&lt;T&gt;()</code> so records can be hydrated back into model instances.</p>
+<p>This is useful for niche workflows and lightweight persistence, but it has
+different consistency and performance characteristics than SQL drivers.</p>
+</section>
 
 
 

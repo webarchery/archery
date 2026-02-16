@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype">void</span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
 <span class="name ">handle</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handle-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
@@ -76,19 +76,21 @@ then dispatching to the router.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void handle(HttpRequest request) async {
-  await Session.init(request);
-
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; handle(HttpRequest request) async {
 
   &#47;&#47; Buffer the request body to prevent &quot;stream has already been listened to&quot; errors.
   &#47;&#47; This allows multiple components (CSRF, Logging, Controllers) to read the body.
-  try {
-    await request.form().buffer();
-  } catch (e) {
-    print(&quot;Error buffering request body: $e&quot;);
+  &#47;&#47; Only buffer body if content exists to prevent stream issues
+  &#47;&#47; For GET&#47;HEAD requests with no body, we skip buffering to improve performance
+  if (request.contentLength &gt; 0) {
+    try {
+      await request.form().buffer();
+    } catch (e) {
+      App().archeryLogger.error(&quot;Error buffering request body&quot;, {&quot;origin&quot;: &quot;Kernel.handle()&quot;, &quot;error&quot;: e.toString()});
+    }
   }
 
-  _runMiddleware(request, 0);
+  await _runMiddleware(request, 0);
 }</code></pre>
 </section>
 

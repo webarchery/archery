@@ -53,6 +53,11 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Middleware guard for routes intended only for <em>guests</em> (unauthenticated users).</p>
+<p>If an auth session exists for the current request, the request is redirected
+to the dashboard. Otherwise the request continues.</p>
+</section>
 
 
 
@@ -162,7 +167,7 @@
     <h2>Static Methods</h2>
     <dl class="callables">
         <dt id="middleware" class="callable">
-  <span class="name"><a href="../archery_core_auth_auth_session/GuestSession/middleware.html">middleware</a></span><span class="signature">(<wbr><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="middleware-param-next"><span class="type-annotation">void</span> <span class="parameter-name">next</span>()</span>)
+  <span class="name"><a href="../archery_core_auth_auth_session/GuestSession/middleware.html">middleware</a></span><span class="signature">(<wbr><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="middleware-param-next"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span>)
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
   </span>
   

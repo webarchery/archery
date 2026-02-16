@@ -33,6 +33,15 @@
 import 'package:archery/archery/archery.dart';
 import 'package:postgres/postgres.dart' hide Type;
 
+/// Postgres driver for Archery ORM.
+///
+/// This class provides static helpers for:
+/// - registering model constructors for hydration (`migrate<T>()`)
+/// - creating tables/indexes for models
+/// - executing CRUD operations against a [PostgresDatabase] connection
+///
+/// Models are discovered/registered by calling `PostgresModel.migrate<T>()`
+/// with a constructor (and optional column definitions).
 abstract class PostgresModel {
   static PostgresDatabase get _database => App().make<PostgresDatabase>();
 
@@ -49,6 +58,8 @@ abstract class PostgresModel {
     final snakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
     return '${snakeCase.toLowerCase()}s';
   }
+
+
 
   static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor, Map<String, String>? columnDefinitions}) async {
     _jsonConstructors[T] = constructor;

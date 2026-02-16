@@ -36,6 +36,10 @@ typedef ViewData = Map<String, dynamic>;
 
 // calling it thisSession because
 // request.session is taken
+/// Session helpers attached to [HttpRequest].
+///
+/// The guest session is identified by the `archery_guest_session` cookie and is
+/// loaded from the in-memory session cache when available.
 extension ThisSession on HttpRequest {
   Session? get thisSession {
     try {
@@ -57,6 +61,17 @@ extension ThisSession on HttpRequest {
 
 /// Extension on [HttpRequest] to render HTML views.
 extension View on HttpRequest {
+  static const _viewHeaders = {
+    HttpHeaders.varyHeader: 'Accept-Encoding',
+    HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate, max-age=0',
+    HttpHeaders.pragmaHeader: 'no-cache',
+    HttpHeaders.expiresHeader: '0',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-XSS-Protection': '1; mode=block',
+  };
+
   /// Renders a template and sends HTML response.
   ///
   /// - Sets `Content-Type: text/html`
@@ -74,35 +89,39 @@ extension View on HttpRequest {
     }
 
     // Ensure CSRF token is available to the view
-    if (data != null && !data.containsKey('csrf_token') || data == null) {
+    String token;
+    bool isNewToken = false;
+
+    if (data != null && data.containsKey('csrf_token')) {
+      token = data['csrf_token'];
+    } else {
       final csrfCookie = cookies.firstWhereOrNull((cookie) => cookie.name == 'archery_csrf_token');
-      // If cookie exists, use it. If not, generate new one (which will be set in response below)
-      final token = csrfCookie?.value ?? App.generateKey();
+      if (csrfCookie != null) {
+        token = csrfCookie.value;
+      } else {
+        token = App.generateKey();
+        isNewToken = true;
+      }
       data = {...?data, 'csrf_token': token};
     }
 
     try {
       final html = await engine.render(template, data);
 
-      // --- Performance headers ---
+      // --- Performance & Security headers ---
       response.headers.contentType = ContentType.html;
-      response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
+      _viewHeaders.forEach((key, value) {
+        response.headers.set(key, value);
+      });
 
-      response.headers.set(HttpHeaders.cacheControlHeader, 'no-cache, no-store, must-revalidate, max-age=0');
-      response.headers.set(HttpHeaders.pragmaHeader, 'no-cache');
-      response.headers.set(HttpHeaders.expiresHeader, '0');
-
-      // --- Security headers ---
-      response.headers.set('X-Content-Type-Options', 'nosniff');
-      response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      response.headers.set('X-XSS-Protection', '1; mode=block');
-
-      final cookie = Cookie('archery_csrf_token', data['csrf_token'] ?? App.generateKey())
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax
-        ..path = '/';
+      if (isNewToken) {
+        final cookie = Cookie('archery_csrf_token', token)
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax
+          ..path = '/';
+        response.cookies.add(cookie);
+      }
 
       final sessions = App().tryMake<List<Session>>();
       if (sessions != null && sessions.isNotEmpty) {
@@ -112,13 +131,12 @@ extension View on HttpRequest {
           final session = sessions.firstWhereOrNull((session) => session.token == requestCookie.value);
 
           if (session != null) {
-            session.csrf = cookie.value;
+            session.csrf = token;
           }
         }
       }
 
       return response
-        ..cookies.add(cookie)
         ..write(html)
         ..close();
     } catch (e, stack) {
@@ -138,34 +156,29 @@ extension View on HttpRequest {
 
 /// Extension on [HttpRequest] to send JSON responses.
 extension Json on HttpRequest {
-  /// Sends JSON response with security headers and XSRF cookie.
+  static const _defaultHeaders = {
+    HttpHeaders.cacheControlHeader: 'public, max-age=300, must-revalidate',
+    HttpHeaders.varyHeader: 'Accept-Encoding',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-XSS-Protection': '1; mode=block',
+  };
+
+  /// Sends JSON response with security headers.
   Future<HttpResponse> json([dynamic data]) async {
-
-    // --- Performance headers ---
     response.headers.contentType = ContentType.json;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
-    response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
-
-    // --- Security headers ---
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-
-    final csrfCookie = cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
-    final cookie = Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax
-      ..path = '/';
+    _defaultHeaders.forEach((key, value) {
+      response.headers.set(key, value);
+    });
 
     return response
       ..statusCode = HttpStatus.ok
-      ..cookies.add(cookie)
       ..write(jsonEncode(data))
       ..close();
   }
 }
+
 
 /// Extension on [HttpRequest] to send plain text.
 extension Text on HttpRequest {
@@ -228,6 +241,11 @@ extension NotFound on HttpRequest {
   }
 }
 
+
+/// Sends a 401 unauthenticated response.
+///
+/// Attempts to render `errors.401`. If the template is missing, falls back to
+/// a plain-text response.
 extension NotAuthenticated on HttpRequest {
   /// Renders `errors.401` template or plain 401.
   Future<HttpResponse> notAuthenticated() async {
@@ -257,6 +275,9 @@ extension NotAuthenticated on HttpRequest {
   }
 }
 
+/// Redirect helpers attached to [HttpRequest].
+///
+/// These are convenience wrappers around `HttpResponse.redirect`.
 extension Redirect on HttpRequest {
   void redirectBack() {
     try {
@@ -291,6 +312,11 @@ extension Redirect on HttpRequest {
 
 final _formRequestCache = Expando<FormRequest>();
 
+
+/// Cached form parsing for the current [HttpRequest].
+///
+/// Returns a [FormRequest] wrapper. The instance is cached per-request using an
+/// [Expando] so repeated calls do not re-parse the request body
 extension HttpRequestFormExtension on HttpRequest {
   FormRequest form() {
     if (_formRequestCache[this] == null) {
@@ -301,6 +327,11 @@ extension HttpRequestFormExtension on HttpRequest {
 }
 
 
+/// Model retrieval helpers that map to Archery ORM "or fail" methods.
+///
+/// These helpers forward to `Model.firstOrFail` / `Model.findOrFail` and pass
+/// through the current request (so the ORM can generate appropriate failure
+/// responses).
 extension FirstOrFail on HttpRequest {
   Future<dynamic> firstOrFail<T extends Model>({required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
     return await Model.firstOrFail<T>(request: this, field: field, value: value, disk: disk);

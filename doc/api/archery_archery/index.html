@@ -119,7 +119,7 @@ and decoding ASCII bytes to strings.
 
 </dt>
 <dd>
-  
+  Authenticated session record.
 </dd>
 
           <dt id="Base64Codec">
@@ -365,6 +365,14 @@ with a value or error.
 header values only <a href="https://api.dart.dev/stable/3.10.9/dart-io/Cookie/name.html">name</a> and <a href="https://api.dart.dev/stable/3.10.9/dart-io/Cookie/value.html">value</a> properties will be set. When building a
 cookie for the 'set-cookie' header in the server and when receiving cookies
 in the client as 'set-cookie' headers all fields can be used.
+</dd>
+
+          <dt id="CorsMiddleware">
+  <span class="name "><a href="../archery_core_http_middleware_cors_middleware/CorsMiddleware-class.html">CorsMiddleware</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
           <dt id="Database">
@@ -706,7 +714,7 @@ numbers  that is viewable as a <a href="https://api.dart.dev/stable/3.10.9/dart-
 
 </dt>
 <dd>
-  
+  Middleware guard for routes intended only for <em>guests</em> (unauthenticated users).
 </dd>
 
           <dt id="GZipCodec">
@@ -1343,7 +1351,7 @@ data written to <a href="https://api.dart.dev/stable/3.10.9/dart-io/Pipe/write.h
 
 </dt>
 <dd>
-  
+  Postgres driver for Archery ORM.
 </dd>
 
           <dt id="PriorityQueue">
@@ -1597,7 +1605,7 @@ as part of <a href="https://api.dart.dev/stable/3.10.9/dart-io/SocketMessage-cla
 
 </dt>
 <dd>
-  
+  S3-backed JSON-file driver for Archery ORM.
 </dd>
 
           <dt id="SameSite">
@@ -1655,7 +1663,7 @@ private key to serve from a secure server.
 
 </dt>
 <dd>
-  
+  Guest session record used for unauthenticated visitors.
 </dd>
 
           <dt id="SetEquality">
@@ -1714,6 +1722,14 @@ private key to serve from a secure server.
 </dt>
 <dd>
   SQLite persistence backend for <code>Model</code>.
+</dd>
+
+          <dt id="StartSession">
+  <span class="name "><a href="../archery_core_http_middleware_session_middleware/StartSession-class.html">StartSession</a></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
           <dt id="StaticFilesServer">
@@ -2251,7 +2267,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Canned ACL values for S3 object uploads.
 </dd>
 
           <dt id="ValidationMode">
@@ -2273,7 +2289,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Instance-level persistence helpers for <a href="../archery_core_orm_model/Model-class.html">Model</a> types.
 </dd>
 
       </dl>
@@ -2313,16 +2329,6 @@ calls.
   Extension on <a href="../archery_core_application/App-class.html">App</a> providing syntactic sugar for dependency resolution and binding.
 </dd>
 
-          <dt id="CurrentRequest">
-  <span class="name "><a href="../archery_core_application/CurrentRequest.html">CurrentRequest</a></span>
-  on <a href="../archery_core_application/App-class.html">App</a>
-  
-
-</dt>
-<dd>
-  
-</dd>
-
           <dt id="DatabaseFactoryLoggerDebugExt">
   <span class="name "><a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseFactoryLoggerDebugExt.html">DatabaseFactoryLoggerDebugExt</a></span>
   on <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/DatabaseFactory-class.html">DatabaseFactory</a>
@@ -2340,7 +2346,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Model retrieval helpers that map to Archery ORM "or fail" methods.
 </dd>
 
           <dt id="FutureExtensions">
@@ -2450,7 +2456,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Convenience accessors for resolving configuration from the IoC container.
 </dd>
 
           <dt id="GetLoggers">
@@ -2460,7 +2466,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Convenience accessors for common framework/application loggers.
 </dd>
 
           <dt id="HttpRequestFormExtension">
@@ -2470,7 +2476,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Cached form parsing for the current <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
 </dd>
 
           <dt id="IterableComparableExtension">
@@ -2580,7 +2586,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Sends a 401 unauthenticated response.
 </dd>
 
           <dt id="NotFound">
@@ -2600,7 +2606,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Redirect helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
 </dd>
 
           <dt id="Relationships">
@@ -2610,7 +2616,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Relationship helpers for Archery ORM models.
 </dd>
 
           <dt id="S3Operations">
@@ -2620,7 +2626,7 @@ calls.
 
 </dt>
 <dd>
-  
+  High-level S3 operations implemented on top of <a href="../archery_packages_s3_client/S3Client-class.html">S3Client</a>'s signed requests.
 </dd>
 
           <dt id="SqfliteDatabaseExecutorExt">
@@ -2670,7 +2676,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Session helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
 </dd>
 
           <dt id="View">
@@ -3277,7 +3283,7 @@ calls.
 
 </dt>
 <dd>
-  
+  Registers Archery's built-in authentication routes onto the provided <code>router</code>.
   
 
 </dd>
@@ -4004,7 +4010,7 @@ locale.
 
 </dt>
 <dd>
-  
+  Alias for <a href="../archery_core_auth_auth_session/AuthSession-class.html">AuthSession</a>.
   
 
 </dd>
@@ -4134,7 +4140,7 @@ callbacks.
 
 </dt>
 <dd>
-  
+  Alias for <a href="../archery_core_auth_auth_session/GuestSession-class.html">GuestSession</a>.
   
 
 </dd>
@@ -4171,7 +4177,7 @@ callbacks.
           
   <dt id="HttpMiddleware" class="callable">
     <span class="name"><a href="../archery_core_http_router/HttpMiddleware.html">HttpMiddleware</a></span><span class="signature">
-      <span class="returntype parameter">= <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a> Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-next"><span class="type-annotation">void</span> <span class="parameter-name">next</span>()</span>)</span></span>
+      <span class="returntype parameter">= <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a> Function<span class="signature">(<span class="parameter" id="param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span><span class="parameter" id="param-next"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span>)</span></span>
     </span>
     
 
@@ -4248,7 +4254,7 @@ when the database is open.
 
 </dt>
 <dd>
-  
+  Type alias for Archery's Postgres connection handle.
   
 
 </dd>
@@ -4389,7 +4395,7 @@ when the database is open.
 
 </dt>
 <dd>
-  
+  Type alias for Archery's SQLite connection handle.
   
 
 </dd>
@@ -4750,6 +4756,7 @@ TLS/SSL protocol.
       <li><a href="../archery_core_http_http/">archery/core/http/http</a></li>
       <li><a href="../archery_core_http_middleware_cors_middleware/">archery/core/http/middleware/cors_middleware</a></li>
       <li><a href="../archery_core_http_middleware_csrf_middleware/">archery/core/http/middleware/csrf_middleware</a></li>
+      <li><a href="../archery_core_http_middleware_session_middleware/">archery/core/http/middleware/session_middleware</a></li>
       <li><a href="../archery_core_http_router/">archery/core/http/router</a></li>
       <li><a href="../archery_core_http_uploaded_file/">archery/core/http/uploaded_file</a></li>
       <li><a href="../archery_core_kernel/">archery/core/kernel</a></li>

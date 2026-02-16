@@ -39,7 +39,7 @@ typedef Handler = Future<dynamic> Function(HttpRequest request);
 /// Signature for HTTP middleware functions.
 ///
 /// Receives an [HttpRequest] and a [next] callback to continue the chain.
-typedef HttpMiddleware = Future<dynamic> Function(HttpRequest request, void Function() next);
+typedef HttpMiddleware = Future<dynamic> Function(HttpRequest request, Future<void> Function() next);
 
 /// HTTP methods supported by the router.
 enum HttpMethod {
@@ -158,7 +158,7 @@ base class Router {
   /// 3. 404 Not Found
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
-  void dispatch(HttpRequest request) async {
+  Future<void> dispatch(HttpRequest request) async {
 
     final spoofMethod = request.uri.queryParameters['_method'];
     HttpMethod method = _parseMethod(request.method);
@@ -175,7 +175,7 @@ base class Router {
     final middleware = _middlewareMap[method]?[path] ?? const [];
 
     if (handler != null) {
-      _runMiddleware(request, middleware, 0, () async => await handler(request));
+      await _runMiddleware(request, middleware, 0, () async => await handler(request));
       return;
     }
 
@@ -204,7 +204,7 @@ base class Router {
       if (!valid) continue;
 
       // Execute with params in Zone
-      runZoned(() => _runMiddleware(request, cr.middleware, 0, () => cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
+      runZoned(() async => await _runMiddleware(request, cr.middleware, 0, () => cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
 
       return;
     }
@@ -247,11 +247,11 @@ base class Router {
   /// Executes middleware chain recursively.
   ///
   /// Calls [onComplete] after all middleware finishes.
-  void _runMiddleware(HttpRequest req, List<HttpMiddleware> list, int index, void Function() onComplete) {
+  Future<void> _runMiddleware(HttpRequest req, List<HttpMiddleware> list, int index, Future<void> Function() onComplete) async {
     if (index < list.length) {
-      list[index](req, () => _runMiddleware(req, list, index + 1, onComplete));
+      await list[index](req, () => _runMiddleware(req, list, index + 1, onComplete));
     } else {
-      onComplete();
+      await onComplete();
     }
   }
 

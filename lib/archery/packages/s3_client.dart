@@ -168,7 +168,10 @@ base class S3HttpResponse {
   S3HttpResponse(this.statusCode, this.body, this.headers);
 }
 
-// S3 ACL Enum
+/// Canned ACL values for S3 object uploads.
+///
+/// These map to the `x-amz-acl` header values supported by S3-compatible
+/// providers.
 enum S3Acl {
   private('private'),
   publicRead('public-read'),
@@ -184,6 +187,11 @@ enum S3Acl {
   const S3Acl(this.value);
 }
 
+
+/// High-level S3 operations implemented on top of [S3Client]'s signed requests.
+///
+/// Provides basic object methods (PUT/GET/DELETE) with optional content type and
+/// canned ACL support.
 extension S3Operations on S3Client {
   // Upload file (PUT)
 

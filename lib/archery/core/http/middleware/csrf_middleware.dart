@@ -32,10 +32,11 @@
 import 'package:archery/archery/archery.dart';
 
 base class VerifyCsrfToken {
-  static Future<dynamic> middleware(HttpRequest request, void Function() next) async {
+  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
 
     if (_isReading(request)) {
-      return next();
+      await next();
+      return;
     }
 
     final token = await _getToken(request);
@@ -58,7 +59,7 @@ base class VerifyCsrfToken {
         ..close();
     }
 
-    return next();
+    await next();
   }
 
   static bool _isReading(HttpRequest request) {

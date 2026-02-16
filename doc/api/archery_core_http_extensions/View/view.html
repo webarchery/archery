@@ -88,35 +88,39 @@
   }
 
   &#47;&#47; Ensure CSRF token is available to the view
-  if (data != null &amp;&amp; !data.containsKey(&#39;csrf_token&#39;) || data == null) {
+  String token;
+  bool isNewToken = false;
+
+  if (data != null &amp;&amp; data.containsKey(&#39;csrf_token&#39;)) {
+    token = data[&#39;csrf_token&#39;];
+  } else {
     final csrfCookie = cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &#39;archery_csrf_token&#39;);
-    &#47;&#47; If cookie exists, use it. If not, generate new one (which will be set in response below)
-    final token = csrfCookie?.value ?? App.generateKey();
+    if (csrfCookie != null) {
+      token = csrfCookie.value;
+    } else {
+      token = App.generateKey();
+      isNewToken = true;
+    }
     data = {...?data, &#39;csrf_token&#39;: token};
   }
 
   try {
     final html = await engine.render(template, data);
 
-    &#47;&#47; --- Performance headers ---
+    &#47;&#47; --- Performance &amp; Security headers ---
     response.headers.contentType = ContentType.html;
-    response.headers.set(HttpHeaders.varyHeader, &#39;Accept-Encoding&#39;);
+    _viewHeaders.forEach((key, value) {
+      response.headers.set(key, value);
+    });
 
-    response.headers.set(HttpHeaders.cacheControlHeader, &#39;no-cache, no-store, must-revalidate, max-age=0&#39;);
-    response.headers.set(HttpHeaders.pragmaHeader, &#39;no-cache&#39;);
-    response.headers.set(HttpHeaders.expiresHeader, &#39;0&#39;);
-
-    &#47;&#47; --- Security headers ---
-    response.headers.set(&#39;X-Content-Type-Options&#39;, &#39;nosniff&#39;);
-    response.headers.set(&#39;X-Frame-Options&#39;, &#39;SAMEORIGIN&#39;);
-    response.headers.set(&#39;Referrer-Policy&#39;, &#39;strict-origin-when-cross-origin&#39;);
-    response.headers.set(&#39;X-XSS-Protection&#39;, &#39;1; mode=block&#39;);
-
-    final cookie = Cookie(&#39;archery_csrf_token&#39;, data[&#39;csrf_token&#39;] ?? App.generateKey())
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax
-      ..path = &#39;&#47;&#39;;
+    if (isNewToken) {
+      final cookie = Cookie(&#39;archery_csrf_token&#39;, token)
+        ..httpOnly = true
+        ..secure = true
+        ..sameSite = SameSite.lax
+        ..path = &#39;&#47;&#39;;
+      response.cookies.add(cookie);
+    }
 
     final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
     if (sessions != null &amp;&amp; sessions.isNotEmpty) {
@@ -126,13 +130,12 @@
         final session = sessions.firstWhereOrNull((session) =&gt; session.token == requestCookie.value);
 
         if (session != null) {
-          session.csrf = cookie.value;
+          session.csrf = token;
         }
       }
     }
 
     return response
-      ..cookies.add(cookie)
       ..write(html)
       ..close();
   } catch (e, stack) {

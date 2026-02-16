@@ -62,6 +62,18 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Registers Archery's built-in authentication routes onto the provided <code>router</code>.</p>
+<p>Routes include:</p>
+<ul>
+<li><code>GET  /login</code> (guest-only)</li>
+<li><code>POST /login</code></li>
+<li><code>GET  /register</code> (guest-only)</li>
+<li><code>POST /register</code></li>
+</ul>
+<p>These routes assume the bundled auth views exist (e.g. <code>auth.login</code>, <code>auth.register</code>)
+and that the <code>User</code> model is available for persistence.</p>
+</section>
 
 
     

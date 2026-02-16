@@ -55,7 +55,7 @@ export './core/container.dart'
 //***********************************
 export './core/provider.dart' show Provider, ProviderException;
 //***********************************
-export './core/application.dart' show ContainerOperations, AppStatus, App, GetConfig, GetLoggers, Boot, CurrentRequest;
+export './core/application.dart' show ContainerOperations, AppStatus, App, GetConfig, GetLoggers, Boot;
 
 //***********************************
 export './core/config.dart' show ConfigRepository, AppConfig;
@@ -97,7 +97,6 @@ export './core/orm/postgres_model.dart';
 
 //***********************************
 export 'core/http/http.dart';
-export 'core/http/middleware/csrf_middleware.dart';
 
 export 'core/auth/auth_session.dart';
 
@@ -105,6 +104,14 @@ export 'core/auth/auth_session.dart';
 //*************************************
 export './packages/s3_client.dart';
 
-
+/// Type alias for Archery's SQLite connection handle.
+///
+/// This exists so applications can reference the database type without importing
+/// the underlying driver package directly.
 typedef SQLiteDatabase = Database;
+
+/// Type alias for Archery's Postgres connection handle.
+///
+/// This exists so applications can reference the database type without importing
+/// the underlying driver package directly.
 typedef PostgresDatabase = Connection;

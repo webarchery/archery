@@ -293,10 +293,19 @@ extension ContainerOperations on App {
   }
 }
 
+
+/// Convenience accessors for resolving configuration from the IoC container.
+///
+/// This keeps call sites terse: `App().config.get('key')`.
 extension GetConfig on App {
   AppConfig get config => container.make<AppConfig>();
 }
 
+
+/// Convenience accessors for common framework/application loggers.
+///
+/// These loggers are constructed on-demand and use app configuration where
+/// applicable (e.g. debug → console logging).
 extension GetLoggers on App {
   Logger get archeryLogger => Logger(
     transports: [config.get('app.debug') != null && config.get('app.debug') == true ? ConsoleTransport(formatJson: true) : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
@@ -318,8 +327,4 @@ extension GetLoggers on App {
     ],
     context: {"logger": "App().consoleFileLogger"},
   );
-}
-
-extension CurrentRequest on App {
-  HttpRequest get request => container.make<HttpRequest>();
 }

@@ -56,7 +56,7 @@
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
 <span class="name ">middleware</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span></li>
-<li><span class="parameter" id="middleware-param-next"><span class="type-annotation">void</span> <span class="parameter-name">next</span>()</span></li>
+<li><span class="parameter" id="middleware-param-next"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span></li>
 </ol>)
 
       
@@ -68,7 +68,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, void Function() next) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
   &#47;&#47; Add CORS headers to response
   request.response.headers
     ..set(&#39;Access-Control-Allow-Origin&#39;, &#39;*&#39;)
@@ -83,7 +83,7 @@
     return;
   }
 
-  next();
+  await next();
 }</code></pre>
 </section>
 

@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype">void</span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
 <span class="name ">dispatch</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="dispatch-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
@@ -77,7 +77,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void dispatch(HttpRequest request) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; dispatch(HttpRequest request) async {
 
   final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
   HttpMethod method = _parseMethod(request.method);
@@ -94,7 +94,7 @@
   final middleware = _middlewareMap[method]?[path] ?? const [];
 
   if (handler != null) {
-    _runMiddleware(request, middleware, 0, () async =&gt; await handler(request));
+    await _runMiddleware(request, middleware, 0, () async =&gt; await handler(request));
     return;
   }
 
@@ -123,7 +123,7 @@
     if (!valid) continue;
 
     &#47;&#47; Execute with params in Zone
-    runZoned(() =&gt; _runMiddleware(request, cr.middleware, 0, () =&gt; cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
+    runZoned(() async =&gt; await _runMiddleware(request, cr.middleware, 0, () =&gt; cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
 
     return;
   }

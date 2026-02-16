@@ -1,5 +1,4 @@
 import 'package:archery/archery/archery.dart';
-import 'package:archery/archery/core/http/middleware/cors_middleware.dart';
 import 'package:archery/src/database/migrations.dart';
 import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
@@ -28,6 +27,7 @@ Future<void> main(List<String> args) async {
     /// db migrations
     /// [Model.defaultDisk] is set to .sqlite
     // run these when you are sure you have them in place
+
     // await migrateS3JsonFileModels();
     // await migratePostgresModels();
 
@@ -58,7 +58,6 @@ Future<void> main(List<String> args) async {
   final kernel = AppKernel(
     router: router,
     middleware: [
-      VerifyCsrfToken.middleware,
       CorsMiddleware.middleware
     ],
   );

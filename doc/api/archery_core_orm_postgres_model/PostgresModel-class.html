@@ -54,6 +54,17 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Postgres driver for Archery ORM.</p>
+<p>This class provides static helpers for:</p>
+<ul>
+<li>registering model constructors for hydration (<code>migrate&lt;T&gt;()</code>)</li>
+<li>creating tables/indexes for models</li>
+<li>executing CRUD operations against a <a href="../archery_archery/PostgresDatabase.html">PostgresDatabase</a> connection</li>
+</ul>
+<p>Models are discovered/registered by calling <code>PostgresModel.migrate&lt;T&gt;()</code>
+with a constructor (and optional column definitions).</p>
+</section>
 
 
 
