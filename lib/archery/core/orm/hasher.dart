@@ -142,10 +142,10 @@ base class Hasher {
   ///
   /// Example:
   /// ```dart
-  /// final hash = Hasher.hashPassword('password123');
+  /// final hash = Hasher.make('password123');
   /// // → $pbkdf2-sha256$100000$abc123...$xyz789...
   /// ```
-  static String hashPassword(String password) {
+  static String _hash(String password) {
     final salt = _generateSalt();
     final key = _pbkdf2(password, salt, _iterations, _keyLength);
     final keyB64 = base64Url.encode(key);
@@ -163,7 +163,7 @@ base class Hasher {
   /// ```dart
   /// final valid = Hasher.verifyPassword('input', storedHash);
   /// ```
-  static bool verifyPassword(String password, String? storedHash) {
+  static bool _verify(String password, String? storedHash) {
     if (storedHash == null) return false;
 
     try {
@@ -196,5 +196,18 @@ base class Hasher {
       result |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
     }
     return result == 0;
+  }
+
+
+  // These method name are generic for the idea
+  // hashPassword/verifyPassword are DX convenient
+
+  static String make(String key) {
+    return _hash(key);
+  }
+
+  // Hasher.check() vs Hasher.verify()
+  static bool check(String key, String? hash) {
+    return _verify(key, hash);
   }
 }

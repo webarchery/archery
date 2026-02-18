@@ -85,7 +85,7 @@ Example:
 ```dart
 router.get('/users/{id:int}', (req) async {
   final id = RouteParam.get<int>('id');
-  return Response.json({'id': id});
+  return req.json({'id': id});
 });
 ```
 
@@ -192,13 +192,13 @@ Example:
 class User extends Model {}
 
 // uses default disk. in this e.g => .file
-final user = Model.find<User>(id: 1);
+final user = await Model.find<User>(id: 1);
 
-final user2 = Model.find<User>(id: 1, disk: .sqlite);
+final user2 = await Model.find<User>(id: 1, disk: .sqlite);
 
-final user3 = Model.find<User>(id: 1, disk: .s3);
+final user3 = await Model.find<User>(id: 1, disk: .s3);
 
-final user4 = Model.find<User>(id: 1, disk: .pgsql);
+final user4 = await Model.find<User>(id: 1, disk: .pgsql);
 
 final user5 = User(name: "Archer", email: "archer@example.com", passwprd: "password");
 

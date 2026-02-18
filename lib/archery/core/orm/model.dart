@@ -670,7 +670,7 @@ abstract class Model
   /// Creates a new record from [fromJson].
   static Future<T?> create<T extends Model>({required Map<String, dynamic> fromJson, DatabaseDisk disk = Model.defaultDisk}) async {
     if (fromJson['password'] != null) {
-      fromJson['password'] = Hasher.hashPassword(fromJson['password']);
+      fromJson['password'] = Hasher.make(fromJson['password']);
     }
     switch (disk) {
       case DatabaseDisk.file:

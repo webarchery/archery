@@ -5,10 +5,9 @@ final class User extends Model with InstanceDatabaseOps<User> {
   late String email;
   String? password;
 
-  User({required this.name, required this.email, String? password}) : password = password != null ? Hasher.hashPassword(password) : null, super.fromJson({});
+  User({required this.name, required this.email, String? password}) : password = password != null ? Hasher.make(password) : null, super.fromJson({});
 
   User.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-
     if (json['name'] != null && json['name'] is String) {
       name = json['name'];
     }

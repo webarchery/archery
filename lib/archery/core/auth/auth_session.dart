@@ -251,7 +251,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
       } else {
         final user = await Model.firstWhere<User>(field: "email", value: email);
 
-        if (user != null && Hasher.verifyPassword(password, user.password)) {
+        if (user != null && Hasher.check(password, user.password)) {
           final newAuthSession = await Model.create<AuthSession>(fromJson: {"email": user.email, "token": App.generateKey()});
           if (newAuthSession == null) return false;
           authSession?.lastActivity = DateTime.now();
