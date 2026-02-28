@@ -77,7 +77,14 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Map&lt;String, dynamic&gt; toMetaJson() {
-  return {&quot;id&quot;: id, &quot;uuid&quot;: uuid, &quot;token&quot;: token, &#39;last_activity&#39;: lastActivity.toIso8601String(), &quot;created_at&quot;: createdAt?.toIso8601String(), &quot;updated_at&quot;: updatedAt?.toIso8601String()};
+  return {
+    &quot;id&quot;: id,
+    &quot;uuid&quot;: uuid,
+    &quot;token&quot;: token,
+    &#39;last_activity&#39;: lastActivity.toIso8601String(),
+    &quot;created_at&quot;: createdAt?.toIso8601String(),
+    &quot;updated_at&quot;: updatedAt?.toIso8601String(),
+  };
 }</code></pre>
 </section>
 
@@ -106,7 +113,7 @@ Map&lt;String, dynamic&gt; toMetaJson() {
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

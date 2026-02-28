@@ -67,7 +67,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;T?&gt; belongsTo&lt;T extends Model&gt;({DatabaseDisk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;T?&gt; belongsTo&lt;T extends Model&gt;({
+  DatabaseDisk disk = Model.defaultDisk,
+}) async {
   try {
     final tableName = Model._getTableName&lt;T&gt;();
     final foreignTableSingular = tableName.substring(0, tableName.length - 1);
@@ -88,11 +90,9 @@
         if (val == null) return null;
         return Model.firstWhere&lt;T&gt;(field: &quot;id&quot;, value: val, disk: disk);
     }
-
-  }catch(e) {
+  } catch (e) {
     return null;
   }
-
 }</code></pre>
 </section>
 
@@ -121,7 +121,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

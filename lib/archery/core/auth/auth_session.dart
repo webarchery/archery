@@ -29,7 +29,6 @@
 
 // https://webarchery.dev
 
-
 import 'package:archery/archery/archery.dart';
 
 /// Alias for [AuthSession].
@@ -43,7 +42,6 @@ typedef Auth = AuthSession;
 /// (redirect authenticated users away from guest-only pages).
 typedef Guest = GuestSession;
 
-
 /// Guest session record used for unauthenticated visitors.
 ///
 /// Archery uses this model to track a visitor session token (stored in the
@@ -53,13 +51,19 @@ class Session extends Model with InstanceDatabaseOps<Session> {
   late String token;
   late DateTime lastActivity = DateTime.now();
 
+  Map<String, dynamic> data = {};
+  Map<String, dynamic> errors = {};
+
+  User? user;
   // set in view engine
   String? csrf;
 
   Session({required this.token}) : super.fromJson({});
 
   static Future<Session?> init(HttpRequest request) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+    final cookie = request.cookies.firstWhereOrNull(
+      (cookie) => cookie.name == "archery_guest_session",
+    );
     final sessions = App().tryMake<List<Session>>();
 
     if (cookie == null) {
@@ -67,35 +71,50 @@ class Session extends Model with InstanceDatabaseOps<Session> {
       await session.save();
       sessions?.add(session);
       request.cookies.add(Cookie("archery_guest_session", session.token));
-      request.response.cookies.add(Cookie("archery_guest_session", session.token));
+      request.response.cookies.add(
+        Cookie("archery_guest_session", session.token),
+      );
       return session;
     } else {
-      final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+      final session = sessions?.firstWhereOrNull(
+        (session) => session.token == cookie.value,
+      );
       if (session != null) {
         session.lastActivity = DateTime.now();
         await session.save();
         request.cookies.add(Cookie("archery_guest_session", session.token));
-        request.response.cookies.add(Cookie("archery_guest_session", session.token));
+        request.response.cookies.add(
+          Cookie("archery_guest_session", session.token),
+        );
         return session;
       }
     }
 
     if (sessions != null && sessions.isEmpty) {
-      final sessionRecord = await Model.firstWhere<Session>(field: "token", value: cookie.value);
+      final sessionRecord = await Model.firstWhere<Session>(
+        field: "token",
+        value: cookie.value,
+      );
 
       if (sessionRecord != null) {
         sessionRecord.lastActivity = DateTime.now();
         await sessionRecord.save();
         sessions.add(sessionRecord);
-        request.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
-        request.response.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
+        request.cookies.add(
+          Cookie("archery_guest_session", sessionRecord.token),
+        );
+        request.response.cookies.add(
+          Cookie("archery_guest_session", sessionRecord.token),
+        );
         return sessionRecord;
       } else {
         final session = Session(token: App.generateKey());
         await session.save();
         sessions.add(session);
         request.cookies.add(Cookie("archery_guest_session", session.token));
-        request.response.cookies.add(Cookie("archery_guest_session", session.token));
+        request.response.cookies.add(
+          Cookie("archery_guest_session", session.token),
+        );
         return session;
       }
     }
@@ -117,20 +136,36 @@ class Session extends Model with InstanceDatabaseOps<Session> {
     }
   }
 
-  static Map<String, String> columnDefinitions = {'token': 'TEXT NOT NULL', 'last_activity': "TEXT NOT NULL"};
+  static Map<String, String> columnDefinitions = {
+    'token': 'TEXT NOT NULL',
+    'last_activity': "TEXT NOT NULL",
+  };
 
   @override
   Map<String, dynamic> toJson() {
-    return {"uuid": uuid, "token": token, 'last_activity': lastActivity.toIso8601String(), "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
+    return {
+      "uuid": uuid,
+      "token": token,
+      'last_activity': lastActivity.toIso8601String(),
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+      "data": data,
+      "user": user?.toJson(),
+      "errors": errors,
+    };
   }
 
   @override
   Map<String, dynamic> toMetaJson() {
-    return {"id": id, "uuid": uuid, "token": token, 'last_activity': lastActivity.toIso8601String(), "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
+    return {
+      "id": id,
+      "uuid": uuid,
+      "token": token,
+      'last_activity': lastActivity.toIso8601String(),
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
   }
-
-
-
 }
 
 /// Middleware guard for routes intended only for *guests* (unauthenticated users).
@@ -138,8 +173,13 @@ class Session extends Model with InstanceDatabaseOps<Session> {
 /// If an auth session exists for the current request, the request is redirected
 /// to the dashboard. Otherwise the request continues.
 class GuestSession {
-  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+  static Future<dynamic> middleware(
+    HttpRequest request,
+    Future<void> Function() next,
+  ) async {
+    final cookie = request.cookies.firstWhereOrNull(
+      (cookie) => cookie.name == "archery_session",
+    );
     final authSessions = App().tryMake<List<AuthSession>>();
 
     if (cookie == null || authSessions == null || authSessions.isEmpty) {
@@ -147,7 +187,9 @@ class GuestSession {
       return;
     }
 
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
+    final session = authSessions.firstWhereOrNull(
+      (session) => session.cookie?.value == cookie.value,
+    );
 
     if (session != null) return request.redirectToDashboard();
 
@@ -167,7 +209,10 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
   late DateTime lastActivity = DateTime.now();
   Cookie? cookie;
 
-  static Map<String, String> columnDefinitions = {'email': 'TEXT NOT NULL', 'token': 'TEXT NOT NULL'};
+  static Map<String, String> columnDefinitions = {
+    'email': 'TEXT NOT NULL',
+    'token': 'TEXT NOT NULL',
+  };
 
   AuthSession({required this.email}) : super.fromJson({});
 
@@ -182,35 +227,59 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
 
   @override
   Map<String, dynamic> toJson() {
-    return {"uuid": uuid, "email": email, 'token': token, "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
+    return {
+      "uuid": uuid,
+      "email": email,
+      'token': token,
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
   }
 
   @override
   Map<String, dynamic> toMetaJson() {
-    return {"id": id, "uuid": uuid, 'email': email, 'token': token, "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
+    return {
+      "id": id,
+      "uuid": uuid,
+      'email': email,
+      'token': token,
+      "created_at": createdAt?.toIso8601String(),
+      "updated_at": updatedAt?.toIso8601String(),
+    };
   }
 
   static Future<User?> user(HttpRequest request) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+    final cookie = request.cookies.firstWhereOrNull(
+      (cookie) => cookie.name == "archery_session",
+    );
     final authSessions = App().tryMake<List<AuthSession>>();
 
     if (cookie == null || authSessions == null || authSessions.isEmpty) {
       return null;
     }
 
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
+    final session = authSessions.firstWhereOrNull(
+      (session) => session.cookie?.value == cookie.value,
+    );
 
     if (session == null) return null;
+
     if (!_validateSession(session)) {
       await logout(request);
       return null;
     }
-    session.lastActivity = DateTime.now();
 
-    final sessionRecord = await Model.firstWhere<AuthSession>(field: "email", value: session.email);
+    session.lastActivity = DateTime.now();
+    final sessionRecord = await Model.firstWhere<AuthSession>(
+      field: "email",
+      value: session.email,
+    );
 
     if (sessionRecord != null) {
-      return await Model.firstWhere<User>(field: "email", value: sessionRecord.email);
+      return await Model.firstWhere<User>(
+        field: "email",
+        value: sessionRecord.email,
+      );
     }
     return null;
   }
@@ -221,15 +290,23 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
 
   static Future<bool> logout(HttpRequest request) async {
     try {
-      final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+      final cookie = request.cookies.firstWhereOrNull(
+        (cookie) => cookie.name == "archery_session",
+      );
       final authSessions = App().tryMake<List<AuthSession>>();
 
-      final session = authSessions?.firstWhereOrNull((session) => session.cookie?.value == cookie?.value);
+      final session = authSessions?.firstWhereOrNull(
+        (session) => session.cookie?.value == cookie?.value,
+      );
 
       if (session != null) {
-        final sessionRecord = await Model.firstWhere<AuthSession>(field: "email", value: session.email);
+        final sessionRecord = await Model.firstWhere<AuthSession>(
+          field: "email",
+          value: session.email,
+        );
         await sessionRecord?.delete();
         authSessions?.remove(session);
+        request.thisSession?.user = null;
         return true;
       }
       return false;
@@ -238,12 +315,17 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     }
   }
 
-  static Future<bool> login({required String email, required String password}) async {
+  static Future<bool> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       final authSessions = App().tryMake<List<AuthSession>>();
       if (authSessions == null) return false;
 
-      final authSession = authSessions.firstWhereOrNull((session) => session.email == email);
+      final authSession = authSessions.firstWhereOrNull(
+        (session) => session.email == email,
+      );
 
       if (authSession != null) {
         authSession.lastActivity = DateTime.now();
@@ -251,11 +333,15 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
       } else {
         final user = await Model.firstWhere<User>(field: "email", value: email);
 
-        if (user != null && Hasher.check(password, user.password)) {
-          final newAuthSession = await Model.create<AuthSession>(fromJson: {"email": user.email, "token": App.generateKey()});
+        if (user != null && Hasher.check(key: password, hash: user.password)) {
+          final newAuthSession = await Model.create<AuthSession>(
+            fromJson: {"email": user.email, "token": App.generateKey()},
+          );
           if (newAuthSession == null) return false;
+
           authSession?.lastActivity = DateTime.now();
           authSessions.add(newAuthSession);
+
           return true;
         }
       }
@@ -266,17 +352,28 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     }
   }
 
-  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+  static Future<dynamic> middleware(
+    HttpRequest request,
+    Future<void> Function() next,
+  ) async {
+    final cookie = request.cookies.firstWhereOrNull(
+      (cookie) => cookie.name == "archery_session",
+    );
     final authSessions = App().tryMake<List<AuthSession>>();
 
     if (cookie == null || authSessions == null || authSessions.isEmpty) {
+      await logout(request);
       return request.redirectToLogin();
     }
 
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
+    final session = authSessions.firstWhereOrNull(
+      (session) => session.cookie?.value == cookie.value,
+    );
 
-    if (session == null) return request.redirectToLogin();
+    if (session == null) {
+      await logout(request);
+      return request.redirectToLogin();
+    }
 
     if (!_validateSession(session)) {
       await logout(request);
@@ -294,7 +391,6 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
   }
 }
 
-
 /// Registers Archery's built-in authentication routes onto the provided [router].
 ///
 /// Routes include:
@@ -306,96 +402,129 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
 /// These routes assume the bundled auth views exist (e.g. `auth.login`, `auth.register`)
 /// and that the `User` model is available for persistence.
 void authRoutes(Router router) {
+  router.group(
+    routes: () {
+      router.get('/login', middleware: [Guest.middleware], (request) async {
+        return request.view("auth.login");
+      });
 
-  router.get('/login', middleware: [Guest.middleware], (request) async {
-    return request.view("auth.login");
-  });
+      router.get('/register', middleware: [Guest.middleware], (request) async {
+        return request.view("auth.register");
+      });
 
-  router.get('/register', middleware: [Guest.middleware], (request) async {
-    return request.view("auth.register");
-  });
+      router.post('/register', (request) async {
+        try {
+          final form = request.form();
+          final name = await form.input('name');
+          final email = await form.input('email');
+          final password = await form.input('password');
 
-  router.post('/register', (request) async {
-    try {
-      final form = request.form();
-      final name = await form.input('name');
-      final email = await form.input('email');
-      final password = await form.input('password');
+          // Todo- form.validate(field as [.email, .phone, .name, .])
+          // or use a FormValidator.validate()
+          // opt 1 gives easy prototyping option
+          // add a method on FormRequest
+          // avoid extending Request, use buffered content and _request in FormRequest
+          if (name == null ||
+              name.toString().isEmpty ||
+              email == null ||
+              email.toString().isEmpty ||
+              password == null ||
+              password.toString().isEmpty) {
+            return request.redirectBack();
+          }
 
-      // Todo- form.validate(field as [.email, .phone, .name, .])
-      // or use a FormValidator.validate()
-      // opt 1 gives easy prototyping option
-      // add a method on FormRequest
-      // avoid extending Request, use buffered content and _request in FormRequest
-      if (name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
-        return request.redirectBack();
-      }
+          final userRecord = await Model.firstWhere<User>(
+            field: "email",
+            value: email,
+          );
+          if (userRecord != null) return request.redirectBack();
 
-      final userRecord = await Model.firstWhere<User>(field: "email", value: email);
-      if (userRecord != null) return request.redirectBack();
+          final user = User(name: name, email: email, password: password);
+          await user.save();
 
-      final user = User(name: name, email: email, password: password);
-      await user.save();
-
-      return request.redirectToLogin();
-    } catch (e) {
-      return request.redirectBack();
-    }
-  });
-
-  router.post('/login', (request) async {
-    try {
-      final form = request.form();
-      final email = await form.input('email');
-      final password = await form.input('password');
-
-      if (email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
-        return request.redirectBack();
-      }
-
-      if (await Auth.login(email: email, password: password)) {
-        final cookie = Cookie('archery_session', App.generateKey())
-          ..httpOnly = true
-          ..secure =
-              true // only over HTTPS
-          ..sameSite = SameSite.lax;
-
-        final sessions = App().container.tryMake<List<AuthSession>>();
-
-        final session = sessions?.firstWhereOrNull((session) => session.email == email);
-        if (session != null) {
-          session.cookie = cookie;
-          request.response.cookies.add(cookie);
+          return request.redirectToLogin();
+        } catch (e) {
+          return request.redirectBack();
         }
-        return request.redirectToDashboard();
-      }
+      });
 
-      return request.redirectBack();
-    } catch (e) {
-      return request.redirectBack();
-    }
-  });
+      router.post('/login', (request) async {
+        try {
+          final form = request.form();
+          final email = await form.input('email');
+          final password = await form.input('password');
 
-  router.get('/logout', (request) async {
-    await Auth.logout(request);
-    return request.redirectHome();
-  });
+          if (email == null ||
+              email.toString().isEmpty ||
+              password == null ||
+              password.toString().isEmpty) {
+            return request.redirectBack();
+          }
 
-  router.group(prefix: "/user", middleware: [Auth.middleware], routes: () {
-      // - grouped for profile & dashboard crud
-      router.group(prefix: "/profile", routes: () {
-          router.get("/", (request) async {
-            return request.view("auth.user.profile");
-          });
-        },
-      );
+          if (await Auth.login(email: email, password: password)) {
+            final cookie = Cookie('archery_session', App.generateKey())
+              ..httpOnly = true
+              ..secure =
+                  true // only over HTTPS
+              ..sameSite = SameSite.lax;
 
-      router.group(prefix: "/dashboard", routes: () {
-          router.get("/", (request) async {
-            return request.view("auth.user.dashboard");
-          });
+            final sessions = App().container.tryMake<List<AuthSession>>();
+
+            final session = sessions?.firstWhereOrNull(
+              (session) => session.email == email,
+            );
+            if (session != null) {
+              session.cookie = cookie;
+              request.response.cookies.add(cookie);
+            }
+            return request.redirectToDashboard();
+          }
+
+          return request.redirectBack();
+        } catch (e) {
+          return request.redirectBack();
+        }
+      });
+
+      router.get('/logout', (request) async {
+        await Auth.logout(request);
+        return request.redirectHome();
+      });
+
+      router.group(
+        prefix: "/user",
+        middleware: [Auth.middleware],
+        routes: () {
+          // - grouped for profile & dashboard crud
+          router.group(
+            prefix: "/profile",
+            routes: () {
+              router.get("/", (request) async {
+                return request.view("auth.user.profile");
+              });
+            },
+          );
+
+          router.group(
+            prefix: "/dashboard",
+            routes: () {
+              router.get("/", (request) async {
+                return request.view("auth.user.dashboard");
+              });
+            },
+          );
         },
       );
     },
   );
+}
+
+extension PasswordHashing on Auth {
+  static String hashPassword({required String key}) {
+    return Hasher.make(key: key);
+  }
+
+  static bool verifyPassword({required String key, String? hash}) {
+    return Hasher.check(key: key, hash: hash);
+  }
 }

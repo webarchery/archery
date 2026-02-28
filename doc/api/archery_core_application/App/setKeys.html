@@ -93,7 +93,14 @@ Otherwise, only writes if file is missing or empty.</p>
   &#47;&#47; Skip if content exists and not resetting
   if ((content.isNotEmpty &amp;&amp; content != &quot;{}&quot;) &amp;&amp; !reset) return;
 
-  final config = &lt;String, dynamic&gt;{&quot;name&quot;: &quot;Archery Web Application&quot;, &quot;version&quot;: version, &quot;timestamp&quot;: DateTime.now().toUtc().toIso8601String(), &quot;key&quot;: generateKey(), &quot;id&quot;: Uuid().v4(), &quot;debug&quot;: true};
+  final config = &lt;String, dynamic&gt;{
+    &quot;name&quot;: &quot;Archery Web Application&quot;,
+    &quot;version&quot;: version,
+    &quot;timestamp&quot;: DateTime.now().toUtc().toIso8601String(),
+    &quot;key&quot;: generateKey(),
+    &quot;id&quot;: Uuid().v4(),
+    &quot;debug&quot;: true,
+  };
 
   file.writeAsStringSync(json.encode(config));
 }</code></pre>
@@ -124,7 +131,7 @@ Otherwise, only writes if file is missing or empty.</p>
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

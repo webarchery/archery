@@ -81,7 +81,7 @@
     </div>
 
     <nav class="space-x-2 uppercase">
-        @if(user)
+        @if(session.user)
         <a href="/user/dashboard" class="text-xs font-bold text-indigo-500 dark:text-yellow-400">Dashboard</a>
 
         @else
@@ -93,4 +93,7 @@
 
 
     </nav>
+
+
+
 </div>

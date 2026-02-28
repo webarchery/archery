@@ -74,11 +74,20 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({required String field, required dynamic value, String comp = &quot;==&quot;, DatabaseDisk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({
+  required String field,
+  required dynamic value,
+  String comp = &quot;==&quot;,
+  DatabaseDisk disk = Model.defaultDisk,
+}) async {
   switch (disk) {
     case DatabaseDisk.file:
       try {
-        final models = await JsonFileModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await JsonFileModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = .file);
           return models;
@@ -89,7 +98,11 @@
       }
     case DatabaseDisk.sqlite:
       try {
-        final models = await SQLiteModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await SQLiteModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = .sqlite);
           return models;
@@ -100,7 +113,11 @@
       }
     case DatabaseDisk.s3:
       try {
-        final models = await S3JsonFileModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await S3JsonFileModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = .s3);
           return models;
@@ -111,7 +128,11 @@
       }
     case DatabaseDisk.pgsql:
       try {
-        final models = await PostgresModel.where&lt;T&gt;(field: field, value: value, comp: comp);
+        final models = await PostgresModel.where&lt;T&gt;(
+          field: field,
+          value: value,
+          comp: comp,
+        );
         if (models.isNotEmpty) {
           models.map((model) =&gt; model.disk = .pgsql);
           return models;
@@ -149,7 +170,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

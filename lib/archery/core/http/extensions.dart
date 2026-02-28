@@ -43,10 +43,14 @@ typedef ViewData = Map<String, dynamic>;
 extension ThisSession on HttpRequest {
   Session? get thisSession {
     try {
-      final cookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+      final cookie = cookies.firstWhereOrNull(
+        (cookie) => cookie.name == "archery_guest_session",
+      );
       final sessions = App().tryMake<List<Session>>();
       if (cookie != null) {
-        final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
+        final session = sessions?.firstWhereOrNull(
+          (session) => session.token == cookie.value,
+        );
         if (session != null) {
           session.lastActivity = DateTime.now();
           return session;
@@ -63,7 +67,8 @@ extension ThisSession on HttpRequest {
 extension View on HttpRequest {
   static const _viewHeaders = {
     HttpHeaders.varyHeader: 'Accept-Encoding',
-    HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate, max-age=0',
+    HttpHeaders.cacheControlHeader:
+        'no-cache, no-store, must-revalidate, max-age=0',
     HttpHeaders.pragmaHeader: 'no-cache',
     HttpHeaders.expiresHeader: '0',
     'X-Content-Type-Options': 'nosniff',
@@ -82,27 +87,29 @@ extension View on HttpRequest {
     final engine = App().container.make<TemplateEngine>();
     final config = App().container.make<AppConfig>();
 
-    final user = await Auth.user(this);
-    if (user != null) {
-      final userData = {"user": user.toJson()};
-      data = {...?data, ...userData};
-    }
+    thisSession?.user = await Auth.user(this);
+
+    final session = {"session": thisSession?.toJson()};
+
+    data = {...?data, ...session};
 
     // Ensure CSRF token is available to the view
     String token;
     bool isNewToken = false;
 
-    if (data != null && data.containsKey('csrf_token')) {
+    if (data.containsKey('csrf_token')) {
       token = data['csrf_token'];
     } else {
-      final csrfCookie = cookies.firstWhereOrNull((cookie) => cookie.name == 'archery_csrf_token');
+      final csrfCookie = cookies.firstWhereOrNull(
+        (cookie) => cookie.name == 'archery_csrf_token',
+      );
       if (csrfCookie != null) {
         token = csrfCookie.value;
       } else {
         token = App.generateKey();
         isNewToken = true;
       }
-      data = {...?data, 'csrf_token': token};
+      data = {...data, 'csrf_token': token};
     }
 
     try {
@@ -125,10 +132,14 @@ extension View on HttpRequest {
 
       final sessions = App().tryMake<List<Session>>();
       if (sessions != null && sessions.isNotEmpty) {
-        final requestCookie = cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
+        final requestCookie = cookies.firstWhereOrNull(
+          (cookie) => cookie.name == "archery_guest_session",
+        );
 
         if (requestCookie != null) {
-          final session = sessions.firstWhereOrNull((session) => session.token == requestCookie.value);
+          final session = sessions.firstWhereOrNull(
+            (session) => session.token == requestCookie.value,
+          );
 
           if (session != null) {
             session.csrf = token;
@@ -179,14 +190,15 @@ extension Json on HttpRequest {
   }
 }
 
-
 /// Extension on [HttpRequest] to send plain text.
 extension Text on HttpRequest {
   /// Sends plain text response.
   Future<HttpResponse> text([dynamic data]) async {
-
     response.headers.contentType = ContentType.text;
-    response.headers.set(HttpHeaders.cacheControlHeader, 'public, max-age=300, must-revalidate');
+    response.headers.set(
+      HttpHeaders.cacheControlHeader,
+      'public, max-age=300, must-revalidate',
+    );
     response.headers.set(HttpHeaders.varyHeader, 'Accept-Encoding');
 
     // --- Security headers ---
@@ -195,12 +207,15 @@ extension Text on HttpRequest {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    final csrfCookie = cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
-    final cookie = Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
-      ..httpOnly = true
-      ..secure = true
-      ..sameSite = SameSite.lax
-      ..path = '/';
+    final csrfCookie = cookies.firstWhereOrNull(
+      (c) => c.name == 'archery_csrf_token',
+    );
+    final cookie =
+        Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax
+          ..path = '/';
 
     return response
       ..statusCode = HttpStatus.ok
@@ -220,12 +235,15 @@ extension NotFound on HttpRequest {
       final html = await engine.render("errors.404", {});
       response.headers.contentType = ContentType.html;
 
-      final csrfCookie = cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
-      final cookie = Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax
-        ..path = '/';
+      final csrfCookie = cookies.firstWhereOrNull(
+        (c) => c.name == 'archery_csrf_token',
+      );
+      final cookie =
+          Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
+            ..httpOnly = true
+            ..secure = true
+            ..sameSite = SameSite.lax
+            ..path = '/';
 
       return response
         ..statusCode = HttpStatus.notFound
@@ -241,7 +259,6 @@ extension NotFound on HttpRequest {
   }
 }
 
-
 /// Sends a 401 unauthenticated response.
 ///
 /// Attempts to render `errors.401`. If the template is missing, falls back to
@@ -254,12 +271,15 @@ extension NotAuthenticated on HttpRequest {
     try {
       final html = await engine.render("errors.401", {});
       response.headers.contentType = ContentType.html;
-      final csrfCookie = cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
-      final cookie = Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax
-        ..path = '/';
+      final csrfCookie = cookies.firstWhereOrNull(
+        (c) => c.name == 'archery_csrf_token',
+      );
+      final cookie =
+          Cookie('archery_csrf_token', csrfCookie?.value ?? App.generateKey())
+            ..httpOnly = true
+            ..secure = true
+            ..sameSite = SameSite.lax
+            ..path = '/';
 
       return response
         ..statusCode = HttpStatus.unauthorized
@@ -312,7 +332,6 @@ extension Redirect on HttpRequest {
 
 final _formRequestCache = Expando<FormRequest>();
 
-
 /// Cached form parsing for the current [HttpRequest].
 ///
 /// Returns a [FormRequest] wrapper. The instance is cached per-request using an
@@ -326,18 +345,30 @@ extension HttpRequestFormExtension on HttpRequest {
   }
 }
 
-
 /// Model retrieval helpers that map to Archery ORM "or fail" methods.
 ///
 /// These helpers forward to `Model.firstOrFail` / `Model.findOrFail` and pass
 /// through the current request (so the ORM can generate appropriate failure
 /// responses).
 extension FirstOrFail on HttpRequest {
-  Future<dynamic> firstOrFail<T extends Model>({required String field, required dynamic value, String comp = "==", DatabaseDisk disk = Model.defaultDisk}) async {
-    return await Model.firstOrFail<T>(request: this, field: field, value: value, disk: disk);
+  Future<dynamic> firstOrFail<T extends Model>({
+    required String field,
+    required dynamic value,
+    String comp = "==",
+    DatabaseDisk disk = Model.defaultDisk,
+  }) async {
+    return await Model.firstOrFail<T>(
+      request: this,
+      field: field,
+      value: value,
+      disk: disk,
+    );
   }
 
-  Future<dynamic> findOrFail<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
+  Future<dynamic> findOrFail<T extends Model>({
+    required dynamic id,
+    DatabaseDisk disk = Model.defaultDisk,
+  }) async {
     return await Model.findOrFail<T>(request: this, id: id, disk: disk);
   }
 }

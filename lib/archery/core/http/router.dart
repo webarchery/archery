@@ -39,7 +39,8 @@ typedef Handler = Future<dynamic> Function(HttpRequest request);
 /// Signature for HTTP middleware functions.
 ///
 /// Receives an [HttpRequest] and a [next] callback to continue the chain.
-typedef HttpMiddleware = Future<dynamic> Function(HttpRequest request, Future<void> Function() next);
+typedef HttpMiddleware =
+    Future<dynamic> Function(HttpRequest request, Future<void> Function() next);
 
 /// HTTP methods supported by the router.
 enum HttpMethod {
@@ -99,7 +100,11 @@ base class Router {
   ///   // Becomes: GET /api/v1/users with authMw
   /// });
   /// ```
-  void group({String prefix = '', List<HttpMiddleware> middleware = const [], required void Function() routes}) {
+  void group({
+    String prefix = '',
+    List<HttpMiddleware> middleware = const [],
+    required void Function() routes,
+  }) {
     _prefixStack.add(_join(_currentPrefix, _normalizePrefix(prefix)));
     _mwStack.add([..._currentMiddleware, ...middleware]);
 
@@ -112,29 +117,60 @@ base class Router {
   }
 
   /// Registers a GET route.
-  void get(String path, Handler handler, {List<HttpMiddleware> middleware = const []}) => _add(HttpMethod.get, path, handler, middleware: middleware);
+  void get(
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) => _add(HttpMethod.get, path, handler, middleware: middleware);
 
   /// Registers a POST route.
-  void post(String path, Handler handler, {List<HttpMiddleware> middleware = const []}) => _add(HttpMethod.post, path, handler, middleware: middleware);
+  void post(
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) => _add(HttpMethod.post, path, handler, middleware: middleware);
 
   /// Registers a PUT route.
-  void put(String path, Handler handler, {List<HttpMiddleware> middleware = const []}) => _add(HttpMethod.put, path, handler, middleware: middleware);
+  void put(
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) => _add(HttpMethod.put, path, handler, middleware: middleware);
 
   /// Registers a PATCH route.
-  void patch(String path, Handler handler, {List<HttpMiddleware> middleware = const []}) => _add(HttpMethod.patch, path, handler, middleware: middleware);
+  void patch(
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) => _add(HttpMethod.patch, path, handler, middleware: middleware);
 
   /// Registers a DELETE route.
-  void delete(String path, Handler handler, {List<HttpMiddleware> middleware = const []}) => _add(HttpMethod.delete, path, handler, middleware: middleware);
+  void delete(
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) => _add(HttpMethod.delete, path, handler, middleware: middleware);
 
   /// Registers a pre-defined [Route] object.
-  void addRoute(Route r) => _add(r.method, r.path, r.handler, middleware: r.middleware);
+  void addRoute(Route r) =>
+      _add(r.method, r.path, r.handler, middleware: r.middleware);
 
   /// Internal: Adds a route with current group context applied.
-  void _add(HttpMethod m, String path, Handler handler, {List<HttpMiddleware> middleware = const []}) {
+  void _add(
+    HttpMethod m,
+    String path,
+    Handler handler, {
+    List<HttpMiddleware> middleware = const [],
+  }) {
     final fullPath = _join(_currentPrefix, _normalizePath(path));
     final combinedMw = [..._currentMiddleware, ...middleware];
 
-    final route = Route(method: m, path: fullPath, middleware: combinedMw, handler: handler);
+    final route = Route(
+      method: m,
+      path: fullPath,
+      middleware: combinedMw,
+      handler: handler,
+    );
     _register(route);
   }
 
@@ -146,7 +182,8 @@ base class Router {
     } else {
       _routes.putIfAbsent(route.method, () => {})[route.path] = route.handler;
       // Store middleware per method+path
-      _middlewareMap.putIfAbsent(route.method, () => {})[route.path] = route.middleware;
+      _middlewareMap.putIfAbsent(route.method, () => {})[route.path] =
+          route.middleware;
     }
   }
 
@@ -159,7 +196,6 @@ base class Router {
   ///
   /// Parameters are injected into [Zone] and accessible via [RouteParams].
   Future<void> dispatch(HttpRequest request) async {
-
     final spoofMethod = request.uri.queryParameters['_method'];
     HttpMethod method = _parseMethod(request.method);
 
@@ -175,7 +211,12 @@ base class Router {
     final middleware = _middlewareMap[method]?[path] ?? const [];
 
     if (handler != null) {
-      await _runMiddleware(request, middleware, 0, () async => await handler(request));
+      await _runMiddleware(
+        request,
+        middleware,
+        0,
+        () async => await handler(request),
+      );
       return;
     }
 
@@ -198,13 +239,23 @@ base class Router {
           valid = false;
           break;
         }
-        params[cr.paramNames[i]] = coerced is _Coerce ? coerced.value! : coerced;
+        params[cr.paramNames[i]] = coerced is _Coerce
+            ? coerced.value!
+            : coerced;
       }
 
       if (!valid) continue;
 
       // Execute with params in Zone
-      runZoned(() async => await _runMiddleware(request, cr.middleware, 0, () => cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
+      runZoned(
+        () async => await _runMiddleware(
+          request,
+          cr.middleware,
+          0,
+          () => cr.handler(request),
+        ),
+        zoneValues: RouteParams._zoneValues(params),
+      );
 
       return;
     }
@@ -247,16 +298,27 @@ base class Router {
   /// Executes middleware chain recursively.
   ///
   /// Calls [onComplete] after all middleware finishes.
-  Future<void> _runMiddleware(HttpRequest req, List<HttpMiddleware> list, int index, Future<void> Function() onComplete) async {
+  Future<void> _runMiddleware(
+    HttpRequest req,
+    List<HttpMiddleware> list,
+    int index,
+    Future<void> Function() onComplete,
+  ) async {
     if (index < list.length) {
-      await list[index](req, () => _runMiddleware(req, list, index + 1, onComplete));
+      await list[index](
+        req,
+        () => _runMiddleware(req, list, index + 1, onComplete),
+      );
     } else {
       await onComplete();
     }
   }
 
   /// Parses HTTP method string to [HttpMethod] enum.
-  HttpMethod _parseMethod(String method) => HttpMethod.values.firstWhere((m) => m.name.toUpperCase() == method.toUpperCase(), orElse: () => HttpMethod.get);
+  HttpMethod _parseMethod(String method) => HttpMethod.values.firstWhere(
+    (m) => m.name.toUpperCase() == method.toUpperCase(),
+    orElse: () => HttpMethod.get,
+  );
 
   /// Normalizes request path (trims trailing `/`).
   String _normalize(String p) {
@@ -298,7 +360,14 @@ base class Router {
     }
     regexParts.add(r'$');
 
-    return _CompiledRoute(method: r.method, regex: RegExp(regexParts.join()), paramNames: paramNames, paramTypes: paramTypes, middleware: r.middleware, handler: r.handler);
+    return _CompiledRoute(
+      method: r.method,
+      regex: RegExp(regexParts.join()),
+      paramNames: paramNames,
+      paramTypes: paramTypes,
+      middleware: r.middleware,
+      handler: r.handler,
+    );
   }
 
   /// Converts parameter type to regex capture group.
@@ -318,7 +387,11 @@ base class Router {
 
   /// Lists all registered routes (static paths + dynamic regex patterns).
   Map<HttpMethod, List<String>> listRoutes() => {
-    for (final m in HttpMethod.values) m: [...(_routes[m]?.keys ?? const []), ...(_dynamicRoutes[m]?.map((cr) => cr.regex.pattern) ?? const [])],
+    for (final m in HttpMethod.values)
+      m: [
+        ...(_routes[m]?.keys ?? const []),
+        ...(_dynamicRoutes[m]?.map((cr) => cr.regex.pattern) ?? const []),
+      ],
   };
 }
 
@@ -337,7 +410,12 @@ base class Route {
   Handler handler;
 
   /// Creates a new route definition.
-  Route({required this.method, required this.path, this.middleware = const [], required this.handler});
+  Route({
+    required this.method,
+    required this.path,
+    this.middleware = const [],
+    required this.handler,
+  });
 }
 
 /// Utility class for accessing route parameters in handlers and middleware.
@@ -351,7 +429,8 @@ base class RouteParams {
   /// Returns all route parameters as a [Map].
   ///
   /// Returns empty map if no parameters are available.
-  static Map<String, dynamic> all() => (Zone.current[_key] as Map<String, dynamic>?) ?? const {};
+  static Map<String, dynamic> all() =>
+      (Zone.current[_key] as Map<String, dynamic>?) ?? const {};
 
   /// Retrieves a typed route parameter by [name].
   ///
@@ -365,14 +444,23 @@ base class RouteParams {
   static T? get<T>(String name) => all()[name] as T?;
 
   /// Creates zone values containing the route [params].
-  static Map<Object?, Object?> _zoneValues(Map<String, dynamic> params) => {_key: params};
+  static Map<Object?, Object?> _zoneValues(Map<String, dynamic> params) => {
+    _key: params,
+  };
 }
 
 /// Internal representation of a compiled dynamic route.
 ///
 /// Contains regex pattern, parameter metadata, and execution pipeline.
 base class _CompiledRoute {
-  const _CompiledRoute({required this.method, required this.regex, required this.paramNames, required this.paramTypes, required this.middleware, required this.handler});
+  const _CompiledRoute({
+    required this.method,
+    required this.regex,
+    required this.paramNames,
+    required this.paramTypes,
+    required this.middleware,
+    required this.handler,
+  });
 
   /// HTTP method this route matches.
   final HttpMethod method;

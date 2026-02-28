@@ -70,7 +70,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;int&gt; count&lt;T extends Model&gt;({DatabaseDisk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;int&gt; count&lt;T extends Model&gt;({
+  DatabaseDisk disk = Model.defaultDisk,
+}) async {
   switch (disk) {
     case DatabaseDisk.file:
       try {
@@ -125,7 +127,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

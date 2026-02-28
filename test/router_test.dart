@@ -7,7 +7,10 @@ final class MockTemplateEngine extends TemplateEngine {
   MockTemplateEngine() : super(viewsDirectory: 'mock', publicDirectory: 'mock');
 
   @override
-  Future<String> render(String templateName, [Map<String, dynamic>? data]) async {
+  Future<String> render(
+    String templateName, [
+    Map<String, dynamic>? data,
+  ]) async {
     return 'Rendered: $templateName';
   }
 }
@@ -59,7 +62,10 @@ class MockHttpResponse implements HttpResponse {
   }
 
   @override
-  Future redirect(Uri location, {int status = HttpStatus.movedTemporarily}) async {
+  Future redirect(
+    Uri location, {
+    int status = HttpStatus.movedTemporarily,
+  }) async {
     statusCode = status;
     headers.set('Location', location.toString());
     close();
@@ -77,8 +83,8 @@ class MockHttpRequest implements HttpRequest {
   final List<Cookie> _cookies = [];
 
   MockHttpRequest(String method, String path)
-      : _method = method,
-        _uri = Uri.parse('http://localhost$path');
+    : _method = method,
+      _uri = Uri.parse('http://localhost$path');
 
   @override
   Uri get uri => _uri;
@@ -205,12 +211,15 @@ void main() {
   group('Router Grouping', () {
     test('applies prefix to routes', () async {
       var called = false;
-      router.group(prefix: '/api/v1', routes: () {
-        router.get('/users', (req) async {
-          called = true;
-          return req.text('API Users');
-        });
-      });
+      router.group(
+        prefix: '/api/v1',
+        routes: () {
+          router.get('/users', (req) async {
+            called = true;
+            return req.text('API Users');
+          });
+        },
+      );
 
       final req = MockHttpRequest('GET', '/api/v1/users');
       await router.dispatch(req);
@@ -226,12 +235,15 @@ void main() {
         await next();
       }
 
-      router.group(middleware: [mw], routes: () {
-        router.get('/protected', (req) async {
-          log.add('handler');
-          return req.text('Protected');
-        });
-      });
+      router.group(
+        middleware: [mw],
+        routes: () {
+          router.get('/protected', (req) async {
+            log.add('handler');
+            return req.text('Protected');
+          });
+        },
+      );
 
       final req = MockHttpRequest('GET', '/protected');
       await router.dispatch(req);
@@ -241,14 +253,20 @@ void main() {
 
     test('nested groups combine prefixes', () async {
       var called = false;
-      router.group(prefix: '/api', routes: () {
-        router.group(prefix: '/v2', routes: () {
-          router.get('/data', (req) async {
-            called = true;
-            return req.text('Data');
-          });
-        });
-      });
+      router.group(
+        prefix: '/api',
+        routes: () {
+          router.group(
+            prefix: '/v2',
+            routes: () {
+              router.get('/data', (req) async {
+                called = true;
+                return req.text('Data');
+              });
+            },
+          );
+        },
+      );
 
       final req = MockHttpRequest('GET', '/api/v2/data');
       await router.dispatch(req);
@@ -281,13 +299,16 @@ void main() {
       final req = MockHttpRequest('GET', '/ordered');
       await router.dispatch(req);
 
-      expect(log, equals([
-        'mw1 start',
-        'mw2 start',
-        'handler',
-        'mw2 end', // Middleware continue logic is purely recursive callback based
-        'mw1 end'
-      ]));
+      expect(
+        log,
+        equals([
+          'mw1 start',
+          'mw2 start',
+          'handler',
+          'mw2 end', // Middleware continue logic is purely recursive callback based
+          'mw1 end',
+        ]),
+      );
     });
   });
 

@@ -63,7 +63,11 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">factory UploadedFile.empty() {
-  return UploadedFile.fromBytes(filename: &#39;&#39;, bytes: Uint8List(0), contentType: &#39;application&#47;octet-stream&#39;);
+  return UploadedFile.fromBytes(
+    filename: &#39;&#39;,
+    bytes: Uint8List(0),
+    contentType: &#39;application&#47;octet-stream&#39;,
+  );
 }</code></pre>
 </section>
 
@@ -92,7 +96,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -91,7 +91,11 @@ abstract class ServiceContainer {
   /// - `eager: false` (default) → lazy creation on first [make]
   ///
   /// Throws [ServiceContainerException.duplicateRegistration] if already registered.
-  void singleton<T>({String? name, required FactoryFunction<T> factory, bool eager = false});
+  void singleton<T>({
+    String? name,
+    required FactoryFunction<T> factory,
+    bool eager = false,
+  });
 
   /// Binds an **existing instance** to the container.
   ///
@@ -205,7 +209,8 @@ abstract class ServiceContainer {
 /// ```
 ///
 /// Async factories should return `Future<T>`.
-typedef FactoryFunction<T> = T Function(ServiceContainer container, [Map<String, dynamic>? options]);
+typedef FactoryFunction<T> =
+    T Function(ServiceContainer container, [Map<String, dynamic>? options]);
 
 /// Exception thrown by [ServiceContainer] operations.
 base class ServiceContainerException implements Exception {
@@ -216,20 +221,30 @@ base class ServiceContainerException implements Exception {
   ServiceContainerException({required this.type, this.name, this.message});
 
   /// Thrown when registering a type/name that's already bound.
-  ServiceContainerException.duplicateRegistration({required this.type, this.name})
-    : message = "Duplicate registration of type($type)${name != null ? ' with name($name)' : ''}";
+  ServiceContainerException.duplicateRegistration({
+    required this.type,
+    this.name,
+  }) : message =
+           "Duplicate registration of type($type)${name != null ? ' with name($name)' : ''}";
 
   /// Thrown when a circular dependency is detected during resolution.
-  ServiceContainerException.circularDependencyResolution({required this.type, this.name})
-    : message = "Circular resolution of type($type)${name != null ? ' with name($name)' : ''}";
+  ServiceContainerException.circularDependencyResolution({
+    required this.type,
+    this.name,
+  }) : message =
+           "Circular resolution of type($type)${name != null ? ' with name($name)' : ''}";
 
   /// Thrown when [make] is called for an unregistered service.
   ServiceContainerException.registrationNotFound({required this.type, this.name})
-    : message = "No registration for type($type)${name != null ? ' with name($name)' : ''} in container or parent scopes";
+    : message =
+          "No registration for type($type)${name != null ? ' with name($name)' : ''} in container or parent scopes";
 
   /// Thrown when [bindInstance] is called with a `null` instance.
-  ServiceContainerException.nullInstanceUnallowed({required this.type, this.name})
-    : message = "Instance cannot be null for type($type)${name != null ? ' with name($name)' : ''} in container or parent scopes";
+  ServiceContainerException.nullInstanceUnallowed({
+    required this.type,
+    this.name,
+  }) : message =
+           "Instance cannot be null for type($type)${name != null ? ' with name($name)' : ''} in container or parent scopes";
 
   @override
   String toString() => message ?? 'ServiceContainerException';
@@ -244,7 +259,8 @@ base class Container implements ServiceContainer {
   final Map<String, Object> _singletons = {};
   final Map<String, bool> _eagerRegistrations = {};
   final List<Future<void> Function()> _disposers = [];
-  final Map<String, dynamic Function(Container, [Map<String, dynamic>?])> _factories = {};
+  final Map<String, dynamic Function(Container, [Map<String, dynamic>?])>
+  _factories = {};
 
   /// Private constructor for internal use and scoping.
   Container._([this._parent]);
@@ -282,9 +298,17 @@ base class Container implements ServiceContainer {
   /// - Executes factory if registered
   /// - Propagates to parent if not found
   /// - Throws appropriate exceptions
-  T _resolve<T>(String key, Set<String> resolutionStack, [Map<String, dynamic>? options, bool propagate = true]) {
+  T _resolve<T>(
+    String key,
+    Set<String> resolutionStack, [
+    Map<String, dynamic>? options,
+    bool propagate = true,
+  ]) {
     if (resolutionStack.contains(key)) {
-      throw ServiceContainerException.circularDependencyResolution(type: T, name: key.split('-> ').last);
+      throw ServiceContainerException.circularDependencyResolution(
+        type: T,
+        name: key.split('-> ').last,
+      );
     }
 
     resolutionStack.add(key);
@@ -311,7 +335,10 @@ base class Container implements ServiceContainer {
         return _parent._resolve<T>(key, {}, options);
       }
 
-      throw ServiceContainerException.registrationNotFound(type: T, name: key.split('-> ').last);
+      throw ServiceContainerException.registrationNotFound(
+        type: T,
+        name: key.split('-> ').last,
+      );
     } finally {
       resolutionStack.remove(key);
     }
@@ -329,11 +356,21 @@ base class Container implements ServiceContainer {
   ///
   /// See [ServiceContainer.bind] for details.
   @override
-  void bind<T>({String? name, required T Function(ServiceContainer container, Map<String, dynamic>? options) factory}) {
+  void bind<T>({
+    String? name,
+    required T Function(
+      ServiceContainer container,
+      Map<String, dynamic>? options,
+    )
+    factory,
+  }) {
     final key = _key<T>(name);
 
     if (_factories.containsKey(key) || _singletons.containsKey(key)) {
-      throw ServiceContainerException.duplicateRegistration(type: T, name: name);
+      throw ServiceContainerException.duplicateRegistration(
+        type: T,
+        name: name,
+      );
     }
 
     _factories[key] = (container, [options]) => factory(container, options);
@@ -347,11 +384,17 @@ base class Container implements ServiceContainer {
     final key = _key<T>(name);
 
     if (_factories.containsKey(key) || _singletons.containsKey(key)) {
-      throw ServiceContainerException.duplicateRegistration(type: T, name: name);
+      throw ServiceContainerException.duplicateRegistration(
+        type: T,
+        name: name,
+      );
     }
 
     if (instance == null) {
-      throw ServiceContainerException.nullInstanceUnallowed(type: T, name: name);
+      throw ServiceContainerException.nullInstanceUnallowed(
+        type: T,
+        name: name,
+      );
     }
 
     _singletons[key] = instance as Object;
@@ -363,7 +406,9 @@ base class Container implements ServiceContainer {
   @override
   bool contains<T>({String? name}) {
     final key = _key<T>(name);
-    return _factories.containsKey(key) || _singletons.containsKey(key) || (_parent?.contains<T>(name: name) ?? false);
+    return _factories.containsKey(key) ||
+        _singletons.containsKey(key) ||
+        (_parent?.contains<T>(name: name) ?? false);
   }
 
   /// Disposes resources and runs cleanup callbacks.
@@ -426,8 +471,10 @@ base class Container implements ServiceContainer {
 
     if (_parent != null) {
       final parentRegistrations = _parent.listRegistrations();
-      registrations['parent_factories'] = parentRegistrations['factories'] ?? [];
-      registrations['parent_singletons'] = parentRegistrations['singletons'] ?? [];
+      registrations['parent_factories'] =
+          parentRegistrations['factories'] ?? [];
+      registrations['parent_singletons'] =
+          parentRegistrations['singletons'] ?? [];
       registrations['parent_eager'] = parentRegistrations['eager'] ?? [];
     }
 
@@ -460,18 +507,34 @@ base class Container implements ServiceContainer {
   ///
   /// See [ServiceContainer.singleton] for details.
   @override
-  void singleton<T>({String? name, required T Function(ServiceContainer container, [Map<String, dynamic>? options]) factory, bool eager = false}) {
+  void singleton<T>({
+    String? name,
+    required T Function(
+      ServiceContainer container, [
+      Map<String, dynamic>? options,
+    ])
+    factory,
+    bool eager = false,
+  }) {
     final key = _key<T>(name);
 
     if (_factories.containsKey(key) || _singletons.containsKey(key)) {
-      throw ServiceContainerException.duplicateRegistration(type: T, name: name);
+      throw ServiceContainerException.duplicateRegistration(
+        type: T,
+        name: name,
+      );
     }
 
     if (eager) {
       _eagerRegistrations[key] = true;
       _factories[key] = (container, [options]) => factory(container, options);
     } else {
-      _factories[key] = (container, [options]) => _singletons.putIfAbsent(key, () => factory(container, options) as Object) as T;
+      _factories[key] = (container, [options]) =>
+          _singletons.putIfAbsent(
+                key,
+                () => factory(container, options) as Object,
+              )
+              as T;
     }
   }
 
@@ -480,6 +543,8 @@ base class Container implements ServiceContainer {
   /// See [ServiceContainer.tryMake] for details.
   @override
   T? tryMake<T>({String? name, Map<String, dynamic>? options}) {
-    return contains<T>(name: name) ? make<T>(name: name, options: options) : null;
+    return contains<T>(name: name)
+        ? make<T>(name: name, options: options)
+        : null;
   }
 }

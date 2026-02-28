@@ -68,7 +68,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; findOrFail&lt;T extends Model&gt;({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; findOrFail&lt;T extends Model&gt;({
+  required dynamic id,
+  DatabaseDisk disk = Model.defaultDisk,
+}) async {
   return await Model.findOrFail&lt;T&gt;(request: this, id: id, disk: disk);
 }</code></pre>
 </section>
@@ -98,7 +101,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

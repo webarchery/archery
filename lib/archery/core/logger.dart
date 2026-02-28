@@ -68,7 +68,10 @@ enum LogLevel {
   ///
   /// Defaults to [LogLevel.info] if not found.
   static LogLevel fromCode(int code) {
-    return values.firstWhere((level) => level.code == code, orElse: () => LogLevel.info);
+    return values.firstWhere(
+      (level) => level.code == code,
+      orElse: () => LogLevel.info,
+    );
   }
 }
 
@@ -99,7 +102,13 @@ final class LogEntry {
   /// Creates a new log entry.
   ///
   /// [context] defaults to empty map if `null`.
-  LogEntry({required this.level, required this.message, this.metadata, Map<String, dynamic>? context}) : timestamp = DateTime.now().toUtc(), context = context ?? {};
+  LogEntry({
+    required this.level,
+    required this.message,
+    this.metadata,
+    Map<String, dynamic>? context,
+  }) : timestamp = DateTime.now().toUtc(),
+       context = context ?? {};
 
   /// Serializes the entry to JSON-compatible map.
   ///
@@ -155,13 +164,24 @@ final class Logger {
   final Map<String, dynamic> _context;
 
   /// Creates a logger with optional [transports] and [context].
-  Logger({List<LogTransport>? transports, Map<String, dynamic>? context}) : _transports = transports ?? [], _context = context ?? {};
+  Logger({List<LogTransport>? transports, Map<String, dynamic>? context})
+    : _transports = transports ?? [],
+      _context = context ?? {};
 
   /// Internal: creates and dispatches a [LogEntry] to all transports.
   ///
   /// Catches and reports transport errors to `stderr`.
-  Future<void> _log(LogLevel level, String message, [Map<String, dynamic>? metadata]) async {
-    final entry = LogEntry(level: level, message: message, metadata: metadata, context: _context);
+  Future<void> _log(
+    LogLevel level,
+    String message, [
+    Map<String, dynamic>? metadata,
+  ]) async {
+    final entry = LogEntry(
+      level: level,
+      message: message,
+      metadata: metadata,
+      context: _context,
+    );
 
     for (final transport in _transports) {
       try {
@@ -173,22 +193,28 @@ final class Logger {
   }
 
   /// Logs an **error** message.
-  Future<void> error(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.error, message, metadata);
+  Future<void> error(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.error, message, metadata);
 
   /// Logs a **success** message.
-  Future<void> success(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.success, message, metadata);
+  Future<void> success(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.success, message, metadata);
 
   /// Logs a **warning** message.
-  Future<void> warn(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.warn, message, metadata);
+  Future<void> warn(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.warn, message, metadata);
 
   /// Logs an **info** message.
-  Future<void> info(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.info, message, metadata);
+  Future<void> info(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.info, message, metadata);
 
   /// Logs a **debug** message.
-  Future<void> debug(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.debug, message, metadata);
+  Future<void> debug(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.debug, message, metadata);
 
   /// Logs a **trace** message.
-  Future<void> trace(String message, [Map<String, dynamic>? metadata]) => _log(LogLevel.trace, message, metadata);
+  Future<void> trace(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.trace, message, metadata);
 
   /// Creates a child logger with additional [context].
   ///
@@ -197,7 +223,10 @@ final class Logger {
   /// final requestLogger = logger.child({'requestId': 'abc123'});
   /// ```
   Logger child([Map<String, dynamic>? additionalContext]) {
-    return Logger(transports: _transports, context: {..._context, ...?additionalContext});
+    return Logger(
+      transports: _transports,
+      context: {..._context, ...?additionalContext},
+    );
   }
 
   /// Disposes all transports.

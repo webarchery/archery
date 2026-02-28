@@ -56,7 +56,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.3.1";
+  static final String version = "1.4.0";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
@@ -100,7 +100,10 @@ class App {
       try {
         register(provider);
       } catch (e, stack) {
-        throw ProviderException.unregistered(type: provider.runtimeType, trace: stack);
+        throw ProviderException.unregistered(
+          type: provider.runtimeType,
+          trace: stack,
+        );
       }
     }
   }
@@ -126,7 +129,9 @@ class App {
   ///
   /// Used for application encryption key, session secrets, etc.
   static String generateKey() {
-    return base64Url.encode(List.generate(32, (i) => Random.secure().nextInt(256)));
+    return base64Url.encode(
+      List.generate(32, (i) => Random.secure().nextInt(256)),
+    );
   }
 
   /// Ensures `lib/src/config/app.json` exists and populates it with default config.
@@ -153,7 +158,14 @@ class App {
     // Skip if content exists and not resetting
     if ((content.isNotEmpty && content != "{}") && !reset) return;
 
-    final config = <String, dynamic>{"name": "Archery Web Application", "version": version, "timestamp": DateTime.now().toUtc().toIso8601String(), "key": generateKey(), "id": Uuid().v4(), "debug": true};
+    final config = <String, dynamic>{
+      "name": "Archery Web Application",
+      "version": version,
+      "timestamp": DateTime.now().toUtc().toIso8601String(),
+      "key": generateKey(),
+      "id": Uuid().v4(),
+      "debug": true,
+    };
 
     file.writeAsStringSync(json.encode(config));
   }
@@ -180,11 +192,18 @@ extension Boot on App {
     container.bindInstance<Router>(router);
 
     // Default View Engine
-    final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
-    final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!);
+    final settings = {
+      "viewsPath": 'lib/src/http/views',
+      "publicPath": 'lib/src/http/public',
+    };
+    final engine = TemplateEngine(
+      viewsDirectory: settings['viewsPath']!,
+      publicDirectory: settings['publicPath']!,
+    );
 
     // Enable caching for performance
-    engine.shouldCache = true; // Enabled by default for performance recommendation
+    engine.shouldCache =
+        true; // Enabled by default for performance recommendation
     // engine.shouldCache = config?.get('view.cache', true) ?? true;
     container.bindInstance<TemplateEngine>(engine);
 
@@ -208,7 +227,10 @@ extension Boot on App {
         },
       ),
     );
-    container.singleton<SQLiteDatabase>(factory: (_, [_]) => sqliteDatabase, eager: true);
+    container.singleton<SQLiteDatabase>(
+      factory: (_, [_]) => sqliteDatabase,
+      eager: true,
+    );
 
     // Default Postgres DB
     // Todo - uncomment to init postgres when you config is set
@@ -236,7 +258,10 @@ extension Boot on App {
         try {
           await provider.boot(container);
         } catch (e, stack) {
-          throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
+          throw ProviderException.unbooted(
+            type: provider.runtimeType,
+            trace: stack,
+          );
         }
       }
 
@@ -293,7 +318,6 @@ extension ContainerOperations on App {
   }
 }
 
-
 /// Convenience accessors for resolving configuration from the IoC container.
 ///
 /// This keeps call sites terse: `App().config.get('key')`.
@@ -301,24 +325,32 @@ extension GetConfig on App {
   AppConfig get config => container.make<AppConfig>();
 }
 
-
 /// Convenience accessors for common framework/application loggers.
 ///
 /// These loggers are constructed on-demand and use app configuration where
 /// applicable (e.g. debug → console logging).
 extension GetLoggers on App {
   Logger get archeryLogger => Logger(
-    transports: [config.get('app.debug') != null && config.get('app.debug') == true ? ConsoleTransport(formatJson: true) : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
+    transports: [
+      config.get('app.debug') != null && config.get('app.debug') == true
+          ? ConsoleTransport(formatJson: true)
+          : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
+    ],
     context: {"logger": "Archery Framework Logger"},
   );
 
   /// Global Loggers for easy messaging
   Logger get fileLogger => Logger(
-    transports: [LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
+    transports: [
+      LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
+    ],
     context: {"logger": "App().fileLogger"},
   );
 
-  Logger get consoleLogger => Logger(transports: [ConsoleTransport(formatJson: true)], context: {"logger": "App().consoleLogger"});
+  Logger get consoleLogger => Logger(
+    transports: [ConsoleTransport(formatJson: true)],
+    context: {"logger": "App().consoleLogger"},
+  );
 
   Logger get consoleFileLogger => Logger(
     transports: [

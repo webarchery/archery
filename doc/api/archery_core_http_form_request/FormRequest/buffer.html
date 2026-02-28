@@ -74,7 +74,10 @@ Called early (in Kernel) to prevent "Stream already listened" errors.</p>
   if (_bodyBuffer != null) return;
 
   try {
-    final bytes = await _request.fold&lt;BytesBuilder&gt;(BytesBuilder(copy: false), (builder, chunk) =&gt; builder..add(chunk));
+    final bytes = await _request.fold&lt;BytesBuilder&gt;(
+      BytesBuilder(copy: false),
+      (builder, chunk) =&gt; builder..add(chunk),
+    );
     _bodyBuffer = bytes.takeBytes();
   } catch (e) {
     &#47;&#47; print(&quot;Error buffering request stream: $e&quot;);
@@ -108,7 +111,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.</p>
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -79,7 +79,9 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 T? tryMake&lt;T&gt;({String? name, Map&lt;String, dynamic&gt;? options}) {
-  return contains&lt;T&gt;(name: name) ? make&lt;T&gt;(name: name, options: options) : null;
+  return contains&lt;T&gt;(name: name)
+      ? make&lt;T&gt;(name: name, options: options)
+      : null;
 }</code></pre>
 </section>
 
@@ -108,7 +110,7 @@ T? tryMake&lt;T&gt;({String? name, Map&lt;String, dynamic&gt;? options}) {
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

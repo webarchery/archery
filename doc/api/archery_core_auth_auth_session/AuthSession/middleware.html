@@ -73,12 +73,16 @@
   final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
   if (cookie == null || authSessions == null || authSessions.isEmpty) {
+    await logout(request);
     return request.redirectToLogin();
   }
 
   final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
 
-  if (session == null) return request.redirectToLogin();
+  if (session == null) {
+    await logout(request);
+    return request.redirectToLogin();
+  }
 
   if (!_validateSession(session)) {
     await logout(request);
@@ -115,7 +119,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

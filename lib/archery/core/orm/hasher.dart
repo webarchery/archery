@@ -66,7 +66,10 @@ base class Hasher {
   /// Returns URL-safe base64-encoded string.
   static String _generateSalt() {
     final random = Random.secure();
-    final saltBytes = List<int>.generate(_saltLength, (i) => random.nextInt(256));
+    final saltBytes = List<int>.generate(
+      _saltLength,
+      (i) => random.nextInt(256),
+    );
     return base64Url.encode(saltBytes);
   }
 
@@ -105,7 +108,12 @@ base class Hasher {
   ///
   /// Derives a key from [password] and [salt] using [iterations].
   /// Returns first [keyLength] bytes of derived key.
-  static List<int> _pbkdf2(String password, String salt, int iterations, int keyLength) {
+  static List<int> _pbkdf2(
+    String password,
+    String salt,
+    int iterations,
+    int keyLength,
+  ) {
     final passwordBytes = utf8.encode(password);
     final saltBytes = utf8.encode(salt);
 
@@ -115,7 +123,13 @@ base class Hasher {
 
     for (var i = 1; i <= l; i++) {
       // F(P, S, c, i) = U1 XOR U2 XOR ... XOR Uc
-      final block = List<int>.from(saltBytes)..addAll([(i >> 24) & 0xFF, (i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF]);
+      final block = List<int>.from(saltBytes)
+        ..addAll([
+          (i >> 24) & 0xFF,
+          (i >> 16) & 0xFF,
+          (i >> 8) & 0xFF,
+          i & 0xFF,
+        ]);
 
       var u = _hmacSha256(passwordBytes, block);
       final temp = List<int>.from(u); // This will be XORed iteratively
@@ -198,16 +212,15 @@ base class Hasher {
     return result == 0;
   }
 
-
   // These method name are generic for the idea
   // hashPassword/verifyPassword are DX convenient
 
-  static String make(String key) {
+  static String make({required String key}) {
     return _hash(key);
   }
 
   // Hasher.check() vs Hasher.verify()
-  static bool check(String key, String? hash) {
+  static bool check({required String key, String? hash}) {
     return _verify(key, hash);
   }
 }

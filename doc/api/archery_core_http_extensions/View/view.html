@@ -81,27 +81,32 @@
   final engine = App().container.make&lt;TemplateEngine&gt;();
   final config = App().container.make&lt;AppConfig&gt;();
 
-  final user = await Auth.user(this);
-  if (user != null) {
-    final userData = {&quot;user&quot;: user.toJson()};
-    data = {...?data, ...userData};
-  }
+
+  thisSession?.user = await Auth.user(this);
+
+  final session = {&quot;session&quot;: thisSession?.toJson() };
+
+
+
+  data = {...?data, ...session};
 
   &#47;&#47; Ensure CSRF token is available to the view
   String token;
   bool isNewToken = false;
 
-  if (data != null &amp;&amp; data.containsKey(&#39;csrf_token&#39;)) {
+  if (data.containsKey(&#39;csrf_token&#39;)) {
     token = data[&#39;csrf_token&#39;];
   } else {
-    final csrfCookie = cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &#39;archery_csrf_token&#39;);
+    final csrfCookie = cookies.firstWhereOrNull(
+      (cookie) =&gt; cookie.name == &#39;archery_csrf_token&#39;,
+    );
     if (csrfCookie != null) {
       token = csrfCookie.value;
     } else {
       token = App.generateKey();
       isNewToken = true;
     }
-    data = {...?data, &#39;csrf_token&#39;: token};
+    data = {...data, &#39;csrf_token&#39;: token};
   }
 
   try {
@@ -124,10 +129,14 @@
 
     final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
     if (sessions != null &amp;&amp; sessions.isNotEmpty) {
-      final requestCookie = cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;);
+      final requestCookie = cookies.firstWhereOrNull(
+        (cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;,
+      );
 
       if (requestCookie != null) {
-        final session = sessions.firstWhereOrNull((session) =&gt; session.token == requestCookie.value);
+        final session = sessions.firstWhereOrNull(
+          (session) =&gt; session.token == requestCookie.value,
+        );
 
         if (session != null) {
           session.csrf = token;
@@ -178,7 +187,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

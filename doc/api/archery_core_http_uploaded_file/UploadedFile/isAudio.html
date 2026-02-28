@@ -75,7 +75,15 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">bool get isAudio {
   final mime = contentType.toLowerCase();
-  return mime.startsWith(&#39;audio&#47;&#39;) || [&#39;.mp3&#39;, &#39;.wav&#39;, &#39;.ogg&#39;, &#39;.m4a&#39;, &#39;.aac&#39;, &#39;.flac&#39;].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
+  return mime.startsWith(&#39;audio&#47;&#39;) ||
+      [
+        &#39;.mp3&#39;,
+        &#39;.wav&#39;,
+        &#39;.ogg&#39;,
+        &#39;.m4a&#39;,
+        &#39;.aac&#39;,
+        &#39;.flac&#39;,
+      ].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
 }</code></pre>
 </section>
 
@@ -106,7 +114,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

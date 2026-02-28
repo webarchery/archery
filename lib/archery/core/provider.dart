@@ -58,7 +58,10 @@ base class ProviderException implements Exception {
   /// ```dart
   /// throw ProviderException.duplicateRegistration(type: MyProvider);
   /// ```
-  factory ProviderException.duplicateRegistration({required Type type, StackTrace? trace}) {
+  factory ProviderException.duplicateRegistration({
+    required Type type,
+    StackTrace? trace,
+  }) {
     return ProviderException(
       type: type,
       message: 'Duplicate provider registration of $type',
@@ -76,7 +79,10 @@ base class ProviderException implements Exception {
   }
 
   /// Thrown when a provider's `register()` method throws during registration.
-  factory ProviderException.unregistered({required Type type, StackTrace? trace,}) {
+  factory ProviderException.unregistered({
+    required Type type,
+    StackTrace? trace,
+  }) {
     return ProviderException(
       type: type,
       message: '$type register() method failed during APP initialization',

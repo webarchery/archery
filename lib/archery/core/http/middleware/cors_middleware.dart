@@ -32,7 +32,10 @@
 import 'package:archery/archery/archery.dart';
 
 base class CorsMiddleware {
-  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
+  static Future<dynamic> middleware(
+    HttpRequest request,
+    Future<void> Function() next,
+  ) async {
     // Add CORS headers to response
     request.response.headers
       ..set('Access-Control-Allow-Origin', '*')

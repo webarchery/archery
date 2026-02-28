@@ -168,7 +168,6 @@ base class StaticFilesServer {
   /// - Resolves symlinks to prevent escaping root
   /// - Only allows `GET` and `HEAD`
   Future<bool> tryServe(HttpRequest req) async {
-
     try {
       final method = req.method.toUpperCase();
       if (method != 'GET' && method != 'HEAD') return false;
@@ -187,11 +186,9 @@ base class StaticFilesServer {
       }
 
       return false;
-
-    }catch (e) {
+    } catch (e) {
       return false;
     }
-
   }
 
   /// Serves [file] if it exists and is within [root].

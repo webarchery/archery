@@ -31,7 +31,7 @@
 
 library;
 
-import 'package:postgres/postgres.dart'  ;
+import 'package:postgres/postgres.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 export 'dart:io';
@@ -47,7 +47,6 @@ export 'package:intl/intl.dart';
 export 'dart:typed_data';
 export 'package:mime/mime.dart';
 
-
 //**********************************
 export './core/container.dart'
     show ServiceContainer, Container, ServiceContainerException;
@@ -55,7 +54,8 @@ export './core/container.dart'
 //***********************************
 export './core/provider.dart' show Provider, ProviderException;
 //***********************************
-export './core/application.dart' show ContainerOperations, AppStatus, App, GetConfig, GetLoggers, Boot;
+export './core/application.dart'
+    show ContainerOperations, AppStatus, App, GetConfig, GetLoggers, Boot;
 
 //***********************************
 export './core/config.dart' show ConfigRepository, AppConfig;
@@ -99,7 +99,6 @@ export './core/orm/postgres_model.dart';
 export 'core/http/http.dart';
 
 export 'core/auth/auth_session.dart';
-
 
 //*************************************
 export './packages/s3_client.dart';

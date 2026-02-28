@@ -74,7 +74,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Logger get fileLogger =&gt; Logger(
-  transports: [LogFileTransport(filePath: &#39;lib&#47;src&#47;storage&#47;logs&#47;archery.log&#39;)],
+  transports: [
+    LogFileTransport(filePath: &#39;lib&#47;src&#47;storage&#47;logs&#47;archery.log&#39;),
+  ],
   context: {&quot;logger&quot;: &quot;App().fileLogger&quot;},
 );</code></pre>
 </section>
@@ -106,7 +108,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

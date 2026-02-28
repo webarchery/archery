@@ -113,7 +113,7 @@ Response
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">router.get('/users/{id:int}', (req) async {
   final id = RouteParam.get&lt;int&gt;('id');
-  return Response.json({'id': id});
+  return req.json({'id': id});
 });
 </code></pre>
 <hr>
@@ -207,13 +207,13 @@ Response
 <pre class="language-dart"><code class="language-dart">class User extends Model {}
 
 // uses default disk. in this e.g =&gt; .file
-final user = Model.find&lt;User&gt;(id: 1);
+final user = await Model.find&lt;User&gt;(id: 1);
 
-final user2 = Model.find&lt;User&gt;(id: 1, disk: .sqlite);
+final user2 = await Model.find&lt;User&gt;(id: 1, disk: .sqlite);
 
-final user3 = Model.find&lt;User&gt;(id: 1, disk: .s3);
+final user3 = await Model.find&lt;User&gt;(id: 1, disk: .s3);
 
-final user4 = Model.find&lt;User&gt;(id: 1, disk: .pgsql);
+final user4 = await Model.find&lt;User&gt;(id: 1, disk: .pgsql);
 
 final user5 = User(name: "Archer", email: "archer@example.com", passwprd: "password");
 
@@ -276,7 +276,7 @@ await user5.save(disk: .sqlite);
 </tr>
 <tr>
 <td>S3</td>
-<td>Backups 0/ Experimental / Niche</td>
+<td>Backups / Experimental / Niche</td>
 </tr>
 </tbody>
 </table>
@@ -566,7 +566,7 @@ See LICENSE file for details.</p>
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -39,7 +39,10 @@ base class FormRequest {
   Uint8List? _bodyBuffer;
   Future<void>? _parsingFuture;
 
-  FormRequest(this._request) : _fields = <String, dynamic>{}, _files = <String, UploadedFile>{}, _parsed = false;
+  FormRequest(this._request)
+    : _fields = <String, dynamic>{},
+      _files = <String, UploadedFile>{},
+      _parsed = false;
 
   /// Access to the underlying HttpRequest
   HttpRequest get httpRequest => _request;
@@ -89,7 +92,10 @@ base class FormRequest {
     if (_bodyBuffer != null) return;
 
     try {
-      final bytes = await _request.fold<BytesBuilder>(BytesBuilder(copy: false), (builder, chunk) => builder..add(chunk));
+      final bytes = await _request.fold<BytesBuilder>(
+        BytesBuilder(copy: false),
+        (builder, chunk) => builder..add(chunk),
+      );
       _bodyBuffer = bytes.takeBytes();
     } catch (e) {
       // print("Error buffering request stream: $e");
@@ -163,7 +169,10 @@ base class FormRequest {
     }
   }
 
-  Future<void> _parseMultipartFormDataFromBytes(Uint8List bodyBytes, String boundary) async {
+  Future<void> _parseMultipartFormDataFromBytes(
+    Uint8List bodyBytes,
+    String boundary,
+  ) async {
     final stream = Stream<Uint8List>.value(bodyBytes);
     final transformer = MimeMultipartTransformer(boundary);
     final partsStream = transformer.bind(stream);
@@ -171,7 +180,10 @@ base class FormRequest {
     await for (final part in partsStream) {
       // print('DB_LOG: Found part. Headers: ${part.headers}');
       // Handle case-insensitive headers
-      final dispositionKey = part.headers.keys.firstWhere((k) => k.toLowerCase() == 'content-disposition', orElse: () => '');
+      final dispositionKey = part.headers.keys.firstWhere(
+        (k) => k.toLowerCase() == 'content-disposition',
+        orElse: () => '',
+      );
 
       if (dispositionKey.isEmpty) {
         // print('DB_LOG: No content-disposition found');
@@ -200,7 +212,12 @@ base class FormRequest {
         final bytes = Uint8List.fromList(chunks.expand((x) => x).toList());
 
         if (bytes.isNotEmpty) {
-          _files[name] = UploadedFile.fromBytes(filename: filename, bytes: bytes, contentType: part.headers['content-type'] ?? 'application/octet-stream');
+          _files[name] = UploadedFile.fromBytes(
+            filename: filename,
+            bytes: bytes,
+            contentType:
+                part.headers['content-type'] ?? 'application/octet-stream',
+          );
         } else {
           _files[name] = UploadedFile.empty();
         }

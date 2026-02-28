@@ -68,8 +68,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
-
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(
+  HttpRequest request,
+  Future&lt;void&gt; Function() next,
+) async {
   if (_isReading(request)) {
     await next();
     return;
@@ -80,15 +82,6 @@
   final sessionToken = await _getSessionToken(request);
 
   if (token == null || sessionToken == null || token != sessionToken) {
-    &#47;&#47; Todo - Leaving this snippet for testing
-    &#47;&#47; print(&#39;--- CSRF DEBUG ---&#39;);
-    &#47;&#47; print(&#39;Method: ${request.method} ${request.uri}&#39;);
-    &#47;&#47; print(&#39;Input Token (Body): $token&#39;);
-    &#47;&#47; print(&#39;Session Token (Cookie): $sessionToken&#39;);
-    &#47;&#47; print(&#39;All Cookies: ${request.cookies.map((c) =&gt; &#39;${c.name}=${c.value}&#39;).join(&#39;, &#39;)}&#39;);
-    &#47;&#47; print(&#39;Headers: ${request.headers.value(&#39;content-type&#39;)}&#39;);
-    &#47;&#47; print(&#39;------------------&#39;);
-
     return request.response
       ..statusCode = HttpStatus.forbidden
       ..write(&quot;403 Forbidden: Invalid CSRF Token&quot;)
@@ -124,7 +117,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

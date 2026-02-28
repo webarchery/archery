@@ -90,12 +90,20 @@ abstract class SQLiteModel {
   static Map<Type, Function> get migrations => _jsonConstructors;
 
   /// Default column definitions for all models.
-  static final Map<String, String> _columnDefinitions = {'id': 'INTEGER PRIMARY KEY AUTOINCREMENT', 'uuid': 'TEXT UNIQUE NOT NULL', 'created_at': 'TEXT NOT NULL', 'updated_at': 'TEXT NOT NULL'};
+  static final Map<String, String> _columnDefinitions = {
+    'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
+    'uuid': 'TEXT UNIQUE NOT NULL',
+    'created_at': 'TEXT NOT NULL',
+    'updated_at': 'TEXT NOT NULL',
+  };
 
   /// Converts `UserModel` → `user_models` (snake_case plural).
   static String _getTableName<T>() {
     final typeName = T.toString();
-    final snakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    final snakeCase = typeName.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (match) => '_',
+    );
     return '${snakeCase.toLowerCase()}s';
   }
 
@@ -107,7 +115,12 @@ abstract class SQLiteModel {
     instance.updatedAt = DateTime.now().toUtc();
 
     try {
-      final data = {...instance.toMetaJson(), 'uuid': instance.uuid, 'created_at': instance.createdAt!.toIso8601String(), 'updated_at': instance.updatedAt!.toIso8601String()};
+      final data = {
+        ...instance.toMetaJson(),
+        'uuid': instance.uuid,
+        'created_at': instance.createdAt!.toIso8601String(),
+        'updated_at': instance.updatedAt!.toIso8601String(),
+      };
 
       final id = await _database.insert(tableName, data);
       if (id > 0) {
@@ -129,9 +142,17 @@ abstract class SQLiteModel {
       final tableName = _getTableName<T>();
       instance.updatedAt = DateTime.now().toUtc();
 
-      final data = {...instance.toJson(), 'updated_at': instance.updatedAt!.toIso8601String()};
+      final data = {
+        ...instance.toMetaJson(),
+        'updated_at': instance.updatedAt!.toIso8601String(),
+      };
 
-      final rows = await _database.update(tableName, data, where: 'id = ?', whereArgs: [instance.id]);
+      final rows = await _database.update(
+        tableName,
+        data,
+        where: 'id = ?',
+        whereArgs: [instance.id],
+      );
 
       return rows > 0;
     } catch (e) {
@@ -157,14 +178,19 @@ abstract class SQLiteModel {
   ///   },
   /// );
   /// ```
-  static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor, Map<String, String>? columnDefinitions}) async {
+  static Future<void> migrate<T extends Model>({
+    required T Function(Map<String, dynamic>) constructor,
+    Map<String, String>? columnDefinitions,
+  }) async {
     _jsonConstructors[T] = constructor;
 
     if (columnDefinitions != null && columnDefinitions.isNotEmpty) {
       final tableName = _getTableName<T>();
       final allColumns = {..._columnDefinitions, ...columnDefinitions};
 
-      final columnsDef = allColumns.entries.map((e) => '${e.key} ${e.value}').join(', ');
+      final columnsDef = allColumns.entries
+          .map((e) => '${e.key} ${e.value}')
+          .join(', ');
 
       await _database.execute('''
         CREATE TABLE IF NOT EXISTS $tableName (
@@ -197,7 +223,10 @@ abstract class SQLiteModel {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return [];
-      final maps = await _database.query(_getTableName<T>(), orderBy: 'id DESC');
+      final maps = await _database.query(
+        _getTableName<T>(),
+        orderBy: 'id DESC',
+      );
       return maps.map((map) => constructor(map) as T).toList();
     } catch (e) {
       print('SQLite index error: $e');
@@ -208,7 +237,9 @@ abstract class SQLiteModel {
   /// Counts total records.
   static Future<int> count<T extends Model>() async {
     try {
-      final result = await _database.rawQuery('SELECT COUNT(*) as count FROM ${_getTableName<T>()}');
+      final result = await _database.rawQuery(
+        'SELECT COUNT(*) as count FROM ${_getTableName<T>()}',
+      );
       return result.first['count'] as int? ?? 0;
     } catch (e) {
       return 0;
@@ -222,11 +253,15 @@ abstract class SQLiteModel {
 
   /// Finds record by primary key (`id`).
   static Future<T?> find<T extends Model>({required int id}) async {
-
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
-      final maps = await _database.query(_getTableName<T>(), where: 'id = ?', whereArgs: [id], limit: 1);
+      final maps = await _database.query(
+        _getTableName<T>(),
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1,
+      );
 
       if (maps.isNotEmpty) {
         return constructor(maps.first) as T;
@@ -239,13 +274,20 @@ abstract class SQLiteModel {
   }
 
   /// Finds first record where [field] == [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value}) async {
-
+  static Future<T?> findBy<T extends Model>({
+    required String field,
+    required dynamic value,
+  }) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
 
-      final records = await _database.query(_getTableName<T>(), where: '$field = ?', whereArgs: [value], limit: 1);
+      final records = await _database.query(
+        _getTableName<T>(),
+        where: '$field = ?',
+        whereArgs: [value],
+        limit: 1,
+      );
 
       if (records.isNotEmpty) {
         return constructor(records.first) as T;
@@ -259,13 +301,16 @@ abstract class SQLiteModel {
 
   /// Finds record by `uuid`.
   static Future<T?> findByUUID<T extends Model>(String uuid) async {
-
     try {
-
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
 
-      final maps = await _database.query(_getTableName<T>(), where: 'uuid = ?', whereArgs: [uuid], limit: 1);
+      final maps = await _database.query(
+        _getTableName<T>(),
+        where: 'uuid = ?',
+        whereArgs: [uuid],
+        limit: 1,
+      );
 
       if (maps.isNotEmpty) {
         return constructor(maps.first) as T;
@@ -280,8 +325,11 @@ abstract class SQLiteModel {
   /// Filters records with comparison.
   ///
   /// Supported: `==`, `!=`, `>`, `<`, `>=`, `<=`
-  static Future<List<T>> where<T extends Model>({required String field, String comp = "==", required dynamic value}) async {
-
+  static Future<List<T>> where<T extends Model>({
+    required String field,
+    String comp = "==",
+    required dynamic value,
+  }) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return [];
@@ -299,7 +347,11 @@ abstract class SQLiteModel {
       } else if (comp == "==") {
         comp = "=";
       }
-      final maps = await _database.query(_getTableName<T>(), where: '$field $comp ?', whereArgs: [value]);
+      final maps = await _database.query(
+        _getTableName<T>(),
+        where: '$field $comp ?',
+        whereArgs: [value],
+      );
 
       return maps.map((map) => constructor(map) as T).toList();
     } catch (e) {
@@ -309,7 +361,11 @@ abstract class SQLiteModel {
   }
 
   /// Returns first record matching `where()` condition.
-  static Future<T?> firstWhere<T extends Model>({required String field, String comp = "==", required dynamic value}) async {
+  static Future<T?> firstWhere<T extends Model>({
+    required String field,
+    String comp = "==",
+    required dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -325,7 +381,12 @@ abstract class SQLiteModel {
     }
 
     try {
-      final maps = await _database.query(_getTableName<T>(), where: '$field $comp ?', whereArgs: [value], limit: 1);
+      final maps = await _database.query(
+        _getTableName<T>(),
+        where: '$field $comp ?',
+        whereArgs: [value],
+        limit: 1,
+      );
 
       if (maps.isNotEmpty) {
         return constructor(maps.first) as T;
@@ -339,8 +400,9 @@ abstract class SQLiteModel {
   /// Creates a new record from [fromJson].
   ///
   /// Prevents mass-assignment of `id`, `uuid`, timestamps.
-  static Future<T?> create<T extends Model>(Map<String, dynamic> fromJson) async {
-
+  static Future<T?> create<T extends Model>(
+    Map<String, dynamic> fromJson,
+  ) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -351,7 +413,11 @@ abstract class SQLiteModel {
         ..remove('created_at')
         ..remove('updated_at');
 
-      final defaults = {'uuid': _uuid.v4(), 'created_at': DateTime.now().toUtc().toIso8601String(), 'updated_at': DateTime.now().toUtc().toIso8601String()};
+      final defaults = {
+        'uuid': _uuid.v4(),
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      };
 
       final instance = constructor({...fromJson, ...defaults}) as T;
 
@@ -367,11 +433,17 @@ abstract class SQLiteModel {
 
   /// Saves [instance] (create or update).
   static Future<bool> save<T extends Model>(T instance) async {
-    return instance.id == null ? await _create<T>(instance) : await _update<T>(instance);
+    return instance.id == null
+        ? await _create<T>(instance)
+        : await _update<T>(instance);
   }
 
   /// Updates a single field by `id`.
-  static Future<bool> update<T extends Model>({required dynamic id, required String field, required dynamic value}) async {
+  static Future<bool> update<T extends Model>({
+    required dynamic id,
+    required String field,
+    required dynamic value,
+  }) async {
     final instance = await find<T>(id: id);
     if (instance == null) return false;
 
@@ -387,7 +459,11 @@ abstract class SQLiteModel {
     if (id == null) return false;
 
     try {
-      final rows = await _database.delete(_getTableName<T>(), where: 'id = ?', whereArgs: [id]);
+      final rows = await _database.delete(
+        _getTableName<T>(),
+        where: 'id = ?',
+        whereArgs: [id],
+      );
       return rows > 0;
     } catch (e) {
       print('SQLite delete error: $e');
@@ -396,7 +472,10 @@ abstract class SQLiteModel {
   }
 
   /// Updates instance with partial data.
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson}) async {
+  static Future<bool> updateInstance<T extends Model>({
+    required T instance,
+    required Map<String, dynamic> withJson,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return false;
 
@@ -417,7 +496,10 @@ abstract class SQLiteModel {
   }
 
   /// Deletes first record matching condition.
-  static Future<bool> deleteBy<T extends Model>({required String field, required dynamic value}) async {
+  static Future<bool> deleteBy<T extends Model>({
+    required String field,
+    required dynamic value,
+  }) async {
     final record = await firstWhere<T>(field: field, value: value);
     if (record == null) return false;
 

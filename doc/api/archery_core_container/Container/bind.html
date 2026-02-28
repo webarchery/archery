@@ -80,11 +80,21 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-void bind&lt;T&gt;({String? name, required T Function(ServiceContainer container, Map&lt;String, dynamic&gt;? options) factory}) {
+void bind&lt;T&gt;({
+  String? name,
+  required T Function(
+    ServiceContainer container,
+    Map&lt;String, dynamic&gt;? options,
+  )
+  factory,
+}) {
   final key = _key&lt;T&gt;(name);
 
   if (_factories.containsKey(key) || _singletons.containsKey(key)) {
-    throw ServiceContainerException.duplicateRegistration(type: T, name: name);
+    throw ServiceContainerException.duplicateRegistration(
+      type: T,
+      name: name,
+    );
   }
 
   _factories[key] = (container, [options]) =&gt; factory(container, options);
@@ -116,7 +126,7 @@ void bind&lt;T&gt;({String? name, required T Function(ServiceContainer container
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

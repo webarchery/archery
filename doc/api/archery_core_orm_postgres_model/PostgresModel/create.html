@@ -67,7 +67,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; create&lt;T extends Model&gt;(Map&lt;String, dynamic&gt; fromJson) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; create&lt;T extends Model&gt;(
+  Map&lt;String, dynamic&gt; fromJson,
+) async {
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
@@ -78,7 +80,11 @@
       ..remove(&#39;created_at&#39;)
       ..remove(&#39;updated_at&#39;);
 
-    final defaults = {&#39;uuid&#39;: _uuid.v4(), &#39;created_at&#39;: DateTime.now().toUtc().toIso8601String(), &#39;updated_at&#39;: DateTime.now().toUtc().toIso8601String()};
+    final defaults = {
+      &#39;uuid&#39;: _uuid.v4(),
+      &#39;created_at&#39;: DateTime.now().toUtc().toIso8601String(),
+      &#39;updated_at&#39;: DateTime.now().toUtc().toIso8601String(),
+    };
 
     final instance = constructor({...fromJson, ...defaults}) as T;
 
@@ -118,7 +124,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

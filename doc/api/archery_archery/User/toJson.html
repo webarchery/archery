@@ -77,7 +77,13 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Map&lt;String, dynamic&gt; toJson() {
-  return {&quot;uuid&quot;: uuid, &#39;name&#39;: name, &#39;email&#39;: email, &#39;created_at&#39;: createdAt?.toIso8601String(), &#39;updated_at&#39;: updatedAt?.toIso8601String()};
+  return {
+    &quot;uuid&quot;: uuid,
+    &#39;name&#39;: name,
+    &#39;email&#39;: email,
+    &#39;created_at&#39;: createdAt?.toIso8601String(),
+    &#39;updated_at&#39;: updatedAt?.toIso8601String(),
+  };
 }</code></pre>
 </section>
 
@@ -106,7 +112,7 @@ Map&lt;String, dynamic&gt; toJson() {
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

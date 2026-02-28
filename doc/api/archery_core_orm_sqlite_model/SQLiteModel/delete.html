@@ -74,7 +74,11 @@
   if (id == null) return false;
 
   try {
-    final rows = await _database.delete(_getTableName&lt;T&gt;(), where: &#39;id = ?&#39;, whereArgs: [id]);
+    final rows = await _database.delete(
+      _getTableName&lt;T&gt;(),
+      where: &#39;id = ?&#39;,
+      whereArgs: [id],
+    );
     return rows &gt; 0;
   } catch (e) {
     print(&#39;SQLite delete error: $e&#39;);
@@ -108,7 +112,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -75,7 +75,16 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">bool get isVideo {
   final mime = contentType.toLowerCase();
-  return mime.startsWith(&#39;video&#47;&#39;) || [&#39;.mp4&#39;, &#39;.webm&#39;, &#39;.ogg&#39;, &#39;.ogv&#39;, &#39;.avi&#39;, &#39;.mov&#39;, &#39;.mkv&#39;].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
+  return mime.startsWith(&#39;video&#47;&#39;) ||
+      [
+        &#39;.mp4&#39;,
+        &#39;.webm&#39;,
+        &#39;.ogg&#39;,
+        &#39;.ogv&#39;,
+        &#39;.avi&#39;,
+        &#39;.mov&#39;,
+        &#39;.mkv&#39;,
+      ].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
 }</code></pre>
 </section>
 
@@ -106,7 +115,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

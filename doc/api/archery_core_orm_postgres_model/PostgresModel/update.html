@@ -69,7 +69,11 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({required dynamic id, required String field, required dynamic value}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; update&lt;T extends Model&gt;({
+  required dynamic id,
+  required String field,
+  required dynamic value,
+}) async {
   try {
     final instance = await find&lt;T&gt;(id: id);
     if (instance == null) return false;
@@ -80,10 +84,9 @@
     final updated = constructor(json) as T;
 
     return await _update&lt;T&gt;(updated);
-  } catch(e) {
+  } catch (e) {
     return false;
   }
-
 }</code></pre>
 </section>
 
@@ -112,7 +115,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

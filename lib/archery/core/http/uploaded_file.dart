@@ -29,7 +29,6 @@
 
 // https://webarchery.dev
 
-
 import 'package:archery/archery/archery.dart';
 
 base class UploadedFile {
@@ -38,11 +37,20 @@ base class UploadedFile {
   final Future<Uint8List> _cachedBytes;
   final int? _knownLength;
 
-  UploadedFile.fromBytes({required this.filename, required Uint8List bytes, required this.contentType}) : _cachedBytes = Future.value(bytes), _knownLength = bytes.length;
+  UploadedFile.fromBytes({
+    required this.filename,
+    required Uint8List bytes,
+    required this.contentType,
+  }) : _cachedBytes = Future.value(bytes),
+       _knownLength = bytes.length;
 
   // Empty factory constructor for invalid files
   factory UploadedFile.empty() {
-    return UploadedFile.fromBytes(filename: '', bytes: Uint8List(0), contentType: 'application/octet-stream');
+    return UploadedFile.fromBytes(
+      filename: '',
+      bytes: Uint8List(0),
+      contentType: 'application/octet-stream',
+    );
   }
 
   // Add validation property
@@ -63,19 +71,45 @@ base class UploadedFile {
   /// Check if this is an audio file
   bool get isAudio {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('audio/') || ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('audio/') ||
+        [
+          '.mp3',
+          '.wav',
+          '.ogg',
+          '.m4a',
+          '.aac',
+          '.flac',
+        ].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
   /// Check if this is a video file
   bool get isVideo {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('video/') || ['.mp4', '.webm', '.ogg', '.ogv', '.avi', '.mov', '.mkv'].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('video/') ||
+        [
+          '.mp4',
+          '.webm',
+          '.ogg',
+          '.ogv',
+          '.avi',
+          '.mov',
+          '.mkv',
+        ].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
   /// Check if this is an image file
   bool get isImage {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('image/') || ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('image/') ||
+        [
+          '.jpg',
+          '.jpeg',
+          '.png',
+          '.gif',
+          '.bmp',
+          '.webp',
+          '.svg',
+        ].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
   /// Get file extension
@@ -144,7 +178,10 @@ base class UploadedFile {
   }
 
   /// Stream this file back to an HTTP response with proper headers
-  Future<void> streamToResponse(HttpRequest request, {bool handleRange = true}) async {
+  Future<void> streamToResponse(
+    HttpRequest request, {
+    bool handleRange = true,
+  }) async {
     final totalLength = await length;
     final bytes = await _cachedBytes;
 
@@ -158,7 +195,10 @@ base class UploadedFile {
     }
   }
 
-  Future<String?> streamToS3(HttpRequest request, {S3Acl acl = .private, bool autoName = true}) async {
+  Future<String?> streamToS3({
+    S3Acl acl = .private,
+    bool autoName = true,
+  }) async {
     final s3Client = App().make<S3Client>();
     final config = App().make<AppConfig>();
     final uuid = App().make<Uuid>();
@@ -173,7 +213,8 @@ base class UploadedFile {
       fileName = filename;
     }
 
-    final String key = "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
+    final String key =
+        "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
 
     if (await s3Client.putObject(
       key: key,
@@ -187,7 +228,12 @@ base class UploadedFile {
   }
 
   /// Handle HTTP range requests for media seeking
-  Future<void> _handleRangeRequest(HttpRequest request, Uint8List bytes, int totalLength, String rangeHeader) async {
+  Future<void> _handleRangeRequest(
+    HttpRequest request,
+    Uint8List bytes,
+    int totalLength,
+    String rangeHeader,
+  ) async {
     final response = request.response;
 
     try {
@@ -222,7 +268,11 @@ base class UploadedFile {
   }
 
   /// Send complete file without range support
-  Future<void> _sendFullFile(HttpRequest request, Uint8List bytes, int totalLength) async {
+  Future<void> _sendFullFile(
+    HttpRequest request,
+    Uint8List bytes,
+    int totalLength,
+  ) async {
     final response = request.response;
 
     response.headers
@@ -332,19 +382,29 @@ base class UploadedFile {
     }
   }
 
-
-
   /// Get file info as JSON
   Future<Map<String, dynamic>> toJson() async {
-    return {'filename': filename, 'contentType': contentType, 'extension': extension, 'size': await length, 'isAudio': isAudio, 'isVideo': isVideo, 'isImage': isImage};
+    return {
+      'filename': filename,
+      'contentType': contentType,
+      'extension': extension,
+      'size': await length,
+      'isAudio': isAudio,
+      'isVideo': isVideo,
+      'isImage': isImage,
+    };
   }
 
   /// Copy this file with new filename
   UploadedFile copyWith({String? filename, String? contentType}) {
-    return UploadedFile.fromBytes(filename: filename ?? this.filename, bytes: _cachedBytes as Uint8List, contentType: contentType ?? this.contentType);
+    return UploadedFile.fromBytes(
+      filename: filename ?? this.filename,
+      bytes: _cachedBytes as Uint8List,
+      contentType: contentType ?? this.contentType,
+    );
   }
 
-
   @override
-  String toString() => 'UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? 'unknown'} bytes)';
+  String toString() =>
+      'UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? 'unknown'} bytes)';
 }

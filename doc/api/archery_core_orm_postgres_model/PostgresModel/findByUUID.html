@@ -73,7 +73,10 @@
     if (constructor == null) return null;
 
     final tableName = _getTableName&lt;T&gt;();
-    final result = await _database.execute(Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE uuid = @uuid LIMIT 1&#39;), parameters: {&#39;uuid&#39;: uuid});
+    final result = await _database.execute(
+      Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE uuid = @uuid LIMIT 1&#39;),
+      parameters: {&#39;uuid&#39;: uuid},
+    );
 
     if (result.isNotEmpty) {
       return constructor(result.first.toColumnMap());
@@ -110,7 +113,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

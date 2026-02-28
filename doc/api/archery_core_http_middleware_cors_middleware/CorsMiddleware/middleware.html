@@ -68,7 +68,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(
+  HttpRequest request,
+  Future&lt;void&gt; Function() next,
+) async {
   &#47;&#47; Add CORS headers to response
   request.response.headers
     ..set(&#39;Access-Control-Allow-Origin&#39;, &#39;*&#39;)
@@ -112,7 +115,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

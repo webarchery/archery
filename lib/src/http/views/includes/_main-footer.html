@@ -5,10 +5,10 @@
     </div>
 
 
-    @if(user)
+    @if(session.user)
     <div class="flex items-center gap-2 bg-white px-3 py-1 rounded animate__animated animate__slideInUp">
         <a href="/logout" class="text-red-500 font-bold text-xs">Logout</a>->
-        <a href="/user/profile" class="text-xs text-indigo-500  font-medium ">{{ user.name }}</a>
+        <a href="/user/profile" class="text-xs text-indigo-500  font-medium ">{{ session.user.name }}</a>
     </div>
 
     @endif

@@ -70,7 +70,15 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;String, dynamic&gt;&gt; toJson() async {
-  return {&#39;filename&#39;: filename, &#39;contentType&#39;: contentType, &#39;extension&#39;: extension, &#39;size&#39;: await length, &#39;isAudio&#39;: isAudio, &#39;isVideo&#39;: isVideo, &#39;isImage&#39;: isImage};
+  return {
+    &#39;filename&#39;: filename,
+    &#39;contentType&#39;: contentType,
+    &#39;extension&#39;: extension,
+    &#39;size&#39;: await length,
+    &#39;isAudio&#39;: isAudio,
+    &#39;isVideo&#39;: isVideo,
+    &#39;isImage&#39;: isImage,
+  };
 }</code></pre>
 </section>
 
@@ -99,7 +107,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

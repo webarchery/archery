@@ -70,7 +70,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Logger get consoleLogger =&gt; Logger(transports: [ConsoleTransport(formatJson: true)], context: {&quot;logger&quot;: &quot;App().consoleLogger&quot;});</code></pre>
+  <pre class="language-dart"><code class="language-dart">Logger get consoleLogger =&gt; Logger(
+  transports: [ConsoleTransport(formatJson: true)],
+  context: {&quot;logger&quot;: &quot;App().consoleLogger&quot;},
+);</code></pre>
 </section>
 
   </section>
@@ -100,7 +103,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

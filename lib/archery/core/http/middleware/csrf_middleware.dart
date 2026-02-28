@@ -32,8 +32,10 @@
 import 'package:archery/archery/archery.dart';
 
 base class VerifyCsrfToken {
-  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
-
+  static Future<dynamic> middleware(
+    HttpRequest request,
+    Future<void> Function() next,
+  ) async {
     if (_isReading(request)) {
       await next();
       return;
@@ -44,15 +46,6 @@ base class VerifyCsrfToken {
     final sessionToken = await _getSessionToken(request);
 
     if (token == null || sessionToken == null || token != sessionToken) {
-      // Todo - Leaving this snippet for testing
-      // print('--- CSRF DEBUG ---');
-      // print('Method: ${request.method} ${request.uri}');
-      // print('Input Token (Body): $token');
-      // print('Session Token (Cookie): $sessionToken');
-      // print('All Cookies: ${request.cookies.map((c) => '${c.name}=${c.value}').join(', ')}');
-      // print('Headers: ${request.headers.value('content-type')}');
-      // print('------------------');
-
       return request.response
         ..statusCode = HttpStatus.forbidden
         ..write("403 Forbidden: Invalid CSRF Token")
@@ -67,7 +60,6 @@ base class VerifyCsrfToken {
   }
 
   static Future<String?> _getToken(HttpRequest request) async {
-
     // Check header
     // Todo -current unused, future proofing for jax calls
     final headerToken = request.headers.value('X-CSRF-TOKEN');
@@ -88,7 +80,9 @@ base class VerifyCsrfToken {
   }
 
   static Future<String?> _getSessionToken(HttpRequest request) async {
-    final cookie = request.cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
+    final cookie = request.cookies.firstWhereOrNull(
+      (c) => c.name == 'archery_csrf_token',
+    );
     return cookie?.value;
   }
 }

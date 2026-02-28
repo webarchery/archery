@@ -29,7 +29,6 @@
 
 // https://webarchery.dev
 
-
 import 'package:archery/archery/archery.dart';
 import 'package:postgres/postgres.dart' hide Type;
 
@@ -51,25 +50,36 @@ abstract class PostgresModel {
 
   static Map<Type, Function> get migrations => _jsonConstructors;
 
-  static final Map<String, String> _columnDefinitions = {'id': 'SERIAL PRIMARY KEY', 'uuid': 'UUID UNIQUE', 'created_at': 'TIMESTAMPTZ', 'updated_at': 'TIMESTAMPTZ'};
+  static final Map<String, String> _columnDefinitions = {
+    'id': 'SERIAL PRIMARY KEY',
+    'uuid': 'UUID UNIQUE',
+    'created_at': 'TIMESTAMPTZ',
+    'updated_at': 'TIMESTAMPTZ',
+  };
 
   static String _getTableName<T>() {
     final typeName = T.toString();
-    final snakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    final snakeCase = typeName.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (match) => '_',
+    );
     return '${snakeCase.toLowerCase()}s';
   }
 
-
-
-  static Future<void> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor, Map<String, String>? columnDefinitions}) async {
+  static Future<void> migrate<T extends Model>({
+    required T Function(Map<String, dynamic>) constructor,
+    Map<String, String>? columnDefinitions,
+  }) async {
     _jsonConstructors[T] = constructor;
-    
+
     try {
       if (columnDefinitions != null && columnDefinitions.isNotEmpty) {
         final tableName = _getTableName<T>();
         final allColumns = {..._columnDefinitions, ...columnDefinitions};
 
-        final columnsDef = allColumns.entries.map((e) => '${e.key} ${e.value}').join(', ');
+        final columnsDef = allColumns.entries
+            .map((e) => '${e.key} ${e.value}')
+            .join(', ');
 
         await _database.execute('''
         CREATE TABLE IF NOT EXISTS $tableName (
@@ -88,18 +98,21 @@ abstract class PostgresModel {
         ON $tableName (created_at)
       ''');
       }
-    }catch(e, s) {
-      App().archeryLogger.error("Migration Error", {"origin": "PostgresModel.migrate", "error": e.toString(), "stack": s.toString()});
+    } catch (e, s) {
+      App().archeryLogger.error("Migration Error", {
+        "origin": "PostgresModel.migrate",
+        "error": e.toString(),
+        "stack": s.toString(),
+      });
     }
-
-    
   }
+
   static Future<List<Map<String, dynamic>>> jsonIndex<T extends Model>() async {
-
     try {
-
       final tableName = _getTableName<T>();
-      final results = await _database.execute(Sql('SELECT * FROM "$tableName" ORDER BY id DESC'));
+      final results = await _database.execute(
+        Sql('SELECT * FROM "$tableName" ORDER BY id DESC'),
+      );
 
       List<Map<String, dynamic>> records = [];
 
@@ -128,7 +141,10 @@ abstract class PostgresModel {
       data.remove('id');
 
       final columns = data.keys.join(', ');
-      final placeholders = List.generate(data.length, (i) => '@${data.keys.elementAt(i)}').join(', ');
+      final placeholders = List.generate(
+        data.length,
+        (i) => '@${data.keys.elementAt(i)}',
+      ).join(', ');
 
       final result = await _database.execute(
         Sql.named('''
@@ -157,7 +173,10 @@ abstract class PostgresModel {
       final tableName = _getTableName<T>();
       instance.updatedAt = DateTime.now().toUtc();
 
-      final data = {...instance.toJson(), 'updated_at': instance.updatedAt!.toIso8601String()};
+      final data = {
+        ...instance.toMetaJson(),
+        'updated_at': instance.updatedAt!.toIso8601String(),
+      };
 
       final updates = data.keys.map((key) => '$key = @$key').join(', ');
 
@@ -197,17 +216,22 @@ abstract class PostgresModel {
   static Future<int> count<T extends Model>() async {
     try {
       final tableName = _getTableName<T>();
-      final result = await _database.execute('SELECT COUNT(*) FROM "$tableName"');
+      final result = await _database.execute(
+        'SELECT COUNT(*) FROM "$tableName"',
+      );
       return result.first[0] as int? ?? 0;
     } catch (e) {
       return 0;
     }
   }
 
-  static Future<bool>  delete<T extends Model>({required int id}) async {
+  static Future<bool> delete<T extends Model>({required int id}) async {
     try {
       final tableName = _getTableName<T>();
-      final result = await _database.execute(Sql.named('DELETE FROM "$tableName" WHERE id = @id RETURNING *'), parameters: {'id': id});
+      final result = await _database.execute(
+        Sql.named('DELETE FROM "$tableName" WHERE id = @id RETURNING *'),
+        parameters: {'id': id},
+      );
       return result.isNotEmpty;
     } catch (e) {
       print('Postgres delete error: $e');
@@ -222,7 +246,10 @@ abstract class PostgresModel {
 
       final tableName = _getTableName<T>();
 
-      final result = await _database.execute(Sql.named('SELECT * FROM "$tableName" WHERE id = @id LIMIT 1'), parameters: {'id': id});
+      final result = await _database.execute(
+        Sql.named('SELECT * FROM "$tableName" WHERE id = @id LIMIT 1'),
+        parameters: {'id': id},
+      );
 
       if (result.isNotEmpty) {
         return constructor(result.first.toColumnMap()) as T;
@@ -233,17 +260,20 @@ abstract class PostgresModel {
       return null;
     }
   }
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value}) async {
 
+  static Future<T?> findBy<T extends Model>({
+    required String field,
+    required dynamic value,
+  }) async {
     try {
-
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
 
       final tableName = _getTableName<T>();
 
-      final records = await _database.execute(Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field LIMIT 1'),
-        parameters: { field: value},
+      final records = await _database.execute(
+        Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field LIMIT 1'),
+        parameters: {field: value},
       );
 
       if (records.isNotEmpty) {
@@ -255,13 +285,17 @@ abstract class PostgresModel {
       return null;
     }
   }
+
   static Future<T?> findByUUID<T extends Model>(String uuid) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
 
       final tableName = _getTableName<T>();
-      final result = await _database.execute(Sql.named('SELECT * FROM "$tableName" WHERE uuid = @uuid LIMIT 1'), parameters: {'uuid': uuid});
+      final result = await _database.execute(
+        Sql.named('SELECT * FROM "$tableName" WHERE uuid = @uuid LIMIT 1'),
+        parameters: {'uuid': uuid},
+      );
 
       if (result.isNotEmpty) {
         return constructor(result.first.toColumnMap());
@@ -272,9 +306,11 @@ abstract class PostgresModel {
     }
   }
 
-  static Future<List<T>> where<T extends Model>({required String field, String comp = "==", required dynamic value}) async {
-
-
+  static Future<List<T>> where<T extends Model>({
+    required String field,
+    String comp = "==",
+    required dynamic value,
+  }) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return [];
@@ -294,23 +330,29 @@ abstract class PostgresModel {
       }
 
       final tableName = _getTableName<T>();
-      final records = await _database.execute(Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field'),
-        parameters: { field: value},
+      final records = await _database.execute(
+        Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field'),
+        parameters: {field: value},
       );
 
       if (records.isNotEmpty) {
-        return records.map((record) => constructor(record.toColumnMap()) as T).toList();
+        return records
+            .map((record) => constructor(record.toColumnMap()) as T)
+            .toList();
       }
 
       return [];
-
     } catch (e) {
       print('Postgres where error: $e');
       return [];
     }
   }
 
-  static Future<T?> firstWhere<T extends Model>({required String field, String comp = "==", required dynamic value}) async {
+  static Future<T?> firstWhere<T extends Model>({
+    required String field,
+    String comp = "==",
+    required dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -330,24 +372,25 @@ abstract class PostgresModel {
 
     try {
       final tableName = _getTableName<T>();
-      final record = await _database.execute(Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field LIMIT 1'),
-        parameters: { field: value},
+      final record = await _database.execute(
+        Sql.named('SELECT * FROM "$tableName" WHERE $field = @$field LIMIT 1'),
+        parameters: {field: value},
       );
-
 
       if (record.isNotEmpty) {
         return constructor(record.first.toColumnMap()) as T;
       }
 
       return null;
-
     } catch (e) {
       print('Postgres where error: $e');
       return null;
     }
   }
 
-  static Future<T?> create<T extends Model>(Map<String, dynamic> fromJson) async {
+  static Future<T?> create<T extends Model>(
+    Map<String, dynamic> fromJson,
+  ) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
@@ -358,7 +401,11 @@ abstract class PostgresModel {
         ..remove('created_at')
         ..remove('updated_at');
 
-      final defaults = {'uuid': _uuid.v4(), 'created_at': DateTime.now().toUtc().toIso8601String(), 'updated_at': DateTime.now().toUtc().toIso8601String()};
+      final defaults = {
+        'uuid': _uuid.v4(),
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      };
 
       final instance = constructor({...fromJson, ...defaults}) as T;
 
@@ -388,7 +435,9 @@ abstract class PostgresModel {
   static Future<bool> truncate<T extends Model>() async {
     try {
       final tableName = _getTableName<T>();
-      await _database.execute(Sql.named('TRUNCATE TABLE "$tableName" RESTART IDENTITY CASCADE'));
+      await _database.execute(
+        Sql.named('TRUNCATE TABLE "$tableName" RESTART IDENTITY CASCADE'),
+      );
       return true;
     } catch (e) {
       print('Postgres truncate error: $e');
@@ -396,8 +445,10 @@ abstract class PostgresModel {
     }
   }
 
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson}) async {
-
+  static Future<bool> updateInstance<T extends Model>({
+    required T instance,
+    required Map<String, dynamic> withJson,
+  }) async {
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return false;
@@ -415,7 +466,12 @@ abstract class PostgresModel {
       return false;
     }
   }
-  static Future<bool> update<T extends Model>({required dynamic id, required String field, required dynamic value}) async {
+
+  static Future<bool> update<T extends Model>({
+    required dynamic id,
+    required String field,
+    required dynamic value,
+  }) async {
     try {
       final instance = await find<T>(id: id);
       if (instance == null) return false;
@@ -426,9 +482,8 @@ abstract class PostgresModel {
       final updated = constructor(json) as T;
 
       return await _update<T>(updated);
-    } catch(e) {
+    } catch (e) {
       return false;
     }
-
   }
 }

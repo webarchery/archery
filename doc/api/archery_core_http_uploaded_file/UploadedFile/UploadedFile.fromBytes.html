@@ -65,7 +65,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">UploadedFile.fromBytes({required this.filename, required Uint8List bytes, required this.contentType}) : _cachedBytes = Future.value(bytes), _knownLength = bytes.length;</code></pre>
+  <pre class="language-dart"><code class="language-dart">UploadedFile.fromBytes({
+  required this.filename,
+  required Uint8List bytes,
+  required this.contentType,
+}) : _cachedBytes = Future.value(bytes),
+     _knownLength = bytes.length;</code></pre>
 </section>
 
 
@@ -93,7 +98,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

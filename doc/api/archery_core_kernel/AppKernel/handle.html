@@ -77,7 +77,6 @@ then dispatching to the router.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; handle(HttpRequest request) async {
-
   &#47;&#47; Buffer the request body to prevent &quot;stream has already been listened to&quot; errors.
   &#47;&#47; This allows multiple components (CSRF, Logging, Controllers) to read the body.
   &#47;&#47; Only buffer body if content exists to prevent stream issues
@@ -86,7 +85,10 @@ then dispatching to the router.</p>
     try {
       await request.form().buffer();
     } catch (e) {
-      App().archeryLogger.error(&quot;Error buffering request body&quot;, {&quot;origin&quot;: &quot;Kernel.handle()&quot;, &quot;error&quot;: e.toString()});
+      App().archeryLogger.error(&quot;Error buffering request body&quot;, {
+        &quot;origin&quot;: &quot;Kernel.handle()&quot;,
+        &quot;error&quot;: e.toString(),
+      });
     }
   }
 
@@ -119,7 +121,7 @@ then dispatching to the router.</p>
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

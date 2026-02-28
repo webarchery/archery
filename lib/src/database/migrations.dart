@@ -23,9 +23,7 @@ Future<void> migrateS3JsonFileModels() async {
   await S3JsonFileModel.migrate<User>(constructor: User.fromJson);
   await S3JsonFileModel.migrate<Session>(constructor: Session.fromJson);
   await S3JsonFileModel.migrate<AuthSession>(constructor: AuthSession.fromJson);
-
 }
-
 
 /// Registers and migrates built-in models for the Postgres driver.
 ///
@@ -34,11 +32,18 @@ Future<void> migrateS3JsonFileModels() async {
 /// - [Session]
 /// - [AuthSession]
 Future<void> migratePostgresModels() async {
-
-  await PostgresModel.migrate<User>(constructor: User.fromJson, columnDefinitions: User.columnDefinitions);
-  await PostgresModel.migrate<Session>(constructor: Session.fromJson, columnDefinitions: Session.columnDefinitions);
-  await PostgresModel.migrate<AuthSession>(constructor: AuthSession.fromJson, columnDefinitions: AuthSession.columnDefinitions);
-
+  await PostgresModel.migrate<User>(
+    constructor: User.fromJson,
+    columnDefinitions: User.columnDefinitions,
+  );
+  await PostgresModel.migrate<Session>(
+    constructor: Session.fromJson,
+    columnDefinitions: Session.columnDefinitions,
+  );
+  await PostgresModel.migrate<AuthSession>(
+    constructor: AuthSession.fromJson,
+    columnDefinitions: AuthSession.columnDefinitions,
+  );
 }
 
 /// Registers and migrates built-in models for the SQLite driver.
@@ -48,7 +53,16 @@ Future<void> migratePostgresModels() async {
 /// - [Session]
 /// - [AuthSession]
 Future<void> migrateSQLiteModels() async {
-  await SQLiteModel.migrate<User>(constructor: User.fromJson, columnDefinitions: User.columnDefinitions);
-  await SQLiteModel.migrate<Session>(constructor: Session.fromJson, columnDefinitions: Session.columnDefinitions);
-  await SQLiteModel.migrate<AuthSession>(constructor: AuthSession.fromJson, columnDefinitions: AuthSession.columnDefinitions);
+  await SQLiteModel.migrate<User>(
+    constructor: User.fromJson,
+    columnDefinitions: User.columnDefinitions,
+  );
+  await SQLiteModel.migrate<Session>(
+    constructor: Session.fromJson,
+    columnDefinitions: Session.columnDefinitions,
+  );
+  await SQLiteModel.migrate<AuthSession>(
+    constructor: AuthSession.fromJson,
+    columnDefinitions: AuthSession.columnDefinitions,
+  );
 }

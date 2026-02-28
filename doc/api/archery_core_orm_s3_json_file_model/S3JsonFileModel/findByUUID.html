@@ -68,8 +68,6 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;T?&gt; findByUUID&lt;T extends Model&gt;(String uuid) async {
-
-
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
@@ -80,7 +78,6 @@
     if (record == null) return null;
 
     return constructor(record) as T;
-
   } catch (e) {
     return null;
   }
@@ -112,7 +109,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

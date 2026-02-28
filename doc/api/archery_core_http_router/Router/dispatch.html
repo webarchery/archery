@@ -78,7 +78,6 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; dispatch(HttpRequest request) async {
-
   final spoofMethod = request.uri.queryParameters[&#39;_method&#39;];
   HttpMethod method = _parseMethod(request.method);
 
@@ -94,7 +93,12 @@
   final middleware = _middlewareMap[method]?[path] ?? const [];
 
   if (handler != null) {
-    await _runMiddleware(request, middleware, 0, () async =&gt; await handler(request));
+    await _runMiddleware(
+      request,
+      middleware,
+      0,
+      () async =&gt; await handler(request),
+    );
     return;
   }
 
@@ -117,13 +121,23 @@
         valid = false;
         break;
       }
-      params[cr.paramNames[i]] = coerced is _Coerce ? coerced.value! : coerced;
+      params[cr.paramNames[i]] = coerced is _Coerce
+          ? coerced.value!
+          : coerced;
     }
 
     if (!valid) continue;
 
     &#47;&#47; Execute with params in Zone
-    runZoned(() async =&gt; await _runMiddleware(request, cr.middleware, 0, () =&gt; cr.handler(request)), zoneValues: RouteParams._zoneValues(params));
+    runZoned(
+      () async =&gt; await _runMiddleware(
+        request,
+        cr.middleware,
+        0,
+        () =&gt; cr.handler(request),
+      ),
+      zoneValues: RouteParams._zoneValues(params),
+    );
 
     return;
   }
@@ -158,7 +172,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

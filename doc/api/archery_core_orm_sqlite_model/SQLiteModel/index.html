@@ -73,7 +73,10 @@
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
-    final maps = await _database.query(_getTableName&lt;T&gt;(), orderBy: &#39;id DESC&#39;);
+    final maps = await _database.query(
+      _getTableName&lt;T&gt;(),
+      orderBy: &#39;id DESC&#39;,
+    );
     return maps.map((map) =&gt; constructor(map) as T).toList();
   } catch (e) {
     print(&#39;SQLite index error: $e&#39;);
@@ -107,7 +110,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

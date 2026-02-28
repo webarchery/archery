@@ -11,9 +11,12 @@ base class S3ClientProvider implements Provider {
       final s3Client = S3Client(s3Config, debug: true);
       container.bindInstance<S3Client>(s3Client);
     } catch (e, s) {
-      await App().archeryLogger.error('S3 Client Init Error', {"error": e.toString(), "stack": s.toString(), "hint": "create env.json in config folder, and add aws credentials, or comment out."});
+      await App().archeryLogger.error('S3 Client Init Error', {
+        "error": e.toString(),
+        "stack": s.toString(),
+        "hint":
+            "create env.json in config folder, and add aws credentials, or comment out.",
+      });
     }
-
   }
-
 }

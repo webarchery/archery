@@ -38,10 +38,21 @@ base class S3Config {
   final String region;
   final String? endpoint;
 
-  S3Config({required this.key, required this.secret, required this.bucket, this.endpoint, this.region = 'us-east-2'});
+  S3Config({
+    required this.key,
+    required this.secret,
+    required this.bucket,
+    this.endpoint,
+    this.region = 'us-east-2',
+  });
 
   factory S3Config.fromMap(Map<String, dynamic> map) {
-    return S3Config(key: map['key'], secret: map['secret'], bucket: map['bucket'], region: map['region'] ?? 'us-east-2');
+    return S3Config(
+      key: map['key'],
+      secret: map['secret'],
+      bucket: map['bucket'],
+      region: map['region'] ?? 'us-east-2',
+    );
   }
 }
 
@@ -65,58 +76,120 @@ base class S3Client {
     return '$year$month$day';
   }
 
-  String _generateSignature({required String stringToSign, required String dateString /*YYYYMMDD format*/}) {
-    final keyDate = Hmac(sha256, utf8.encode('AWS4${config.secret}')).convert(utf8.encode(dateString)).bytes;
+  String _generateSignature({
+    required String stringToSign,
+    required String dateString /*YYYYMMDD format*/,
+  }) {
+    final keyDate = Hmac(
+      sha256,
+      utf8.encode('AWS4${config.secret}'),
+    ).convert(utf8.encode(dateString)).bytes;
 
-    final keyRegion = Hmac(sha256, keyDate).convert(utf8.encode(config.region)).bytes;
+    final keyRegion = Hmac(
+      sha256,
+      keyDate,
+    ).convert(utf8.encode(config.region)).bytes;
 
-    final keyService = Hmac(sha256, keyRegion).convert(utf8.encode(_service)).bytes;
+    final keyService = Hmac(
+      sha256,
+      keyRegion,
+    ).convert(utf8.encode(_service)).bytes;
 
-    final keySigning = Hmac(sha256, keyService).convert(utf8.encode('aws4_request')).bytes;
+    final keySigning = Hmac(
+      sha256,
+      keyService,
+    ).convert(utf8.encode('aws4_request')).bytes;
 
-    final signature = Hmac(sha256, keySigning).convert(utf8.encode(stringToSign)).toString();
+    final signature = Hmac(
+      sha256,
+      keySigning,
+    ).convert(utf8.encode(stringToSign)).toString();
 
     return signature;
   }
 
-  String _generateAuthHeader({required String method, required String path, required String datetime, required String dateString, required Map<String, String> headers, required String canonicalQueryString, required String payloadHash}) {
+  String _generateAuthHeader({
+    required String method,
+    required String path,
+    required String datetime,
+    required String dateString,
+    required Map<String, String> headers,
+    required String canonicalQueryString,
+    required String payloadHash,
+  }) {
     // Build canonical headers
-    final canonicalHeaders = headers.entries.map((e) => '${e.key.toLowerCase()}:${e.value.trim()}').toList()..sort();
+    final canonicalHeaders =
+        headers.entries
+            .map((e) => '${e.key.toLowerCase()}:${e.value.trim()}')
+            .toList()
+          ..sort();
 
-    final signedHeaders = canonicalHeaders.map((h) => h.split(':')[0]).toList().join(';');
+    final signedHeaders = canonicalHeaders
+        .map((h) => h.split(':')[0])
+        .toList()
+        .join(';');
 
     // Build canonical request
-    final canonicalRequest = [method, path, canonicalQueryString, '${canonicalHeaders.join('\n')}\n', signedHeaders, payloadHash].join('\n');
-
-
+    final canonicalRequest = [
+      method,
+      path,
+      canonicalQueryString,
+      '${canonicalHeaders.join('\n')}\n',
+      signedHeaders,
+      payloadHash,
+    ].join('\n');
 
     // Build string to sign - use dateString (YYYYMMDD) for credential scope
-    final credentialScope = '$dateString/${config.region}/$_service/aws4_request';
-    final stringToSign = ['AWS4-HMAC-SHA256', datetime, credentialScope, sha256.convert(utf8.encode(canonicalRequest)).toString()].join('\n');
+    final credentialScope =
+        '$dateString/${config.region}/$_service/aws4_request';
+    final stringToSign = [
+      'AWS4-HMAC-SHA256',
+      datetime,
+      credentialScope,
+      sha256.convert(utf8.encode(canonicalRequest)).toString(),
+    ].join('\n');
 
+    final signature = _generateSignature(
+      stringToSign: stringToSign,
+      dateString: dateString,
+    );
 
-
-    final signature = _generateSignature(stringToSign: stringToSign, dateString: dateString);
-
-    final authHeader = 'AWS4-HMAC-SHA256 Credential=${config.key}/$credentialScope, SignedHeaders=$signedHeaders, Signature=$signature';
+    final authHeader =
+        'AWS4-HMAC-SHA256 Credential=${config.key}/$credentialScope, SignedHeaders=$signedHeaders, Signature=$signature';
 
     return authHeader;
   }
 
-  Future<S3HttpResponse> _makeRequest({required String method, required String path, Map<String, String>? queryParams, Uint8List? body, Map<String, String>? extraHeaders}) async {
+  Future<S3HttpResponse> _makeRequest({
+    required String method,
+    required String path,
+    Map<String, String>? queryParams,
+    Uint8List? body,
+    Map<String, String>? extraHeaders,
+  }) async {
     final now = DateTime.now().toUtc();
     final datetime = HttpDate.format(now); // HTTP date format
-    final dateString = _getDateString(now); // YYYYMMDD format for credential scope
+    final dateString = _getDateString(
+      now,
+    ); // YYYYMMDD format for credential scope
 
     // Use virtual-hosted style for S3
     final host = '${config.bucket}.s3.${config.region}.amazonaws.com';
     final actualPath = path.startsWith('/') ? path : '/$path';
 
     final params = queryParams ?? {};
-    final canonicalQueryString = params.entries.map((e) => '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}').toList().join('&');
+    final canonicalQueryString = params.entries
+        .map(
+          (e) =>
+              '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+        )
+        .toList()
+        .join('&');
 
     // Calculate payload hash - for empty bodies, use the hash of an empty string
-    final payloadHash = body != null ? sha256.convert(body).toString() : sha256.convert(Uint8List(0)).toString();
+    final payloadHash = body != null
+        ? sha256.convert(body).toString()
+        : sha256.convert(Uint8List(0)).toString();
 
     final headers = <String, String>{
       'host': host,
@@ -125,7 +198,15 @@ base class S3Client {
       ...?extraHeaders,
     };
 
-    final authHeader = _generateAuthHeader(method: method, path: actualPath, datetime: datetime, dateString: dateString, headers: headers, canonicalQueryString: canonicalQueryString, payloadHash: payloadHash);
+    final authHeader = _generateAuthHeader(
+      method: method,
+      path: actualPath,
+      datetime: datetime,
+      dateString: dateString,
+      headers: headers,
+      canonicalQueryString: canonicalQueryString,
+      payloadHash: payloadHash,
+    );
 
     headers['authorization'] = authHeader;
 
@@ -146,12 +227,18 @@ base class S3Client {
       }
 
       final response = await request.close();
-      final responseBody = await response.fold<Uint8List>(Uint8List(0), (previous, element) => Uint8List.fromList([...previous, ...element]));
+      final responseBody = await response.fold<Uint8List>(
+        Uint8List(0),
+        (previous, element) => Uint8List.fromList([...previous, ...element]),
+      );
 
-      if (response.statusCode != 200 && response.statusCode != 204) {
-      }
+      if (response.statusCode != 200 && response.statusCode != 204) {}
 
-      return S3HttpResponse(response.statusCode, responseBody, response.headers);
+      return S3HttpResponse(
+        response.statusCode,
+        responseBody,
+        response.headers,
+      );
     } catch (e) {
       rethrow;
     } finally {
@@ -187,7 +274,6 @@ enum S3Acl {
   const S3Acl(this.value);
 }
 
-
 /// High-level S3 operations implemented on top of [S3Client]'s signed requests.
 ///
 /// Provides basic object methods (PUT/GET/DELETE) with optional content type and
@@ -195,7 +281,12 @@ enum S3Acl {
 extension S3Operations on S3Client {
   // Upload file (PUT)
 
-  Future<bool> putObject({required String key, required Uint8List data, String? contentType, S3Acl? acl}) async {
+  Future<bool> putObject({
+    required String key,
+    required Uint8List data,
+    String? contentType,
+    S3Acl? acl,
+  }) async {
     try {
       final headers = <String, String>{};
       if (contentType != null) {
@@ -205,7 +296,12 @@ extension S3Operations on S3Client {
         headers['x-amz-acl'] = acl.value;
       }
 
-      final response = await _makeRequest(method: 'PUT', path: key, body: data, extraHeaders: headers);
+      final response = await _makeRequest(
+        method: 'PUT',
+        path: key,
+        body: data,
+        extraHeaders: headers,
+      );
 
       return response.statusCode == 200;
     } catch (e) {
@@ -213,8 +309,18 @@ extension S3Operations on S3Client {
     }
   }
 
-  Future<bool> putString(String key, String data, {String? contentType, S3Acl? acl}) async {
-    return putObject(key: key, data: utf8.encode(data), contentType: contentType ?? 'text/plain', acl: acl);
+  Future<bool> putString(
+    String key,
+    String data, {
+    String? contentType,
+    S3Acl? acl,
+  }) async {
+    return putObject(
+      key: key,
+      data: utf8.encode(data),
+      contentType: contentType ?? 'text/plain',
+      acl: acl,
+    );
   }
 
   // Download file
@@ -259,13 +365,20 @@ extension S3Operations on S3Client {
   // List objects
   Future<List<String>> listObjects({String? prefix, int maxKeys = 1000}) async {
     try {
-      final queryParams = <String, String>{'list-type': '2', 'max-keys': maxKeys.toString()};
+      final queryParams = <String, String>{
+        'list-type': '2',
+        'max-keys': maxKeys.toString(),
+      };
 
       if (prefix != null) {
         queryParams['prefix'] = prefix;
       }
 
-      final response = await _makeRequest(method: 'GET', path: '/', queryParams: queryParams);
+      final response = await _makeRequest(
+        method: 'GET',
+        path: '/',
+        queryParams: queryParams,
+      );
 
       if (response.statusCode == 200) {
         final xml = utf8.decode(response.body);
@@ -287,7 +400,12 @@ extension S3Operations on S3Client {
   // Set object ACL after upload
   Future<bool> setObjectAcl(String key, S3Acl acl) async {
     try {
-      final response = await _makeRequest(method: 'PUT', path: key, queryParams: {'acl': ''}, extraHeaders: {'x-amz-acl': acl.value});
+      final response = await _makeRequest(
+        method: 'PUT',
+        path: key,
+        queryParams: {'acl': ''},
+        extraHeaders: {'x-amz-acl': acl.value},
+      );
 
       return response.statusCode == 200;
     } catch (e) {

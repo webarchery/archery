@@ -74,7 +74,6 @@ base class AppKernel {
   /// });
   /// ```
   Future<void> handle(HttpRequest request) async {
-
     // Buffer the request body to prevent "stream has already been listened to" errors.
     // This allows multiple components (CSRF, Logging, Controllers) to read the body.
     // Only buffer body if content exists to prevent stream issues
@@ -83,7 +82,10 @@ base class AppKernel {
       try {
         await request.form().buffer();
       } catch (e) {
-        App().archeryLogger.error("Error buffering request body", {"origin": "Kernel.handle()", "error": e.toString()});
+        App().archeryLogger.error("Error buffering request body", {
+          "origin": "Kernel.handle()",
+          "error": e.toString(),
+        });
       }
     }
 

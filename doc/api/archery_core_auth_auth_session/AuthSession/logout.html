@@ -78,6 +78,7 @@
       final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
       await sessionRecord?.delete();
       authSessions?.remove(session);
+      request.thisSession?.user = null;
       return true;
     }
     return false;
@@ -112,7 +113,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

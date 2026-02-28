@@ -68,8 +68,10 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; updateInstance&lt;T extends Model&gt;({required T instance, required Map&lt;String, dynamic&gt; withJson}) async {
-
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; updateInstance&lt;T extends Model&gt;({
+  required T instance,
+  required Map&lt;String, dynamic&gt; withJson,
+}) async {
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return false;
@@ -114,7 +116,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

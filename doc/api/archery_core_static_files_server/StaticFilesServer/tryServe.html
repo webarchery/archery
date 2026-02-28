@@ -79,7 +79,6 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; tryServe(HttpRequest req) async {
-
   try {
     final method = req.method.toUpperCase();
     if (method != &#39;GET&#39; &amp;&amp; method != &#39;HEAD&#39;) return false;
@@ -98,11 +97,9 @@
     }
 
     return false;
-
-  }catch (e) {
+  } catch (e) {
     return false;
   }
-
 }</code></pre>
 </section>
 
@@ -131,7 +128,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

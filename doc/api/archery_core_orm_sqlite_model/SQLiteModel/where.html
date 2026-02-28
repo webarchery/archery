@@ -73,8 +73,11 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({required String field, String comp = &quot;==&quot;, required dynamic value}) async {
-
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({
+  required String field,
+  String comp = &quot;==&quot;,
+  required dynamic value,
+}) async {
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
@@ -92,7 +95,11 @@
     } else if (comp == &quot;==&quot;) {
       comp = &quot;=&quot;;
     }
-    final maps = await _database.query(_getTableName&lt;T&gt;(), where: &#39;$field $comp ?&#39;, whereArgs: [value]);
+    final maps = await _database.query(
+      _getTableName&lt;T&gt;(),
+      where: &#39;$field $comp ?&#39;,
+      whereArgs: [value],
+    );
 
     return maps.map((map) =&gt; constructor(map) as T).toList();
   } catch (e) {
@@ -127,7 +134,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

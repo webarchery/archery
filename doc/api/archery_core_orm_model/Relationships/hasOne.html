@@ -67,8 +67,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;T?&gt; hasOne&lt;T extends Model&gt;({DatabaseDisk disk = Model.defaultDisk}) async {
-
+  <pre class="language-dart"><code class="language-dart">Future&lt;T?&gt; hasOne&lt;T extends Model&gt;({
+  DatabaseDisk disk = Model.defaultDisk,
+}) async {
   try {
     final tableName = _getInstanceTableName();
     final foreignTableSingular = tableName.substring(0, tableName.length - 1);
@@ -78,18 +79,24 @@
       case DatabaseDisk.file:
       case DatabaseDisk.s3:
         final foreignUuidKey = &quot;${foreignTableSingular}_uuid&quot;;
-        return Model.firstWhere&lt;T&gt;(field: foreignUuidKey, value: data[&#39;uuid&#39;], disk: disk);
+        return Model.firstWhere&lt;T&gt;(
+          field: foreignUuidKey,
+          value: data[&#39;uuid&#39;],
+          disk: disk,
+        );
 
       case DatabaseDisk.sqlite:
       case DatabaseDisk.pgsql:
         final foreignIdKey = &quot;${foreignTableSingular}_id&quot;;
-        return Model.firstWhere&lt;T&gt;(field: foreignIdKey, value: data[&#39;id&#39;], disk: disk);
+        return Model.firstWhere&lt;T&gt;(
+          field: foreignIdKey,
+          value: data[&#39;id&#39;],
+          disk: disk,
+        );
     }
-
-  }catch(e) {
+  } catch (e) {
     return null;
   }
-
 }</code></pre>
 </section>
 
@@ -118,7 +125,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

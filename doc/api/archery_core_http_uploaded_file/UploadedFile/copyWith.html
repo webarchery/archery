@@ -72,7 +72,11 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">UploadedFile copyWith({String? filename, String? contentType}) {
-  return UploadedFile.fromBytes(filename: filename ?? this.filename, bytes: _cachedBytes as Uint8List, contentType: contentType ?? this.contentType);
+  return UploadedFile.fromBytes(
+    filename: filename ?? this.filename,
+    bytes: _cachedBytes as Uint8List,
+    contentType: contentType ?? this.contentType,
+  );
 }</code></pre>
 </section>
 
@@ -101,7 +105,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

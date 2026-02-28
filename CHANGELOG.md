@@ -51,3 +51,19 @@
 
 ## 1.3.4
 - HasOne, HasMany, BelongsTo on Model
+
+## 1.4.0
+- Hashing API changes
+  - Hasher.hasherPassword -> Hasher.make()
+  - Hasher.verifyPassword -> Hasher.check()
+  - Hashing Ext on Auth   -> Auth.hashPassword
+  - Hashing Ext on Auth   -> Auth.verifyPassword Sessions
+- Sessions
+  - {{ session }} available to all views
+  - session.user    -> nullable
+  - session.errors  -> empty
+  - use request.thisSession.errors.addAll()
+- Templates API changes
+  - {{ user }} -> {{ session.user }}
+  - errors     -> {{ session.errors }}
+  - data       -> {{ session.data }}

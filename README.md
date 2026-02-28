@@ -250,12 +250,12 @@ Security hardening is an active focus toward the 2.0 milestone.
 
 # Database Guidance
 
-| Driver   | Recommended Use                 |
-| -------- |---------------------------------|
-| JSON     | Local dev, small apps           |
-| SQLite   | Small to medium apps            |
-| Postgres | Production workloads            |
-| S3       | Backups 0/ Experimental / Niche |
+| Driver   | Recommended Use                |
+| -------- |--------------------------------|
+| JSON     | Local dev, small apps          |
+| SQLite   | Small to medium apps           |
+| Postgres | Production workloads           |
+| S3       | Backups / Experimental / Niche |
 
 ---
 

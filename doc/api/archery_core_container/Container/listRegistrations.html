@@ -85,8 +85,10 @@ Map&lt;String, List&lt;String&gt;&gt; listRegistrations() {
 
   if (_parent != null) {
     final parentRegistrations = _parent.listRegistrations();
-    registrations[&#39;parent_factories&#39;] = parentRegistrations[&#39;factories&#39;] ?? [];
-    registrations[&#39;parent_singletons&#39;] = parentRegistrations[&#39;singletons&#39;] ?? [];
+    registrations[&#39;parent_factories&#39;] =
+        parentRegistrations[&#39;factories&#39;] ?? [];
+    registrations[&#39;parent_singletons&#39;] =
+        parentRegistrations[&#39;singletons&#39;] ?? [];
     registrations[&#39;parent_eager&#39;] = parentRegistrations[&#39;eager&#39;] ?? [];
   }
 
@@ -119,7 +121,7 @@ Map&lt;String, List&lt;String&gt;&gt; listRegistrations() {
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -70,8 +70,18 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; putString(String key, String data, {String? contentType, S3Acl? acl}) async {
-  return putObject(key: key, data: utf8.encode(data), contentType: contentType ?? &#39;text&#47;plain&#39;, acl: acl);
+  <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; putString(
+  String key,
+  String data, {
+  String? contentType,
+  S3Acl? acl,
+}) async {
+  return putObject(
+    key: key,
+    data: utf8.encode(data),
+    contentType: contentType ?? &#39;text&#47;plain&#39;,
+    acl: acl,
+  );
 }</code></pre>
 </section>
 
@@ -100,7 +110,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

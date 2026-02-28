@@ -56,7 +56,10 @@ abstract class S3JsonFileModel {
   /// Converts `UserModel` → `user_models` (snake_case plural).
   static String _getTableName<T>() {
     final typeName = T.toString();
-    final upperSnakeCase = typeName.replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '_');
+    final upperSnakeCase = typeName.replaceAllMapped(
+      RegExp(r'(?<=[a-z])(?=[A-Z])'),
+      (match) => '_',
+    );
     return "${upperSnakeCase.toLowerCase()}s";
   }
 
@@ -85,7 +88,13 @@ abstract class S3JsonFileModel {
     final data = instance.toJson();
     final meta = instance.toMetaJson();
 
-    return {...data, ...meta, 'uuid': instance.uuid, 'created_at': instance.createdAt?.toIso8601String(), 'updated_at': instance.updatedAt?.toIso8601String()};
+    return {
+      ...data,
+      ...meta,
+      'uuid': instance.uuid,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+    };
   }
 
   /// Persists [instance] to its JSON file (create or update).
@@ -98,7 +107,9 @@ abstract class S3JsonFileModel {
 
     if (instance.uuid == null) return false;
 
-    final existingIndex = allRecords.indexWhere((record) => record['uuid'] == instance.uuid);
+    final existingIndex = allRecords.indexWhere(
+      (record) => record['uuid'] == instance.uuid,
+    );
     final preparedData = _prepareForSave<T>(instance);
 
     if (existingIndex >= 0) {
@@ -107,10 +118,17 @@ abstract class S3JsonFileModel {
       allRecords.add(preparedData);
     }
 
-    return await _s3client.putString(s3KeyPath, jsonEncode(allRecords), contentType: 'application/json', acl: S3Acl.private);
+    return await _s3client.putString(
+      s3KeyPath,
+      jsonEncode(allRecords),
+      contentType: 'application/json',
+      acl: S3Acl.private,
+    );
   }
 
-  static Future<List<Map<String, dynamic>>> _loadS3JsonFileRecords(String s3KeyPath) async {
+  static Future<List<Map<String, dynamic>>> _loadS3JsonFileRecords(
+    String s3KeyPath,
+  ) async {
     if (s3KeyPath.isEmpty) {
       return [];
     }
@@ -127,8 +145,9 @@ abstract class S3JsonFileModel {
     }
   }
 
-
-  static Future<bool> migrate<T extends Model>({required T Function(Map<String, dynamic>) constructor}) async {
+  static Future<bool> migrate<T extends Model>({
+    required T Function(Map<String, dynamic>) constructor,
+  }) async {
     final s3KeyPath = _getS3TableKey<T>();
 
     if (await _s3client.objectExists(s3KeyPath)) {
@@ -136,20 +155,22 @@ abstract class S3JsonFileModel {
       return true;
     }
 
-    if (await _s3client.putString(s3KeyPath, jsonEncode({}), contentType: 'application/json', acl: S3Acl.private)) {
+    if (await _s3client.putString(
+      s3KeyPath,
+      jsonEncode({}),
+      contentType: 'application/json',
+      acl: S3Acl.private,
+    )) {
       _jsonConstructors[T] = constructor;
       return true;
     }
 
     return false;
-
-
   }
-
 
   static Future<List<Map<String, dynamic>>> jsonIndex<T extends Model>() async {
     try {
-     return await _loadS3JsonFileRecords(_getS3TableKey<T>());
+      return await _loadS3JsonFileRecords(_getS3TableKey<T>());
     } catch (e) {
       return [];
     }
@@ -204,7 +225,10 @@ abstract class S3JsonFileModel {
   }
 
   /// Finds first record where [field] == [value].
-  static Future<T?> findBy<T extends Model>({required String field, required dynamic value}) async {
+  static Future<T?> findBy<T extends Model>({
+    required String field,
+    required dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -219,8 +243,6 @@ abstract class S3JsonFileModel {
   }
 
   static Future<T?> findByUUID<T extends Model>(String uuid) async {
-
-
     try {
       final constructor = _jsonConstructors[T];
       if (constructor == null) return null;
@@ -231,7 +253,6 @@ abstract class S3JsonFileModel {
       if (record == null) return null;
 
       return constructor(record) as T;
-
     } catch (e) {
       return null;
     }
@@ -267,18 +288,26 @@ abstract class S3JsonFileModel {
     }
   }
 
-  static Future<bool> update<T extends Model>({required dynamic id, required String field, required dynamic value}) async {
-
-
+  static Future<bool> update<T extends Model>({
+    required dynamic id,
+    required String field,
+    required dynamic value,
+  }) async {
     try {
       final allRecords = await _loadS3JsonFileRecords(_getS3TableKey<T>());
       final index = allRecords.indexWhere((record) => record['uuid'] == id);
       if (index < 0) return false;
 
       allRecords[index][field] = value;
-      allRecords[index]['updated_at'] = DateTime.now().toUtc().toIso8601String();
-      return await _s3client.putString(_getS3TableKey<T>(), jsonEncode(allRecords), contentType: 'application/json', acl: S3Acl.private);
-
+      allRecords[index]['updated_at'] = DateTime.now()
+          .toUtc()
+          .toIso8601String();
+      return await _s3client.putString(
+        _getS3TableKey<T>(),
+        jsonEncode(allRecords),
+        contentType: 'application/json',
+        acl: S3Acl.private,
+      );
     } catch (e) {
       return false;
     }
@@ -286,11 +315,15 @@ abstract class S3JsonFileModel {
 
   /// Deletes record by UUID.
   static Future<bool> delete<T extends Model>({required String uuid}) async {
-
     try {
       final allRecords = await jsonIndex<T>();
       allRecords.removeWhere((record) => record['uuid'] == uuid);
-      return await _s3client.putString(_getS3TableKey<T>(), jsonEncode(allRecords), contentType: 'application/json', acl: S3Acl.private);
+      return await _s3client.putString(
+        _getS3TableKey<T>(),
+        jsonEncode(allRecords),
+        contentType: 'application/json',
+        acl: S3Acl.private,
+      );
     } catch (e) {
       return false;
     }
@@ -298,15 +331,22 @@ abstract class S3JsonFileModel {
 
   static Future<bool> truncate<T extends Model>() async {
     try {
-      return await _s3client.putString(_getS3TableKey<T>(), jsonEncode({}), contentType: 'application/json', acl: S3Acl.private);
+      return await _s3client.putString(
+        _getS3TableKey<T>(),
+        jsonEncode({}),
+        contentType: 'application/json',
+        acl: S3Acl.private,
+      );
     } catch (e) {
       return false;
     }
-
-
   }
 
-  static Future<List<T>> where<T extends Model>({required String field, String comp = "==", dynamic value}) async {
+  static Future<List<T>> where<T extends Model>({
+    required String field,
+    String comp = "==",
+    dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
 
@@ -339,7 +379,11 @@ abstract class S3JsonFileModel {
   }
 
   /// Returns first record matching `where()` condition.
-  static Future<T?> firstWhere<T extends Model>({required String field, String comp = "==", dynamic value}) async {
+  static Future<T?> firstWhere<T extends Model>({
+    required String field,
+    String comp = "==",
+    dynamic value,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return null;
 
@@ -372,8 +416,10 @@ abstract class S3JsonFileModel {
   }
 
   /// Updates instance with partial [withJson].
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson}) async {
-
+  static Future<bool> updateInstance<T extends Model>({
+    required T instance,
+    required Map<String, dynamic> withJson,
+  }) async {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return false;
 
@@ -389,15 +435,17 @@ abstract class S3JsonFileModel {
   }
 
   /// Deletes [instance] by UUID.
-  static Future<bool> deleteInstance<T extends Model>({required T instance}) async {
+  static Future<bool> deleteInstance<T extends Model>({
+    required T instance,
+  }) async {
     if (instance.uuid == null) return false;
     return await delete<T>(uuid: instance.uuid!);
   }
 
   /// Saves [instance].
-  static Future<bool> saveInstance<T extends Model>({required T instance}) async {
+  static Future<bool> saveInstance<T extends Model>({
+    required T instance,
+  }) async {
     return await save<T>(instance);
   }
-
-
 }

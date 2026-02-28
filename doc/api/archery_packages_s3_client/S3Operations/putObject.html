@@ -70,7 +70,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; putObject({required String key, required Uint8List data, String? contentType, S3Acl? acl}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;bool&gt; putObject({
+  required String key,
+  required Uint8List data,
+  String? contentType,
+  S3Acl? acl,
+}) async {
   try {
     final headers = &lt;String, String&gt;{};
     if (contentType != null) {
@@ -80,7 +85,12 @@
       headers[&#39;x-amz-acl&#39;] = acl.value;
     }
 
-    final response = await _makeRequest(method: &#39;PUT&#39;, path: key, body: data, extraHeaders: headers);
+    final response = await _makeRequest(
+      method: &#39;PUT&#39;,
+      path: key,
+      body: data,
+      extraHeaders: headers,
+    );
 
     return response.statusCode == 200;
   } catch (e) {
@@ -114,7 +124,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

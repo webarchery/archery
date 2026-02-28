@@ -77,7 +77,10 @@
     try {
       register(provider);
     } catch (e, stack) {
-      throw ProviderException.unregistered(type: provider.runtimeType, trace: stack);
+      throw ProviderException.unregistered(
+        type: provider.runtimeType,
+        trace: stack,
+      );
     }
   }
 }</code></pre>
@@ -108,7 +111,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

@@ -86,14 +86,19 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; migrate&lt;T extends Model&gt;({required T Function(Map&lt;String, dynamic&gt;) constructor, Map&lt;String, String&gt;? columnDefinitions}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; migrate&lt;T extends Model&gt;({
+  required T Function(Map&lt;String, dynamic&gt;) constructor,
+  Map&lt;String, String&gt;? columnDefinitions,
+}) async {
   _jsonConstructors[T] = constructor;
 
   if (columnDefinitions != null &amp;&amp; columnDefinitions.isNotEmpty) {
     final tableName = _getTableName&lt;T&gt;();
     final allColumns = {..._columnDefinitions, ...columnDefinitions};
 
-    final columnsDef = allColumns.entries.map((e) =&gt; &#39;${e.key} ${e.value}&#39;).join(&#39;, &#39;);
+    final columnsDef = allColumns.entries
+        .map((e) =&gt; &#39;${e.key} ${e.value}&#39;)
+        .join(&#39;, &#39;);
 
     await _database.execute(&#39;&#39;&#39;
       CREATE TABLE IF NOT EXISTS $tableName (
@@ -140,7 +145,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

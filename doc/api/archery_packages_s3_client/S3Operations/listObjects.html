@@ -70,13 +70,20 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;List&lt;String&gt;&gt; listObjects({String? prefix, int maxKeys = 1000}) async {
   try {
-    final queryParams = &lt;String, String&gt;{&#39;list-type&#39;: &#39;2&#39;, &#39;max-keys&#39;: maxKeys.toString()};
+    final queryParams = &lt;String, String&gt;{
+      &#39;list-type&#39;: &#39;2&#39;,
+      &#39;max-keys&#39;: maxKeys.toString(),
+    };
 
     if (prefix != null) {
       queryParams[&#39;prefix&#39;] = prefix;
     }
 
-    final response = await _makeRequest(method: &#39;GET&#39;, path: &#39;&#47;&#39;, queryParams: queryParams);
+    final response = await _makeRequest(
+      method: &#39;GET&#39;,
+      path: &#39;&#47;&#39;,
+      queryParams: queryParams,
+    );
 
     if (response.statusCode == 200) {
       final xml = utf8.decode(response.body);
@@ -121,7 +128,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

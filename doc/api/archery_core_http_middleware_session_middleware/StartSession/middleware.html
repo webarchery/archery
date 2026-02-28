@@ -68,8 +68,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
-  await Session.init(request);
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(
+  HttpRequest request,
+  Future&lt;void&gt; Function() next,
+) async {
+  final session = await Session.init(request);
+  &#47;&#47; print(session?.toMetaJson());
   await next();
 }</code></pre>
 </section>
@@ -99,7 +103,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

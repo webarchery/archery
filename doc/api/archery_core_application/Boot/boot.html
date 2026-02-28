@@ -87,11 +87,18 @@
   container.bindInstance&lt;Router&gt;(router);
 
   &#47;&#47; Default View Engine
-  final settings = {&quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;, &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;};
-  final engine = TemplateEngine(viewsDirectory: settings[&#39;viewsPath&#39;]!, publicDirectory: settings[&#39;publicPath&#39;]!);
+  final settings = {
+    &quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;,
+    &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;,
+  };
+  final engine = TemplateEngine(
+    viewsDirectory: settings[&#39;viewsPath&#39;]!,
+    publicDirectory: settings[&#39;publicPath&#39;]!,
+  );
 
   &#47;&#47; Enable caching for performance
-  engine.shouldCache = true; &#47;&#47; Enabled by default for performance recommendation
+  engine.shouldCache =
+      true; &#47;&#47; Enabled by default for performance recommendation
   &#47;&#47; engine.shouldCache = config?.get(&#39;view.cache&#39;, true) ?? true;
   container.bindInstance&lt;TemplateEngine&gt;(engine);
 
@@ -115,7 +122,10 @@
       },
     ),
   );
-  container.singleton&lt;SQLiteDatabase&gt;(factory: (_, [_]) =&gt; sqliteDatabase, eager: true);
+  container.singleton&lt;SQLiteDatabase&gt;(
+    factory: (_, [_]) =&gt; sqliteDatabase,
+    eager: true,
+  );
 
   &#47;&#47; Default Postgres DB
   &#47;&#47; Todo - uncomment to init postgres when you config is set
@@ -143,7 +153,10 @@
       try {
         await provider.boot(container);
       } catch (e, stack) {
-        throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
+        throw ProviderException.unbooted(
+          type: provider.runtimeType,
+          trace: stack,
+        );
       }
     }
 
@@ -186,7 +199,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>

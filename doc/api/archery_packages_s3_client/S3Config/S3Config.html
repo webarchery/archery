@@ -67,7 +67,13 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">S3Config({required this.key, required this.secret, required this.bucket, this.endpoint, this.region = &#39;us-east-2&#39;});</code></pre>
+  <pre class="language-dart"><code class="language-dart">S3Config({
+  required this.key,
+  required this.secret,
+  required this.bucket,
+  this.endpoint,
+  this.region = &#39;us-east-2&#39;,
+});</code></pre>
 </section>
 
 
@@ -95,7 +101,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.3.4
+      1.4.0
   </span>
   
 </footer>
