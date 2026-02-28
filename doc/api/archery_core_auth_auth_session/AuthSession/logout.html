@@ -69,13 +69,20 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; logout(HttpRequest request) async {
   try {
-    final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
+    final cookie = request.cookies.firstWhereOrNull(
+      (cookie) =&gt; cookie.name == &quot;archery_session&quot;,
+    );
     final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-    final session = authSessions?.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie?.value);
+    final session = authSessions?.firstWhereOrNull(
+      (session) =&gt; session.cookie?.value == cookie?.value,
+    );
 
     if (session != null) {
-      final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
+      final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(
+        field: &quot;email&quot;,
+        value: session.email,
+      );
       await sessionRecord?.delete();
       authSessions?.remove(session);
       request.thisSession?.user = null;
@@ -113,7 +120,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

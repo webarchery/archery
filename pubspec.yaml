@@ -1,5 +1,5 @@
 name: archery
-version: 1.4.0
+version: 1.4.1
 description: Archery is a high-performance, full-featured web framework for Dart.
 repository: https://github.com/webarchery/archery
 environment:

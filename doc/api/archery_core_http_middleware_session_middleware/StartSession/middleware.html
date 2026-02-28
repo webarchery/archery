@@ -72,8 +72,7 @@
   HttpRequest request,
   Future&lt;void&gt; Function() next,
 ) async {
-  final session = await Session.init(request);
-  &#47;&#47; print(session?.toMetaJson());
+  await Session.init(request);
   await next();
 }</code></pre>
 </section>
@@ -103,7 +102,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

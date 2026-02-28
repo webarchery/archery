@@ -5,8 +5,7 @@ base class StartSession {
     HttpRequest request,
     Future<void> Function() next,
   ) async {
-    final session = await Session.init(request);
-    // print(session?.toMetaJson());
+    await Session.init(request);
     await next();
   }
 }

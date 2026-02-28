@@ -68,12 +68,17 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; login({required String email, required String password}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; login({
+  required String email,
+  required String password,
+}) async {
   try {
     final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
     if (authSessions == null) return false;
 
-    final authSession = authSessions.firstWhereOrNull((session) =&gt; session.email == email);
+    final authSession = authSessions.firstWhereOrNull(
+      (session) =&gt; session.email == email,
+    );
 
     if (authSession != null) {
       authSession.lastActivity = DateTime.now();
@@ -82,7 +87,9 @@
       final user = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
 
       if (user != null &amp;&amp; Hasher.check(key: password, hash: user.password)) {
-        final newAuthSession = await Model.create&lt;AuthSession&gt;(fromJson: {&quot;email&quot;: user.email, &quot;token&quot;: App.generateKey()});
+        final newAuthSession = await Model.create&lt;AuthSession&gt;(
+          fromJson: {&quot;email&quot;: user.email, &quot;token&quot;: App.generateKey()},
+        );
         if (newAuthSession == null) return false;
 
         authSession?.lastActivity = DateTime.now();
@@ -124,7 +131,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

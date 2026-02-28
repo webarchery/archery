@@ -81,12 +81,9 @@
   final engine = App().container.make&lt;TemplateEngine&gt;();
   final config = App().container.make&lt;AppConfig&gt;();
 
-
   thisSession?.user = await Auth.user(this);
 
-  final session = {&quot;session&quot;: thisSession?.toJson() };
-
-
+  final session = {&quot;session&quot;: thisSession?.toJson()};
 
   data = {...?data, ...session};
 
@@ -187,7 +184,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

@@ -80,110 +80,121 @@ and that the <code>User</code> model is available for persistence.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">void authRoutes(Router router) {
+  router.group(
+    routes: () {
+      router.get(&#39;&#47;login&#39;, middleware: [Guest.middleware], (request) async {
+        return request.view(&quot;auth.login&quot;);
+      });
 
-  router.group( routes: () {
+      router.get(&#39;&#47;register&#39;, middleware: [Guest.middleware], (request) async {
+        return request.view(&quot;auth.register&quot;);
+      });
 
-    router.get(&#39;&#47;login&#39;, middleware: [Guest.middleware], (request) async {
-      return request.view(&quot;auth.login&quot;);
-    });
+      router.post(&#39;&#47;register&#39;, (request) async {
+        try {
+          final form = request.form();
+          final name = await form.input(&#39;name&#39;);
+          final email = await form.input(&#39;email&#39;);
+          final password = await form.input(&#39;password&#39;);
 
-    router.get(&#39;&#47;register&#39;, middleware: [Guest.middleware], (request) async {
-      return request.view(&quot;auth.register&quot;);
-    });
-
-    router.post(&#39;&#47;register&#39;, (request) async {
-      try {
-        final form = request.form();
-        final name = await form.input(&#39;name&#39;);
-        final email = await form.input(&#39;email&#39;);
-        final password = await form.input(&#39;password&#39;);
-
-        &#47;&#47; Todo- form.validate(field as [.email, .phone, .name, .])
-        &#47;&#47; or use a FormValidator.validate()
-        &#47;&#47; opt 1 gives easy prototyping option
-        &#47;&#47; add a method on FormRequest
-        &#47;&#47; avoid extending Request, use buffered content and _request in FormRequest
-        if (name == null || name.toString().isEmpty || email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
-          return request.redirectBack();
-        }
-
-        final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
-        if (userRecord != null) return request.redirectBack();
-
-        final user = User(name: name, email: email, password: password);
-        await user.save();
-
-        return request.redirectToLogin();
-      } catch (e) {
-        return request.redirectBack();
-      }
-    });
-
-    router.post(&#39;&#47;login&#39;, (request) async {
-      try {
-        final form = request.form();
-        final email = await form.input(&#39;email&#39;);
-        final password = await form.input(&#39;password&#39;);
-
-        if (email == null || email.toString().isEmpty || password == null || password.toString().isEmpty) {
-          return request.redirectBack();
-        }
-
-        if (await Auth.login(email: email, password: password)) {
-          final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
-            ..httpOnly = true
-            ..secure =
-            true &#47;&#47; only over HTTPS
-            ..sameSite = SameSite.lax;
-
-          final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
-
-          final session = sessions?.firstWhereOrNull((session) =&gt; session.email == email);
-          if (session != null) {
-            session.cookie = cookie;
-            request.response.cookies.add(cookie);
+          &#47;&#47; Todo- form.validate(field as [.email, .phone, .name, .])
+          &#47;&#47; or use a FormValidator.validate()
+          &#47;&#47; opt 1 gives easy prototyping option
+          &#47;&#47; add a method on FormRequest
+          &#47;&#47; avoid extending Request, use buffered content and _request in FormRequest
+          if (name == null ||
+              name.toString().isEmpty ||
+              email == null ||
+              email.toString().isEmpty ||
+              password == null ||
+              password.toString().isEmpty) {
+            return request.redirectBack();
           }
-          return request.redirectToDashboard();
+
+          final userRecord = await Model.firstWhere&lt;User&gt;(
+            field: &quot;email&quot;,
+            value: email,
+          );
+          if (userRecord != null) return request.redirectBack();
+
+          final user = User(name: name, email: email, password: password);
+          await user.save();
+
+          return request.redirectToLogin();
+        } catch (e) {
+          return request.redirectBack();
         }
+      });
 
-        return request.redirectBack();
-      } catch (e) {
-        return request.redirectBack();
-      }
-    });
+      router.post(&#39;&#47;login&#39;, (request) async {
+        try {
+          final form = request.form();
+          final email = await form.input(&#39;email&#39;);
+          final password = await form.input(&#39;password&#39;);
 
-    router.get(&#39;&#47;logout&#39;, (request) async {
-      await Auth.logout(request);
-      return request.redirectHome();
-    });
+          if (email == null ||
+              email.toString().isEmpty ||
+              password == null ||
+              password.toString().isEmpty) {
+            return request.redirectBack();
+          }
 
-    router.group(
-      prefix: &quot;&#47;user&quot;,
-      middleware: [Auth.middleware],
-      routes: () {
-        &#47;&#47; - grouped for profile &amp; dashboard crud
-        router.group(
-          prefix: &quot;&#47;profile&quot;,
-          routes: () {
-            router.get(&quot;&#47;&quot;, (request) async {
-              return request.view(&quot;auth.user.profile&quot;);
-            });
-          },
-        );
+          if (await Auth.login(email: email, password: password)) {
+            final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
+              ..httpOnly = true
+              ..secure =
+                  true &#47;&#47; only over HTTPS
+              ..sameSite = SameSite.lax;
 
-        router.group(
-          prefix: &quot;&#47;dashboard&quot;,
-          routes: () {
-            router.get(&quot;&#47;&quot;, (request) async {
-              return request.view(&quot;auth.user.dashboard&quot;);
-            });
-          },
-        );
-      },
-    );
+            final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-  });
+            final session = sessions?.firstWhereOrNull(
+              (session) =&gt; session.email == email,
+            );
+            if (session != null) {
+              session.cookie = cookie;
+              request.response.cookies.add(cookie);
+            }
+            return request.redirectToDashboard();
+          }
 
+          return request.redirectBack();
+        } catch (e) {
+          return request.redirectBack();
+        }
+      });
+
+      router.get(&#39;&#47;logout&#39;, (request) async {
+        await Auth.logout(request);
+        return request.redirectHome();
+      });
+
+      router.group(
+        prefix: &quot;&#47;user&quot;,
+        middleware: [Auth.middleware],
+        routes: () {
+          &#47;&#47; - grouped for profile &amp; dashboard crud
+          router.group(
+            prefix: &quot;&#47;profile&quot;,
+            routes: () {
+              router.get(&quot;&#47;&quot;, (request) async {
+                return request.view(&quot;auth.user.profile&quot;);
+              });
+            },
+          );
+
+          router.group(
+            prefix: &quot;&#47;dashboard&quot;,
+            routes: () {
+              router.get(&quot;&#47;&quot;, (request) async {
+                return request.view(&quot;auth.user.dashboard&quot;);
+              });
+            },
+          );
+        },
+      );
+    },
+  );
 }</code></pre>
 </section>
 
@@ -211,7 +222,7 @@ and that the <code>User</code> model is available for persistence.</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

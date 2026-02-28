@@ -68,15 +68,18 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;User?&gt; user(HttpRequest request) async {
-  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
+  final cookie = request.cookies.firstWhereOrNull(
+    (cookie) =&gt; cookie.name == &quot;archery_session&quot;,
+  );
   final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
   if (cookie == null || authSessions == null || authSessions.isEmpty) {
     return null;
   }
 
-  final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
-
+  final session = authSessions.firstWhereOrNull(
+    (session) =&gt; session.cookie?.value == cookie.value,
+  );
 
   if (session == null) return null;
 
@@ -86,10 +89,16 @@
   }
 
   session.lastActivity = DateTime.now();
-  final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
+  final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(
+    field: &quot;email&quot;,
+    value: session.email,
+  );
 
   if (sessionRecord != null) {
-    return await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: sessionRecord.email);
+    return await Model.firstWhere&lt;User&gt;(
+      field: &quot;email&quot;,
+      value: sessionRecord.email,
+    );
   }
   return null;
 }</code></pre>
@@ -120,7 +129,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

@@ -68,7 +68,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;Session?&gt; init(HttpRequest request) async {
-  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;);
+  final cookie = request.cookies.firstWhereOrNull(
+    (cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;,
+  );
   final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
 
   if (cookie == null) {
@@ -76,35 +78,50 @@
     await session.save();
     sessions?.add(session);
     request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-    request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
+    request.response.cookies.add(
+      Cookie(&quot;archery_guest_session&quot;, session.token),
+    );
     return session;
   } else {
-    final session = sessions?.firstWhereOrNull((session) =&gt; session.token == cookie.value);
+    final session = sessions?.firstWhereOrNull(
+      (session) =&gt; session.token == cookie.value,
+    );
     if (session != null) {
       session.lastActivity = DateTime.now();
       await session.save();
       request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
+      request.response.cookies.add(
+        Cookie(&quot;archery_guest_session&quot;, session.token),
+      );
       return session;
     }
   }
 
   if (sessions != null &amp;&amp; sessions.isEmpty) {
-    final sessionRecord = await Model.firstWhere&lt;Session&gt;(field: &quot;token&quot;, value: cookie.value);
+    final sessionRecord = await Model.firstWhere&lt;Session&gt;(
+      field: &quot;token&quot;,
+      value: cookie.value,
+    );
 
     if (sessionRecord != null) {
       sessionRecord.lastActivity = DateTime.now();
       await sessionRecord.save();
       sessions.add(sessionRecord);
-      request.cookies.add(Cookie(&quot;archery_guest_session&quot;, sessionRecord.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, sessionRecord.token));
+      request.cookies.add(
+        Cookie(&quot;archery_guest_session&quot;, sessionRecord.token),
+      );
+      request.response.cookies.add(
+        Cookie(&quot;archery_guest_session&quot;, sessionRecord.token),
+      );
       return sessionRecord;
     } else {
       final session = Session(token: App.generateKey());
       await session.save();
       sessions.add(session);
       request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
+      request.response.cookies.add(
+        Cookie(&quot;archery_guest_session&quot;, session.token),
+      );
       return session;
     }
   }
@@ -138,7 +155,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.0
+      1.4.1
   </span>
   
 </footer>

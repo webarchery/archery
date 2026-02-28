@@ -67,3 +67,5 @@
   - {{ user }} -> {{ session.user }}
   - errors     -> {{ session.errors }}
   - data       -> {{ session.data }}
+
+## 1.4.1
