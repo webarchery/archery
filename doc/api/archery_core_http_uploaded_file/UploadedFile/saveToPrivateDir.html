@@ -63,6 +63,16 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Saves the file into a subdirectory of the private storage path.</p>
+<p>When <code>autoName</code> is <code>true</code>, a UUID-based filename is generated while
+preserving the original extension when possible.</p>
+<p>Returns the written <a href="https://api.dart.dev/stable/3.10.9/dart-io/File-class.html">File</a>.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final saved = await file.saveToPrivateDir('documents');
+print(saved.path);
+</code></pre>
+</section>
 
 
     
@@ -116,7 +126,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

@@ -67,8 +67,14 @@
     </section>
     
 <section class="desc markdown">
-  <p>Serializes model data (excluding metadata).</p>
-<p>Override in subclass.</p>
+  <p>Serializes the session into its standard JSON representation.</p>
+<p>Includes the model UUID, email, token, and timestamp metadata.</p>
+<p>Returns a map suitable for storage or transport.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final json = session.toJson();
+print(json['email']);
+print(json['token']);
+</code></pre>
 </section>
 
 
@@ -77,13 +83,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Map&lt;String, dynamic&gt; toJson() {
-  return {
-    &quot;uuid&quot;: uuid,
-    &quot;email&quot;: email,
-    &#39;token&#39;: token,
-    &quot;created_at&quot;: createdAt?.toIso8601String(),
-    &quot;updated_at&quot;: updatedAt?.toIso8601String(),
-  };
+  return {&quot;uuid&quot;: uuid, &quot;email&quot;: email, &#39;token&#39;: token, &quot;created_at&quot;: createdAt?.toIso8601String(), &quot;updated_at&quot;: updatedAt?.toIso8601String()};
 }</code></pre>
 </section>
 
@@ -112,7 +112,7 @@ Map&lt;String, dynamic&gt; toJson() {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

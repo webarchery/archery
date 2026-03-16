@@ -62,26 +62,51 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Resolves the currently authenticated user from the incoming request.</p>
+<p>Workflow:</p>
+<ol>
+<li>Reads the <code>archery_session</code> cookie from the request.</li>
+<li>Looks up the matching in-memory session.</li>
+<li>Verifies the session is still valid.</li>
+<li>Updates the session activity timestamp.</li>
+<li>Loads and returns the corresponding <code>User</code> record.</li>
+</ol>
+<p>If any step fails, the request is logged out and <code>null</code> is returned.</p>
+<p>Returns the authenticated <code>User</code>, or <code>null</code> when authentication fails.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final currentUser = await AuthSession.user(request);
+
+if (currentUser != null) {
+  print('Authenticated as ${currentUser.email}');
+}
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;User?&gt; user(HttpRequest request) async {
-  final cookie = request.cookies.firstWhereOrNull(
-    (cookie) =&gt; cookie.name == &quot;archery_session&quot;,
-  );
-  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
-
-  if (cookie == null || authSessions == null || authSessions.isEmpty) {
+  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
+  if (cookie == null) {
+    await logout(request);
     return null;
   }
 
-  final session = authSessions.firstWhereOrNull(
-    (session) =&gt; session.cookie?.value == cookie.value,
-  );
+  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-  if (session == null) return null;
+  if (authSessions == null || authSessions.isEmpty) {
+    await logout(request);
+    return null;
+  }
+
+  final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
+
+  if (session == null) {
+    await logout(request);
+    return null;
+  }
 
   if (!_validateSession(session)) {
     await logout(request);
@@ -89,16 +114,11 @@
   }
 
   session.lastActivity = DateTime.now();
-  final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(
-    field: &quot;email&quot;,
-    value: session.email,
-  );
+
+  final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
 
   if (sessionRecord != null) {
-    return await Model.firstWhere&lt;User&gt;(
-      field: &quot;email&quot;,
-      value: sessionRecord.email,
-    );
+    return await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: sessionRecord.email);
   }
   return null;
 }</code></pre>
@@ -129,7 +149,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

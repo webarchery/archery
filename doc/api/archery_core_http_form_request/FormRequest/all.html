@@ -62,7 +62,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns all form fields merged with query parameters</p>
+  <p>Returns all parsed input data merged with query parameters.</p>
+<p>Query parameters are included first, then body fields are applied on top,
+allowing body values to override matching query keys.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final values = await form.all();
+print(values['email']);
+</code></pre>
 </section>
 
 
@@ -100,7 +106,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

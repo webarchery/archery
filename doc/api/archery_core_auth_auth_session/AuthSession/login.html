@@ -55,7 +55,8 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
-<span class="name ">login</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="login-param-email"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">email</span>, </span></li>
+<span class="name ">login</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="login-param-request"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span></li>
+<li><span class="parameter" id="login-param-email"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">email</span>, </span></li>
 <li><span class="parameter" id="login-param-password"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">password</span>, </span></li>
 </ol>})
 
@@ -63,42 +64,73 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Attempts to authenticate a user and establish a session.</p>
+<p>Behavior:</p>
+<ul>
+<li>Creates a secure, HTTP-only session cookie.</li>
+<li>Reuses an existing in-memory session when available for the email.</li>
+<li>Otherwise verifies the user's password and creates a new persisted
+session record.</li>
+<li>Registers the session in memory and attaches the cookie to the response.</li>
+</ul>
+<p>Parameters:</p>
+<ul>
+<li><code>request</code>: The active HTTP request.</li>
+<li><code>email</code>: The user's email address.</li>
+<li><code>password</code>: The plain-text password to verify.</li>
+</ul>
+<p>Returns <code>true</code> when login succeeds; otherwise returns <code>false</code>.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final success = await AuthSession.login(
+  request: request,
+  email: 'jane@example.com',
+  password: 'super-secret-password',
+);
+
+if (success) {
+  print('Login successful');
+}
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; login({
-  required String email,
-  required String password,
-}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; login({required HttpRequest request, required String email, required String password}) async {
   try {
+    final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
+
     final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
     if (authSessions == null) return false;
 
-    final authSession = authSessions.firstWhereOrNull(
-      (session) =&gt; session.email == email,
-    );
+    final authSession = authSessions.firstWhereOrNull((session) =&gt; session.email == email);
 
     if (authSession != null) {
+      request.response.cookies.add(cookie);
+      authSession.cookie = cookie;
       authSession.lastActivity = DateTime.now();
       return true;
     } else {
       final user = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
 
       if (user != null &amp;&amp; Hasher.check(key: password, hash: user.password)) {
-        final newAuthSession = await Model.create&lt;AuthSession&gt;(
-          fromJson: {&quot;email&quot;: user.email, &quot;token&quot;: App.generateKey()},
-        );
+        final newAuthSession = await Model.create&lt;AuthSession&gt;(fromJson: {&quot;email&quot;: user.email, &quot;token&quot;: App.generateKey()});
         if (newAuthSession == null) return false;
 
-        authSession?.lastActivity = DateTime.now();
+        newAuthSession.lastActivity = DateTime.now();
+        newAuthSession.cookie = cookie;
         authSessions.add(newAuthSession);
+
+        request.response.cookies.add(cookie);
 
         return true;
       }
     }
-
     return false;
   } catch (e) {
     return false;
@@ -131,7 +163,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

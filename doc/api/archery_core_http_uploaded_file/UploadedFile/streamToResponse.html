@@ -64,17 +64,27 @@
     </section>
     
 <section class="desc markdown">
-  <p>Stream this file back to an HTTP response with proper headers</p>
+  <p>Streams this file to the current HTTP response.</p>
+<p>Range requests are supported by default, which is especially useful for
+browser media playback and seeking.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>request</code>: The active request whose response will receive the file.</li>
+<li><code>handleRange</code>: Whether to honor <code>Range</code> headers. Defaults to <code>true</code>.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final file = await request.form().file('video');
+if (file != null) {
+  await file.streamToResponse(request);
+}
+</code></pre>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; streamToResponse(
-  HttpRequest request, {
-  bool handleRange = true,
-}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; streamToResponse(HttpRequest request, {bool handleRange = true}) async {
   final totalLength = await length;
   final bytes = await _cachedBytes;
 
@@ -114,7 +124,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

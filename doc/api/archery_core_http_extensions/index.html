@@ -62,6 +62,19 @@
 
 
 
+    <section class="summary offset-anchor" id="enums">
+      <h2>Enums</h2>
+      <dl>
+          <dt id="FlashMessageType">
+  <span class="name "><a href="../archery_core_http_extensions/FlashMessageType.html">FlashMessageType</a></span> 
+
+</dt>
+<dd>
+  Types of flash data that may be stored on the session.
+</dd>
+
+      </dl>
+    </section>
 
 
 
@@ -76,6 +89,16 @@
 </dt>
 <dd>
   Model retrieval helpers that map to Archery ORM "or fail" methods.
+</dd>
+
+          <dt id="FlashingMessages">
+  <span class="name "><a href="../archery_core_http_extensions/FlashingMessages.html">FlashingMessages</a></span>
+  on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
+  
+
+</dt>
+<dd>
+  Flash-message helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
 </dd>
 
           <dt id="HttpRequestFormExtension">
@@ -98,16 +121,6 @@
   Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send JSON responses.
 </dd>
 
-          <dt id="NotAuthenticated">
-  <span class="name "><a href="../archery_core_http_extensions/NotAuthenticated.html">NotAuthenticated</a></span>
-  on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
-  
-
-</dt>
-<dd>
-  Sends a 401 unauthenticated response.
-</dd>
-
           <dt id="NotFound">
   <span class="name "><a href="../archery_core_http_extensions/NotFound.html">NotFound</a></span>
   on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
@@ -115,7 +128,7 @@
 
 </dt>
 <dd>
-  Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send 404 with fallback template.
+  Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send a 404 response.
 </dd>
 
           <dt id="Redirect">
@@ -128,6 +141,16 @@
   Redirect helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
 </dd>
 
+          <dt id="RequestUser">
+  <span class="name "><a href="../archery_core_http_extensions/RequestUser.html">RequestUser</a></span>
+  on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
+  
+
+</dt>
+<dd>
+  Convenience authenticated-user lookup attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
+</dd>
+
           <dt id="Text">
   <span class="name "><a href="../archery_core_http_extensions/Text.html">Text</a></span>
   on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
@@ -135,7 +158,7 @@
 
 </dt>
 <dd>
-  Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send plain text.
+  Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send plain-text responses.
 </dd>
 
           <dt id="ThisSession">
@@ -146,6 +169,26 @@
 </dt>
 <dd>
   Session helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
+</dd>
+
+          <dt id="UnAuthenticated">
+  <span class="name "><a href="../archery_core_http_extensions/UnAuthenticated.html">UnAuthenticated</a></span>
+  on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
+  
+
+</dt>
+<dd>
+  Sends a 401 unauthenticated response.
+</dd>
+
+          <dt id="UnAuthorized">
+  <span class="name "><a href="../archery_core_http_extensions/UnAuthorized.html">UnAuthorized</a></span>
+  on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>
+  
+
+</dt>
+<dd>
+  Sends a 403 forbidden response.
 </dd>
 
           <dt id="View">
@@ -161,6 +204,23 @@
       </dl>
     </section>
 
+    <section class="summary offset-anchor" id="constants">
+      <h2>Constants</h2>
+      <dl class="properties">
+          <dt id="staticSecurityHeaders" class="constant">
+    <span class="name "><a href="../archery_core_http_extensions/staticSecurityHeaders-constant.html">staticSecurityHeaders</a></span>
+  <span class="signature">&#8594; const <a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Static security headers shared by cached or text-based responses.
+  
+
+</dd>
+
+      </dl>
+    </section>
 
 
 
@@ -176,7 +236,7 @@
 
 </dt>
 <dd>
-  Type alias for view data.
+  Type alias for data passed into rendered views.
   
 
 </dd>
@@ -204,6 +264,7 @@
       <li><a href="../archery_archery/">archery/archery</a></li>
       <li><a href="../archery_core_application/">archery/core/application</a></li>
       <li><a href="../archery_core_auth_auth_session/">archery/core/auth/auth_session</a></li>
+      <li><a href="../archery_core_auth_request_validation/">archery/core/auth/request_validation</a></li>
       <li><a href="../archery_core_config/">archery/core/config</a></li>
       <li><a href="../archery_core_container/">archery/core/container</a></li>
       <li><a href="../archery_core_http_extensions/">archery/core/http/extensions</a></li>
@@ -211,21 +272,29 @@
       <li><a href="../archery_core_http_http/">archery/core/http/http</a></li>
       <li><a href="../archery_core_http_middleware_cors_middleware/">archery/core/http/middleware/cors_middleware</a></li>
       <li><a href="../archery_core_http_middleware_csrf_middleware/">archery/core/http/middleware/csrf_middleware</a></li>
+      <li><a href="../archery_core_http_middleware_flash_messages_middleware/">archery/core/http/middleware/flash_messages_middleware</a></li>
       <li><a href="../archery_core_http_middleware_session_middleware/">archery/core/http/middleware/session_middleware</a></li>
       <li><a href="../archery_core_http_router/">archery/core/http/router</a></li>
       <li><a href="../archery_core_http_uploaded_file/">archery/core/http/uploaded_file</a></li>
       <li><a href="../archery_core_kernel/">archery/core/kernel</a></li>
       <li><a href="../archery_core_logger/">archery/core/logger</a></li>
-      <li><a href="../archery_core_orm_hasher/">archery/core/orm/hasher</a></li>
-      <li><a href="../archery_core_orm_json_file_model/">archery/core/orm/json_file_model</a></li>
-      <li><a href="../archery_core_orm_model/">archery/core/orm/model</a></li>
-      <li><a href="../archery_core_orm_postgres_model/">archery/core/orm/postgres_model</a></li>
-      <li><a href="../archery_core_orm_s3_json_file_model/">archery/core/orm/s3_json_file_model</a></li>
-      <li><a href="../archery_core_orm_sqlite_model/">archery/core/orm/sqlite_model</a></li>
+      <li><a href="../archery_core_orm_db_drivers_json_file_model/">archery/core/orm/db_drivers/json_file_model</a></li>
+      <li><a href="../archery_core_orm_db_drivers_postgres_model/">archery/core/orm/db_drivers/postgres_model</a></li>
+      <li><a href="../archery_core_orm_db_drivers_s3_json_file_model/">archery/core/orm/db_drivers/s3_json_file_model</a></li>
+      <li><a href="../archery_core_orm_db_drivers_sqlite_model/">archery/core/orm/db_drivers/sqlite_model</a></li>
+      <li><a href="../archery_core_orm_model_model/">archery/core/orm/model/model</a></li>
+      <li><a href="../archery_core_orm_model_model_operations/">archery/core/orm/model/model_operations</a></li>
+      <li><a href="../archery_core_orm_model_model_relationship/">archery/core/orm/model/model_relationship</a></li>
+      <li><a href="../archery_core_orm_model_pivot_tables/">archery/core/orm/model/pivot_tables</a></li>
+      <li><a href="../archery_core_orm_utils_hasher/">archery/core/orm/utils/hasher</a></li>
       <li><a href="../archery_core_provider/">archery/core/provider</a></li>
+      <li><a href="../archery_core_queueable/">archery/core/queueable</a></li>
       <li><a href="../archery_core_static_files_server/">archery/core/static_files_server</a></li>
       <li><a href="../archery_core_template_engine/">archery/core/template_engine</a></li>
-      <li><a href="../archery_packages_s3_client/">archery/packages/s3_client</a></li>
+      <li><a href="../archery_packages_aws_s3_client/">archery/packages/aws/s3_client</a></li>
+      <li><a href="../archery_packages_aws_ses_client/">archery/packages/aws/ses_client</a></li>
+      <li><a href="../archery_utils_extensions/">archery/utils/extensions</a></li>
+      <li><a href="../archery_utils_helpers/">archery/utils/helpers</a></li>
 </ol>
 
   </div>
@@ -236,7 +305,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

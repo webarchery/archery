@@ -1,14 +1,8 @@
 {
   "name": "Archery Web Application",
-  "version": "1.0.0",
-  "timestamp": "2026-02-05T14:24:45.044276Z",
-  "key": "bP2Elr1mAAoFNxzybFMu1IbrAsh1Q4wCNuchbPsNy4A=",
-  "id": "729dbc05-de76-46cc-806b-857e8eba76c1",
-  "debug": true,
-
-  "models": {
-    "disks": {
-      "default": "file"
-    }
-  }
+  "version": "1.5.0",
+  "timestamp": "2026-03-12T15:10:49.129735Z",
+  "key": "xV4S9WbJWuDlmhwOhY767_eyuYdU4MyL0ztrl2wHycs=",
+  "id": "20015c1e-1725-40b0-b1da-331e41416583",
+  "debug": true
 }

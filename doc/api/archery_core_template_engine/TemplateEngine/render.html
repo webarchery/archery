@@ -72,9 +72,9 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;String&gt; render(
-  String templateName, [
-  Map&lt;String, dynamic&gt;? data,
-]) async {
+    String templateName, [
+      Map&lt;String, dynamic&gt;? data,
+    ]) async {
   final templateContent = await _loadTemplate(templateName);
   return _compile(templateContent, data ?? {});
 }</code></pre>
@@ -105,7 +105,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

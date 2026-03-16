@@ -30,6 +30,7 @@
 // https://webarchery.dev
 
 import 'package:archery/archery/archery.dart';
+import 'package:postgres/postgres.dart';
 
 /// Enum representing the lifecycle status of the [App] instance.
 enum AppStatus {
@@ -56,7 +57,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.4.0";
+  static final String version = "1.5.0";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
@@ -100,10 +101,7 @@ class App {
       try {
         register(provider);
       } catch (e, stack) {
-        throw ProviderException.unregistered(
-          type: provider.runtimeType,
-          trace: stack,
-        );
+        throw ProviderException.unregistered(type: provider.runtimeType, trace: stack);
       }
     }
   }
@@ -129,9 +127,7 @@ class App {
   ///
   /// Used for application encryption key, session secrets, etc.
   static String generateKey() {
-    return base64Url.encode(
-      List.generate(32, (i) => Random.secure().nextInt(256)),
-    );
+    return base64Url.encode(List.generate(32, (i) => Random.secure().nextInt(256)));
   }
 
   /// Ensures `lib/src/config/app.json` exists and populates it with default config.
@@ -186,24 +182,19 @@ extension Boot on App {
   /// Sets [status] to [AppStatus.ready] on success, or [AppStatus.error] on failure.
   Future<void> boot() async {
     status = AppStatus.booting;
+    setKeys();
 
     // Default Router
     final router = Router();
     container.bindInstance<Router>(router);
 
     // Default View Engine
-    final settings = {
-      "viewsPath": 'lib/src/http/views',
-      "publicPath": 'lib/src/http/public',
-    };
-    final engine = TemplateEngine(
-      viewsDirectory: settings['viewsPath']!,
-      publicDirectory: settings['publicPath']!,
-    );
+    final settings = {"viewsPath": 'lib/src/http/views', "publicPath": 'lib/src/http/public'};
+    final engine = TemplateEngine(viewsDirectory: settings['viewsPath']!, publicDirectory: settings['publicPath']!);
 
     // Enable caching for performance
-    engine.shouldCache =
-        true; // Enabled by default for performance recommendation
+    // Enabled by default for performance
+    engine.shouldCache = true;
     // engine.shouldCache = config?.get('view.cache', true) ?? true;
     container.bindInstance<TemplateEngine>(engine);
 
@@ -215,40 +206,18 @@ extension Boot on App {
     final Uuid uuid = Uuid();
     container.bindInstance<Uuid>(uuid);
 
-    // Default SQLite DB
-    final Directory dir = Directory("lib/src/storage");
-    final file = File("${dir.absolute.path}/database.sqlite");
-    final SQLiteDatabase sqliteDatabase = await databaseFactoryFfi.openDatabase(
-      file.absolute.path,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: (db, version) async {
-          // Placeholder for database migrations
-        },
-      ),
-    );
-    container.singleton<SQLiteDatabase>(
-      factory: (_, [_]) => sqliteDatabase,
-      eager: true,
-    );
+    switch(Model.defaultDisk) {
+      case .file:
+      case DatabaseDisk.s3:
+      case DatabaseDisk.sqlite:
+        await _initSQLite();
+      case DatabaseDisk.pgsql:
+        await _initSQLite();
+        await _initPostgres();
+    }
 
-    // Default Postgres DB
-    // Todo - uncomment to init postgres when you config is set
 
-    // try {
-    //   final postgresConnection = await PostgresDatabase.open(
-    //     Endpoint(host: config.get('db.pgsql.host', ''), database: config.get('db.pgsql.database', ''), username: config.get('db.pgsql.username', ''), password: config.get('db.pgsql.password', '')),
-    //     // The postgres server hosted locally doesn't have SSL by default. If you're
-    //     // accessing a postgres server over the Internet, the server should support
-    //     // SSL and you should swap out the mode with `SslMode.verifyFull`.
-    //     settings: ConnectionSettings(sslMode: SslMode.disable),
-    //   );
-    //
-    //   container.bindInstance<PostgresDatabase>(postgresConnection);
-    //
-    // } catch (e, s) {
-    //   App().archeryLogger.error("Postgres DB Init Error", {"origin": "App.boot()", "error": e.toString(), "stack": config.get('app.debug') != null && config.get('app.debug') == true ? s.toString() : ''});
-    // }
+
 
     await container.initialize();
 
@@ -258,10 +227,7 @@ extension Boot on App {
         try {
           await provider.boot(container);
         } catch (e, stack) {
-          throw ProviderException.unbooted(
-            type: provider.runtimeType,
-            trace: stack,
-          );
+          throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
         }
       }
 
@@ -273,8 +239,8 @@ extension Boot on App {
       status = AppStatus.ready;
     } catch (e, stack) {
       status = AppStatus.error;
-      print('[App Boot Error] $e\n$stack');
-      rethrow; // Optional: allow external handling
+      archeryLogger.error("Error booting app", {"origin": "App.boot", "error": e.toString(), "stack": stack.toString()});
+      rethrow;
     }
   }
 }
@@ -332,25 +298,18 @@ extension GetConfig on App {
 extension GetLoggers on App {
   Logger get archeryLogger => Logger(
     transports: [
-      config.get('app.debug') != null && config.get('app.debug') == true
-          ? ConsoleTransport(formatJson: true)
-          : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
+      config.get('app.debug') != null && config.get('app.debug') == true ? ConsoleTransport(formatJson: true) : LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
     ],
     context: {"logger": "Archery Framework Logger"},
   );
 
   /// Global Loggers for easy messaging
   Logger get fileLogger => Logger(
-    transports: [
-      LogFileTransport(filePath: 'lib/src/storage/logs/archery.log'),
-    ],
+    transports: [LogFileTransport(filePath: 'lib/src/storage/logs/archery.log')],
     context: {"logger": "App().fileLogger"},
   );
 
-  Logger get consoleLogger => Logger(
-    transports: [ConsoleTransport(formatJson: true)],
-    context: {"logger": "App().consoleLogger"},
-  );
+  Logger get consoleLogger => Logger(transports: [ConsoleTransport(formatJson: true)], context: {"logger": "App().consoleLogger"});
 
   Logger get consoleFileLogger => Logger(
     transports: [
@@ -359,4 +318,60 @@ extension GetLoggers on App {
     ],
     context: {"logger": "App().consoleFileLogger"},
   );
+}
+
+extension InitDatabases on App {
+
+  Future<void> _initPostgres() async {
+    // Default Postgres DB
+    // Todo - uncomment to init postgres when you config is set
+
+    try {
+      final postgresConnection = await PostgresDatabase.open(
+        Endpoint(
+          host: config.get('db.pgsql.host', ''),
+          database: config.get('db.pgsql.database', ''),
+          username: config.get('db.pgsql.username', ''),
+          password: config.get('db.pgsql.password', ''),
+        ),
+        // The postgres server hosted locally doesn't have SSL by default. If you're
+        // accessing a postgres server over the Internet, the server should support
+        // SSL and you should swap out the mode with `SslMode.verifyFull`.
+        settings: ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      container.bindInstance<PostgresDatabase>(postgresConnection);
+    } catch (e, s) {
+      App().archeryLogger.error("Postgres DB Init Error", {
+        "origin": "App.boot()",
+        "error": e.toString(),
+        "stack": config.get('app.debug') != null && config.get('app.debug') == true ? s.toString() : '',
+      });
+    }
+  }
+
+  Future<void> _initSQLite() async {
+    // Default SQLite DB
+    final Directory dir = Directory("lib/src/storage/sqlite");
+    final file = File("${dir.absolute.path}/database.sqlite");
+    final SQLiteDatabase sqliteDatabase = await databaseFactoryFfi.openDatabase(
+      file.absolute.path,
+      options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, version) async {},
+        onOpen: (db) async {
+          // 1. Wait up to 5 seconds for a lock to clear before failing
+          await db.execute('PRAGMA busy_timeout = 5000;');
+
+          // 2. Enable Write-Ahead Logging for multi-process/isolate support
+          await db.execute('PRAGMA journal_mode = WAL;');
+
+          // 3. Optimize synchronization for speed
+          await db.execute('PRAGMA synchronous = NORMAL;');
+        },
+
+      ),
+    );
+    container.singleton<SQLiteDatabase>(factory: (_, [_]) => sqliteDatabase, eager: true);
+  }
 }

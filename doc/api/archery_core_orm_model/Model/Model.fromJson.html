@@ -78,12 +78,12 @@
       createdAt = DateTime.parse(json[&#39;created_at&#39;]);
     } catch (e) {
       &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
-      &#47;&#47; Postgres returns a string which doesnt parse to date
+      &#47;&#47; Postgres returns a string which might not parse to date
       &#47;&#47; a string wont have datetime props and methods.
       &#47;&#47; considering a get createdAt =&gt;
       &#47;&#47; first test seem to be passing... leaving for redundancy
       &#47;&#47; key your eye on datetime format behaviors from different dbs
-      &#47;&#47;datetime might not be able to parse it!
+      &#47;&#47; datetime might not be able to parse it!
       createdAt = json[&#39;created_at&#39;];
     }
   }
@@ -95,7 +95,7 @@
       updatedAt = DateTime.parse(json[&#39;updated_at&#39;]);
     } catch (e) {
       &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
-      &#47;&#47; Postgres returns a string which doesnt parse to date
+      &#47;&#47; Postgres returns a string which might not parse to date
       updatedAt = json[&#39;updated_at&#39;];
     }
   }
@@ -127,7 +127,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.4.2
   </span>
   
 </footer>

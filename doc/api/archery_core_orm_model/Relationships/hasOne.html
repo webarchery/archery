@@ -71,7 +71,7 @@
   DatabaseDisk disk = Model.defaultDisk,
 }) async {
   try {
-    final tableName = _getInstanceTableName();
+    final tableName = getInstanceTableName();
     final foreignTableSingular = tableName.substring(0, tableName.length - 1);
     final data = toMetaJson();
 
@@ -125,7 +125,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.4.2
   </span>
   
 </footer>

@@ -63,18 +63,40 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Verifies the CSRF token for the current request before continuing.</p>
+<p>Behavior:</p>
+<ul>
+<li>allows read-only requests through immediately</li>
+<li>extracts the submitted request token</li>
+<li>extracts the session token from the CSRF cookie</li>
+<li>compares both tokens</li>
+<li>rejects the request with <code>403 Forbidden</code> when tokens are missing or do
+not match</li>
+</ul>
+<p>Parameters:</p>
+<ul>
+<li><code>request</code>: The incoming HTTP request.</li>
+<li><code>next</code>: The next middleware or handler in the pipeline.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await VerifyCsrfToken.middleware(request, () async {
+  request.response.write('Token accepted');
+});
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(
-  HttpRequest request,
-  Future&lt;void&gt; Function() next,
-) async {
+    HttpRequest request,
+    Future&lt;void&gt; Function() next,
+    ) async {
   if (_isReading(request)) {
-    await next();
-    return;
+    return await next();
+
   }
 
   final token = await _getToken(request);
@@ -117,7 +139,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

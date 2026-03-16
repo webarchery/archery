@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>&gt;</span></span>
-<span class="name ">streamToS3</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="streamToS3-param-acl"><span class="type-annotation"><a href="../../archery_packages_s3_client/S3Acl.html">S3Acl</a></span> <span class="parameter-name">acl</span> = <span class="default-value">.private</span>, </span></li>
+<span class="name ">streamToS3</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="streamToS3-param-acl"><span class="type-annotation"><a href="../../archery_packages_aws_s3_client/S3Acl.html">S3Acl</a></span> <span class="parameter-name">acl</span> = <span class="default-value">.private</span>, </span></li>
 <li><span class="parameter" id="streamToS3-param-autoName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoName</span> = <span class="default-value">true</span>, </span></li>
 </ol>})
 
@@ -63,15 +63,24 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Uploads the file to S3 and returns the stored object key.</p>
+<p>The generated key includes the current application ID and stores uploads
+under the framework upload prefix.</p>
+<p>When <code>autoName</code> is <code>true</code>, a UUID-based filename is generated while
+preserving the extension when possible.</p>
+<p>Returns the S3 object key on success, or <code>null</code> on failure.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final key = await file.streamToS3(acl: S3Acl.private);
+print(key);
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;String?&gt; streamToS3({
-  S3Acl acl = .private,
-  bool autoName = true,
-}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;String?&gt; streamToS3({S3Acl acl = .private, bool autoName = true}) async {
   final s3Client = App().make&lt;S3Client&gt;();
   final config = App().make&lt;AppConfig&gt;();
   final uuid = App().make&lt;Uuid&gt;();
@@ -86,8 +95,7 @@
     fileName = filename;
   }
 
-  final String key =
-      &quot;archery&#47;web&#47;app-${config.get(&#39;app.id&#39;, uuid.v4())}&#47;storage&#47;uploads&#47;$fileName&quot;;
+  final String key = &quot;archery&#47;web&#47;app-${config.get(&#39;app.id&#39;, uuid.v4())}&#47;storage&#47;uploads&#47;$fileName&quot;;
 
   if (await s3Client.putObject(
     key: key,
@@ -126,7 +134,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

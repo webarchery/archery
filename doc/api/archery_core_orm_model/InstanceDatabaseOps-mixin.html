@@ -76,6 +76,7 @@ static Archery ORM functions while respecting the model's configured <a href="..
             <dd>
               <ul class="comma-separated mixin-relationships">
                 <li><a href="../archery_core_auth_auth_session/AuthSession-class.html">AuthSession</a></li>
+                <li><a href="../archery_archery/Role-class.html">Role</a></li>
                 <li><a href="../archery_core_auth_auth_session/Session-class.html">Session</a></li>
                 <li><a href="../archery_archery/User-class.html">User</a></li>
               </ul>
@@ -83,6 +84,8 @@ static Archery ORM functions while respecting the model's configured <a href="..
           
   <dt>Available extensions</dt>
   <dd><ul class="comma-separated clazz-relationships">
+      <li><a href="../archery_core_orm_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a></li>
+      <li><a href="../archery_core_orm_model_relationship/ModelRelationships.html">ModelRelationships</a></li>
       <li><a href="../archery_core_orm_model/Relationships.html">Relationships</a></li>
   </ul></dd>
 
@@ -189,6 +192,23 @@ static Archery ORM functions while respecting the model's configured <a href="..
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="attach" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationshipOps/attach.html">attach</a></span><span class="signature">(<wbr><span class="parameter" id="attach-param-sibling"><span class="type-annotation"><a href="../archery_core_orm_model/Model-class.html">Model</a></span> <span class="parameter-name">sibling</span>, {</span><span class="parameter" id="attach-param-relationship"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_model_relationship/ModelRelationshipType.html">ModelRelationshipType</a></span> <span class="parameter-name">relationship</span>, </span><span class="parameter" id="attach-param-table"><span class="type-annotation"><a href="../archery_core_orm_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span>?</span> <span class="parameter-name">table</span>, </span><span class="parameter" id="attach-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
         <dt id="belongsTo" class="callable">
   <span class="name"><a href="../archery_core_orm_model/Relationships/belongsTo.html">belongsTo</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsTo-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
@@ -200,6 +220,40 @@ static Archery ORM functions while respecting the model's configured <a href="..
       <p class="from-extension">
         <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
         provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
+        <dt id="belongsToMany" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationships/belongsToMany.html">belongsToMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsToMany-param-table"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span></span> <span class="parameter-name">table</span>, </span><span class="parameter" id="belongsToMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
+        <dt id="belongsToOne" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationships/belongsToOne.html">belongsToOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsToOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
       </p>
   
   
@@ -219,6 +273,66 @@ static Archery ORM functions while respecting the model's configured <a href="..
 
 </dd>
 
+        <dt id="detach" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationshipOps/detach.html">detach</a></span><span class="signature">(<wbr><span class="parameter" id="detach-param-sibling"><span class="type-annotation"><a href="../archery_core_orm_model/Model-class.html">Model</a></span> <span class="parameter-name">sibling</span>, {</span><span class="parameter" id="detach-param-relationship"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_model_relationship/ModelRelationshipType.html">ModelRelationshipType</a></span> <span class="parameter-name">relationship</span>, </span><span class="parameter" id="detach-param-table"><span class="type-annotation"><a href="../archery_core_orm_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span>?</span> <span class="parameter-name">table</span>, </span><span class="parameter" id="detach-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
+        <dt id="getInstanceTableName" class="callable inherited">
+  <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/getInstanceTableName.html">getInstanceTableName</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="getInstanceTableSingularName" class="callable inherited">
+  <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/getInstanceTableSingularName.html">getInstanceTableSingularName</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="hasMany" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationships/hasMany.html">hasMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
         <dt id="hasMany" class="callable">
   <span class="name"><a href="../archery_core_orm_model/Relationships/hasMany.html">hasMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
@@ -230,6 +344,23 @@ static Archery ORM functions while respecting the model's configured <a href="..
       <p class="from-extension">
         <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
         provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+      </p>
+  
+  
+
+</dd>
+
+        <dt id="hasOne" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_relationship/ModelRelationships/hasOne.html">hasOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
       </p>
   
   
@@ -381,7 +512,7 @@ static Archery ORM functions while respecting the model's configured <a href="..
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.4.2
   </span>
   
 </footer>

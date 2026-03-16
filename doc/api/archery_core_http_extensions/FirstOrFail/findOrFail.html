@@ -56,22 +56,32 @@
       
 <span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
 <span class="name ">findOrFail</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="findOrFail-param-id"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">id</span>, </span></li>
-<li><span class="parameter" id="findOrFail-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
+<li><span class="parameter" id="findOrFail-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Retrieves a model by primary identifier or fails.</p>
+<p>This method forwards to <code>Model.findOrFail</code> and includes the current
+request context.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>id</code>: The model identifier.</li>
+<li><code>disk</code>: The database disk to query.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final post = await request.findOrFail&lt;Post&gt;(id: 42);
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; findOrFail&lt;T extends Model&gt;({
-  required dynamic id,
-  DatabaseDisk disk = Model.defaultDisk,
-}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; findOrFail&lt;T extends Model&gt;({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
   return await Model.findOrFail&lt;T&gt;(request: this, id: id, disk: disk);
 }</code></pre>
 </section>
@@ -101,7 +111,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

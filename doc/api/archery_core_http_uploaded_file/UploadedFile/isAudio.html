@@ -67,7 +67,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Check if this is an audio file</p>
+  <p>Returns <code>true</code> when the file appears to be an audio file.</p>
+<p>Detection is based on MIME type and common filename extensions.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">if (file.isAudio) {
+  print('This upload is audio');
+}
+</code></pre>
 </section>
 
     
@@ -75,15 +81,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">bool get isAudio {
   final mime = contentType.toLowerCase();
-  return mime.startsWith(&#39;audio&#47;&#39;) ||
-      [
-        &#39;.mp3&#39;,
-        &#39;.wav&#39;,
-        &#39;.ogg&#39;,
-        &#39;.m4a&#39;,
-        &#39;.aac&#39;,
-        &#39;.flac&#39;,
-      ].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
+  return mime.startsWith(&#39;audio&#47;&#39;) || [&#39;.mp3&#39;, &#39;.wav&#39;, &#39;.ogg&#39;, &#39;.m4a&#39;, &#39;.aac&#39;, &#39;.flac&#39;].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
 }</code></pre>
 </section>
 
@@ -114,7 +112,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

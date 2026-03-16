@@ -88,9 +88,9 @@ base class AppKernel {
         });
       }
     }
-
     await _runMiddleware(request, 0);
   }
+
 
   /// Recursively executes the global middleware chain.
   ///

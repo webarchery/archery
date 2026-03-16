@@ -55,9 +55,15 @@
     
 <section class="desc markdown">
   <p>Model retrieval helpers that map to Archery ORM "or fail" methods.</p>
-<p>These helpers forward to <code>Model.firstOrFail</code> / <code>Model.findOrFail</code> and pass
-through the current request (so the ORM can generate appropriate failure
-responses).</p>
+<p>These helpers forward to <code>Model.firstOrFail</code> and <code>Model.findOrFail</code>, passing
+through the current request so the ORM can generate request-aware failure
+responses.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final user = await request.firstOrFail&lt;User&gt;(
+  field: 'email',
+  value: 'jane@example.com',
+);
+</code></pre>
 </section>
 
     <section>
@@ -82,7 +88,7 @@ responses).</p>
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="findOrFail" class="callable">
-  <span class="name"><a href="../archery_core_http_extensions/FirstOrFail/findOrFail.html">findOrFail</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="findOrFail-param-id"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="findOrFail-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+  <span class="name"><a href="../archery_core_http_extensions/FirstOrFail/findOrFail.html">findOrFail</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="findOrFail-param-id"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">id</span>, </span><span class="parameter" id="findOrFail-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
   </span>
   
@@ -93,13 +99,13 @@ responses).</p>
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/FirstOrFail.html">FirstOrFail</a> extension</span>
       </p>
-  
+  Retrieves a model by primary identifier or fails.
   
 
 </dd>
 
         <dt id="firstOrFail" class="callable">
-  <span class="name"><a href="../archery_core_http_extensions/FirstOrFail/firstOrFail.html">firstOrFail</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="firstOrFail-param-field"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">field</span>, </span><span class="parameter" id="firstOrFail-param-value"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">value</span>, </span><span class="parameter" id="firstOrFail-param-comp"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">comp</span> = <span class="default-value">&quot;==&quot;</span>, </span><span class="parameter" id="firstOrFail-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+  <span class="name"><a href="../archery_core_http_extensions/FirstOrFail/firstOrFail.html">firstOrFail</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="firstOrFail-param-field"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">field</span>, </span><span class="parameter" id="firstOrFail-param-value"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">value</span>, </span><span class="parameter" id="firstOrFail-param-comp"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">comp</span> = <span class="default-value">&quot;==&quot;</span>, </span><span class="parameter" id="firstOrFail-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
   </span>
   
@@ -110,7 +116,7 @@ responses).</p>
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/FirstOrFail.html">FirstOrFail</a> extension</span>
       </p>
-  
+  Retrieves the first model matching the given field/value pair or fails.
   
 
 </dd>
@@ -145,7 +151,7 @@ responses).</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

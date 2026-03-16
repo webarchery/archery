@@ -81,24 +81,19 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; boot() async {
   status = AppStatus.booting;
+  setKeys();
 
   &#47;&#47; Default Router
   final router = Router();
   container.bindInstance&lt;Router&gt;(router);
 
   &#47;&#47; Default View Engine
-  final settings = {
-    &quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;,
-    &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;,
-  };
-  final engine = TemplateEngine(
-    viewsDirectory: settings[&#39;viewsPath&#39;]!,
-    publicDirectory: settings[&#39;publicPath&#39;]!,
-  );
+  final settings = {&quot;viewsPath&quot;: &#39;lib&#47;src&#47;http&#47;views&#39;, &quot;publicPath&quot;: &#39;lib&#47;src&#47;http&#47;public&#39;};
+  final engine = TemplateEngine(viewsDirectory: settings[&#39;viewsPath&#39;]!, publicDirectory: settings[&#39;publicPath&#39;]!);
 
   &#47;&#47; Enable caching for performance
-  engine.shouldCache =
-      true; &#47;&#47; Enabled by default for performance recommendation
+  &#47;&#47; Enabled by default for performance
+  engine.shouldCache = true;
   &#47;&#47; engine.shouldCache = config?.get(&#39;view.cache&#39;, true) ?? true;
   container.bindInstance&lt;TemplateEngine&gt;(engine);
 
@@ -110,40 +105,18 @@
   final Uuid uuid = Uuid();
   container.bindInstance&lt;Uuid&gt;(uuid);
 
-  &#47;&#47; Default SQLite DB
-  final Directory dir = Directory(&quot;lib&#47;src&#47;storage&quot;);
-  final file = File(&quot;${dir.absolute.path}&#47;database.sqlite&quot;);
-  final SQLiteDatabase sqliteDatabase = await databaseFactoryFfi.openDatabase(
-    file.absolute.path,
-    options: OpenDatabaseOptions(
-      version: 1,
-      onCreate: (db, version) async {
-        &#47;&#47; Placeholder for database migrations
-      },
-    ),
-  );
-  container.singleton&lt;SQLiteDatabase&gt;(
-    factory: (_, [_]) =&gt; sqliteDatabase,
-    eager: true,
-  );
+  switch(Model.defaultDisk) {
+    case .file:
+    case DatabaseDisk.s3:
+    case DatabaseDisk.sqlite:
+      await _initSQLite();
+    case DatabaseDisk.pgsql:
+      await _initSQLite();
+      await _initPostgres();
+  }
 
-  &#47;&#47; Default Postgres DB
-  &#47;&#47; Todo - uncomment to init postgres when you config is set
 
-  &#47;&#47; try {
-  &#47;&#47;   final postgresConnection = await PostgresDatabase.open(
-  &#47;&#47;     Endpoint(host: config.get(&#39;db.pgsql.host&#39;, &#39;&#39;), database: config.get(&#39;db.pgsql.database&#39;, &#39;&#39;), username: config.get(&#39;db.pgsql.username&#39;, &#39;&#39;), password: config.get(&#39;db.pgsql.password&#39;, &#39;&#39;)),
-  &#47;&#47;     &#47;&#47; The postgres server hosted locally doesn&#39;t have SSL by default. If you&#39;re
-  &#47;&#47;     &#47;&#47; accessing a postgres server over the Internet, the server should support
-  &#47;&#47;     &#47;&#47; SSL and you should swap out the mode with `SslMode.verifyFull`.
-  &#47;&#47;     settings: ConnectionSettings(sslMode: SslMode.disable),
-  &#47;&#47;   );
-  &#47;&#47;
-  &#47;&#47;   container.bindInstance&lt;PostgresDatabase&gt;(postgresConnection);
-  &#47;&#47;
-  &#47;&#47; } catch (e, s) {
-  &#47;&#47;   App().archeryLogger.error(&quot;Postgres DB Init Error&quot;, {&quot;origin&quot;: &quot;App.boot()&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: config.get(&#39;app.debug&#39;) != null &amp;&amp; config.get(&#39;app.debug&#39;) == true ? s.toString() : &#39;&#39;});
-  &#47;&#47; }
+
 
   await container.initialize();
 
@@ -153,10 +126,7 @@
       try {
         await provider.boot(container);
       } catch (e, stack) {
-        throw ProviderException.unbooted(
-          type: provider.runtimeType,
-          trace: stack,
-        );
+        throw ProviderException.unbooted(type: provider.runtimeType, trace: stack);
       }
     }
 
@@ -168,8 +138,8 @@
     status = AppStatus.ready;
   } catch (e, stack) {
     status = AppStatus.error;
-    print(&#39;[App Boot Error] $e\n$stack&#39;);
-    rethrow; &#47;&#47; Optional: allow external handling
+    archeryLogger.error(&quot;Error booting app&quot;, {&quot;origin&quot;: &quot;App.boot&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: stack.toString()});
+    rethrow;
   }
 }</code></pre>
 </section>
@@ -199,7 +169,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

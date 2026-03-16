@@ -62,7 +62,14 @@
     </section>
     
 <section class="desc markdown">
-  <p>Renders <code>errors.404</code> template or plain 404.</p>
+  <p>Renders <code>errors.404</code> or falls back to a plain 404 response.</p>
+<p>A CSRF cookie is also attached to the response, reusing the current token
+when available or generating a new one otherwise.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">if (post == null) {
+  return request.notFound();
+}
+</code></pre>
 </section>
 
 
@@ -76,15 +83,12 @@
     final html = await engine.render(&quot;errors.404&quot;, {});
     response.headers.contentType = ContentType.html;
 
-    final csrfCookie = cookies.firstWhereOrNull(
-      (c) =&gt; c.name == &#39;archery_csrf_token&#39;,
-    );
-    final cookie =
-        Cookie(&#39;archery_csrf_token&#39;, csrfCookie?.value ?? App.generateKey())
-          ..httpOnly = true
-          ..secure = true
-          ..sameSite = SameSite.lax
-          ..path = &#39;&#47;&#39;;
+    final csrfCookie = cookies.firstWhereOrNull((c) =&gt; c.name == &#39;archery_csrf_token&#39;);
+    final cookie = Cookie(&#39;archery_csrf_token&#39;, csrfCookie?.value ?? App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax
+      ..path = &#39;&#47;&#39;;
 
     return response
       ..statusCode = HttpStatus.notFound
@@ -125,7 +129,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

@@ -67,8 +67,14 @@
     </section>
     
 <section class="desc markdown">
-  <p>Serializes model data (excluding metadata).</p>
-<p>Override in subclass.</p>
+  <p>Serializes the user into its standard JSON representation.</p>
+<p>This form excludes the password field and is appropriate for typical
+response payloads.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final json = user.toJson();
+print(json['name']);
+print(json['email']);
+</code></pre>
 </section>
 
 
@@ -112,7 +118,7 @@ Map&lt;String, dynamic&gt; toJson() {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

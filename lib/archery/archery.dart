@@ -77,31 +77,39 @@ export './core/static_files_server.dart';
 export '../src/database/models/user.dart';
 
 //***********************************
-export './core/orm/hasher.dart';
+export 'core/orm/utils/hasher.dart';
 //***********************************
 
-export './core/orm/model.dart';
-//***********************************
-
-export './core/orm/json_file_model.dart';
-//***********************************
-
-export './core/orm/s3_json_file_model.dart';
-//***********************************
-
-export './core/orm/sqlite_model.dart';
+export 'core/orm/model/model.dart';
+export '../src/database/models/role.dart';
+export '../src/database/tables/user_role_pivot_table.dart';
 
 //***********************************
 
-export './core/orm/postgres_model.dart';
+export 'core/orm/db_drivers/json_file_model.dart';
+//***********************************
+
+export 'core/orm/db_drivers/s3_json_file_model.dart';
+//***********************************
+
+export 'core/orm/db_drivers/sqlite_model.dart';
+
+//***********************************
+
+export 'core/orm/db_drivers/postgres_model.dart';
 
 //***********************************
 export 'core/http/http.dart';
 
 export 'core/auth/auth_session.dart';
+export 'core/auth/request_validation.dart';
 
 //*************************************
-export './packages/s3_client.dart';
+export 'packages/aws/s3_client.dart';
+export 'packages/aws/ses_client.dart';
+export 'core/queueable.dart';
+export 'utils/helpers.dart';
+export 'utils/extensions.dart';
 
 /// Type alias for Archery's SQLite connection handle.
 ///

@@ -67,7 +67,11 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns only query parameters</p>
+  <p>Returns only the request query parameters.</p>
+<p>This does not trigger body parsing.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final page = form.query['page'];
+</code></pre>
 </section>
 
     
@@ -103,7 +107,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

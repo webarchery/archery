@@ -1,9 +1,9 @@
 name: archery
-version: 1.4.1
+version: 1.5.0
 description: Archery is a high-performance, full-featured web framework for Dart.
 repository: https://github.com/webarchery/archery
 environment:
-  sdk: ^3.10.9
+  sdk: ^3.10.0
 
 # Add regular dependencies here.
 dependencies:

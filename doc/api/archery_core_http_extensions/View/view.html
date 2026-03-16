@@ -64,13 +64,29 @@
     </section>
     
 <section class="desc markdown">
-  <p>Renders a template and sends HTML response.</p>
+  <p>Renders an HTML template and writes it to the response.</p>
+<p>This method:</p>
 <ul>
-<li>Sets <code>Content-Type: text/html</code></li>
-<li>Adds caching and security headers</li>
-<li>Sets XSRF token cookie</li>
-<li>Handles errors gracefully in debug mode</li>
+<li>resolves the configured <a href="../../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a></li>
+<li>loads the authenticated user into session state</li>
+<li>reuses or generates a CSRF token</li>
+<li>merges provided <code>data</code> with session and CSRF values</li>
+<li>renders the template into HTML</li>
+<li>configures response headers and content length</li>
+<li>stores a CSRF cookie when a new token is generated</li>
 </ul>
+<p>Parameters:</p>
+<ul>
+<li><code>template</code>: The template identifier to render.</li>
+<li><code>data</code>: Optional view data passed into the template.</li>
+</ul>
+<p>Returns the active <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpResponse-class.html">HttpResponse</a> after writing and closing it.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">return request.view('users.show', {
+  'user': user,
+  'pageTitle': 'User Profile',
+});
+</code></pre>
 </section>
 
 
@@ -78,82 +94,71 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;HttpResponse&gt; view(String template, [ViewData? data]) async {
-  final engine = App().container.make&lt;TemplateEngine&gt;();
-  final config = App().container.make&lt;AppConfig&gt;();
+  final container = App().container; &#47;&#47; Cache reference
+  final engine = container.make&lt;TemplateEngine&gt;();
 
+  &#47;&#47; 1. Parallelize data fetching if possible, but definitely cache user
   thisSession?.user = await Auth.user(this);
 
-  final session = {&quot;session&quot;: thisSession?.toJson()};
+  &#47;&#47; 2. Optimized Cookie Access: Search cookies ONCE
+  Cookie? csrfCookie;
+  Cookie? guestCookie;
+  for (var c in cookies) {
+    if (c.name == &#39;archery_csrf_token&#39;) csrfCookie = c;
+    if (c.name == &#39;archery_guest_session&#39;) guestCookie = c;
+    if (csrfCookie != null &amp;&amp; guestCookie != null) break;
+  }
 
-  data = {...?data, ...session};
-
-  &#47;&#47; Ensure CSRF token is available to the view
   String token;
   bool isNewToken = false;
 
-  if (data.containsKey(&#39;csrf_token&#39;)) {
-    token = data[&#39;csrf_token&#39;];
+  if (data?.containsKey(&#39;csrf_token&#39;) ?? false) {
+    token = data![&#39;csrf_token&#39;];
+  } else if (csrfCookie != null) {
+    token = csrfCookie.value;
   } else {
-    final csrfCookie = cookies.firstWhereOrNull(
-      (cookie) =&gt; cookie.name == &#39;archery_csrf_token&#39;,
-    );
-    if (csrfCookie != null) {
-      token = csrfCookie.value;
-    } else {
-      token = App.generateKey();
-      isNewToken = true;
-    }
-    data = {...data, &#39;csrf_token&#39;: token};
+    token = App.generateKey();
+    isNewToken = true;
   }
 
   try {
-    final html = await engine.render(template, data);
+    &#47;&#47; 3. Merging data: Use a single map spread
+    final viewData = {
+      ...?data,
+      &quot;session&quot;: thisSession?.toJson(),
+      &#39;csrf_token&#39;: token
+    };
 
-    &#47;&#47; --- Performance &amp; Security headers ---
-    response.headers.contentType = ContentType.html;
-    _viewHeaders.forEach((key, value) {
-      response.headers.set(key, value);
-    });
+    final html = await engine.render(template, viewData);
+    final bodyBytes = utf8.encode(html);
+
+    &#47;&#47; 4. Batch Header Setting
+    response.headers.contentLength = bodyBytes.length;
+    _viewHeaders.forEach(response.headers.set);
+    response.persistentConnection = true;
 
     if (isNewToken) {
-      final cookie = Cookie(&#39;archery_csrf_token&#39;, token)
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax
-        ..path = &#39;&#47;&#39;;
-      response.cookies.add(cookie);
-    }
-
-    final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
-    if (sessions != null &amp;&amp; sessions.isNotEmpty) {
-      final requestCookie = cookies.firstWhereOrNull(
-        (cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;,
+      response.cookies.add(
+          Cookie(&#39;archery_csrf_token&#39;, token)
+            ..httpOnly = true ..secure = true
+            ..sameSite = SameSite.lax ..path = &#39;&#47;&#39;
       );
+    }
 
-      if (requestCookie != null) {
-        final session = sessions.firstWhereOrNull(
-          (session) =&gt; session.token == requestCookie.value,
-        );
-
-        if (session != null) {
-          session.csrf = token;
-        }
-      }
+    &#47;&#47; 5. Direct lookup for sessions list
+    final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
+    if (sessions != null &amp;&amp; guestCookie != null) {
+      final session = sessions.firstWhereOrNull((s) =&gt; s.token == guestCookie!.value);
+      if (session != null) session.csrf = token;
     }
 
     return response
-      ..write(html)
+      ..add(bodyBytes) &#47;&#47; Use .add() for bytes to bypass re-encoding strings
       ..close();
+
   } catch (e, stack) {
-    if (config.get(&#39;app.debug&#39;)) {
-      return response
-        ..statusCode = HttpStatus.internalServerError
-        ..write(&quot;$e\n\n$stack&quot;)
-        ..close();
-    }
     return response
-      ..statusCode = HttpStatus.internalServerError
-      ..write(e)
+      ..write(&quot;error&quot;) &#47;&#47; Use .add() for bytes to bypass re-encoding strings
       ..close();
   }
 }</code></pre>
@@ -184,7 +189,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

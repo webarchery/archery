@@ -54,6 +54,24 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Wraps an <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> and provides cached access to parsed request input,
+uploaded files, query parameters, and buffered body data.</p>
+<p><code>FormRequest</code> is responsible for reading the request stream once, buffering
+it, and parsing supported body formats into convenient field and file
+accessors.</p>
+<p>Supported body types:</p>
+<ul>
+<li><code>application/json</code></li>
+<li><code>application/x-www-form-urlencoded</code></li>
+<li><code>multipart/form-data</code></li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final form = FormRequest(request);
+final email = await form.input('email');
+final avatar = await form.file('avatar');
+</code></pre>
+</section>
 
 
 
@@ -65,7 +83,7 @@
           <span class="name"><a href="../archery_core_http_form_request/FormRequest/FormRequest.html">FormRequest</a></span><span class="signature">(<span class="parameter" id="-param-_request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">_request</span></span>)</span>
         </dt>
         <dd>
-          
+          Creates a form request wrapper for the given <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
         </dd>
     </dl>
   </section>
@@ -94,7 +112,7 @@
 
 </dt>
 <dd>
-  Access to the underlying HttpRequest
+  Access to the underlying <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -106,7 +124,7 @@
 
 </dt>
 <dd>
-  Returns only query parameters
+  Returns only the request query parameters.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -140,7 +158,7 @@
 
 </dt>
 <dd>
-  Returns all form fields merged with query parameters
+  Returns all parsed input data merged with query parameters.
   
 
 </dd>
@@ -153,7 +171,7 @@
 
 </dt>
 <dd>
-  Returns only body fields
+  Returns only the parsed body fields.
   
 
 </dd>
@@ -166,8 +184,7 @@
 
 </dt>
 <dd>
-  Explicitly reads the request stream and buffers it.
-Called early (in Kernel) to prevent "Stream already listened" errors.
+  Reads the request stream and buffers its bytes in memory.
   
 
 </dd>
@@ -180,7 +197,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.
 
 </dt>
 <dd>
-  Gets uploaded file for the given field name
+  Returns the uploaded file associated with <code>key</code>.
   
 
 </dd>
@@ -193,7 +210,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.
 
 </dt>
 <dd>
-  Returns all uploaded files
+  Returns all uploaded files parsed from the request.
   
 
 </dd>
@@ -206,7 +223,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.
 
 </dt>
 <dd>
-  Gets form field value from request body
+  Returns the value for a single input field.
   
 
 </dd>
@@ -287,7 +304,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

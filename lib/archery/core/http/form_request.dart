@@ -30,24 +30,74 @@
 // https://webarchery.dev
 
 import 'package:archery/archery/archery.dart';
-
+/// Wraps an [HttpRequest] and provides cached access to parsed request input,
+/// uploaded files, query parameters, and buffered body data.
+///
+/// `FormRequest` is responsible for reading the request stream once, buffering
+/// it, and parsing supported body formats into convenient field and file
+/// accessors.
+///
+/// Supported body types:
+/// - `application/json`
+/// - `application/x-www-form-urlencoded`
+/// - `multipart/form-data`
+///
+/// Example:
+/// ```dart
+/// final form = FormRequest(request);
+/// final email = await form.input('email');
+/// final avatar = await form.file('avatar');
+/// ```
 base class FormRequest {
+  /// The underlying HTTP request being wrapped.
   final HttpRequest _request;
+  /// Parsed body fields extracted from the request body.
   final Map<String, dynamic> _fields;
+  /// Uploaded files extracted from multipart form data.
   final Map<String, UploadedFile> _files;
+  /// Indicates whether the request body has already been parsed.
   bool _parsed;
+
+  /// Buffered raw request body bytes.
   Uint8List? _bodyBuffer;
+
+  /// Tracks the active parse operation so parsing only happens once.
   Future<void>? _parsingFuture;
 
+  /// Creates a form request wrapper for the given [HttpRequest].
+  ///
+  /// Parsing is deferred until one of the async accessors is called.
+  ///
+  /// Example:
+  /// ```dart
+  /// final form = FormRequest(request);
+  /// ```
   FormRequest(this._request)
     : _fields = <String, dynamic>{},
       _files = <String, UploadedFile>{},
       _parsed = false;
 
-  /// Access to the underlying HttpRequest
+  /// Access to the underlying [HttpRequest].
+  ///
+  /// Example:
+  /// ```dart
+  /// final rawRequest = form.httpRequest;
+  /// print(rawRequest.method);
+  /// ```
   HttpRequest get httpRequest => _request;
 
-  /// Gets form field value from request body
+  /// Returns the value for a single input field.
+  ///
+  /// Query parameters are checked first, but parsed body fields take precedence
+  /// when both sources contain the same key.
+  ///
+  /// Returns the resolved value or `null` when the key is not present.
+  ///
+  /// Example:
+  /// ```dart
+  /// final email = await form.input('email');
+  /// final token = await form.input('_token');
+  /// ```
   Future<dynamic> input(String key) async {
     await _ensureParsed();
 
@@ -59,35 +109,89 @@ base class FormRequest {
     return bodyValue ?? queryValue;
   }
 
-  /// Returns all form fields merged with query parameters
+  /// Returns all parsed input data merged with query parameters.
+  ///
+  /// Query parameters are included first, then body fields are applied on top,
+  /// allowing body values to override matching query keys.
+  ///
+  /// Example:
+  /// ```dart
+  /// final values = await form.all();
+  /// print(values['email']);
+  /// ```
   Future<Map<String, dynamic>> all() async {
     await _ensureParsed();
     return {..._request.uri.queryParameters, ..._fields};
   }
 
-  /// Gets uploaded file for the given field name
+  /// Returns the uploaded file associated with [key].
+  ///
+  /// This only resolves files parsed from multipart form data.
+  ///
+  /// Returns the matching [UploadedFile] or `null` when no file exists for the
+  /// given field.
+  ///
+  /// Example:
+  /// ```dart
+  /// final avatar = await form.file('avatar');
+  /// if (avatar != null) {
+  ///   print(avatar.filename);
+  /// }
+  /// ```
   Future<UploadedFile?> file(String key) async {
     await _ensureParsed();
     return _files[key];
   }
 
-  /// Returns all uploaded files
+  /// Returns all uploaded files parsed from the request.
+  ///
+  /// The returned map is a copy of the internal file registry.
+  ///
+  /// Example:
+  /// ```dart
+  /// final files = await form.files();
+  /// print(files.keys);
+  /// ```
   Future<Map<String, UploadedFile>> files() async {
     await _ensureParsed();
     return Map<String, UploadedFile>.from(_files);
   }
 
-  /// Returns only query parameters
+  /// Returns only the request query parameters.
+  ///
+  /// This does not trigger body parsing.
+  ///
+  /// Example:
+  /// ```dart
+  /// final page = form.query['page'];
+  /// ```
   Map<String, String> get query => _request.uri.queryParameters;
 
-  /// Returns only body fields
+  /// Returns only the parsed body fields.
+  ///
+  /// Query parameters are not included in this result.
+  ///
+  /// Example:
+  /// ```dart
+  /// final body = await form.body();
+  /// print(body['name']);
+  /// ```
   Future<Map<String, dynamic>> body() async {
     await _ensureParsed();
     return Map<String, dynamic>.from(_fields);
   }
 
-  /// Explicitly reads the request stream and buffers it.
-  /// Called early (in Kernel) to prevent "Stream already listened" errors.
+  /// Reads the request stream and buffers its bytes in memory.
+  ///
+  /// This is typically called early to prevent repeated reads of the request
+  /// stream and avoid `"Stream already listened"` errors.
+  ///
+  /// If buffering fails, an empty buffer is stored.
+  ///
+  /// Example:
+  /// ```dart
+  /// await form.buffer();
+  /// ```
   Future<void> buffer() async {
     if (_bodyBuffer != null) return;
 
@@ -106,6 +210,16 @@ base class FormRequest {
   // ----------------------------
   // Parsing Internals
   // ----------------------------
+
+  /// Ensures the request body has been parsed exactly once.
+  ///
+  /// If parsing has already completed, this returns immediately. If parsing is
+  /// in progress, the active parse future is reused.
+  ///
+  /// Example:
+  /// ```dart
+  /// await form._ensureParsed();
+  /// ```
   Future<void> _ensureParsed() {
     if (_parsed) return Future.value();
     if (_parsingFuture != null) return _parsingFuture!;
@@ -113,6 +227,18 @@ base class FormRequest {
     return _parsingFuture!;
   }
 
+  /// Performs buffered body parsing based on the request content type.
+  ///
+  /// This method:
+  /// - ensures the request body is buffered
+  /// - determines the request MIME type
+  /// - dispatches parsing to the appropriate body parser
+  /// - marks the request as parsed even when parsing fails
+  ///
+  /// Example:
+  /// ```dart
+  /// await form._doParse();
+  /// ```
   Future<void> _doParse() async {
     try {
       // Ensure body is buffered
@@ -148,6 +274,16 @@ base class FormRequest {
     }
   }
 
+  /// Parses a JSON request body into [_fields].
+  ///
+  /// Only top-level JSON objects are merged into the field map.
+  ///
+  /// Example:
+  /// ```dart
+  /// form._parseJsonFromBytes(
+  ///   Uint8List.fromList(utf8.encode('{"email":"jane@example.com"}')),
+  /// );
+  /// ```
   void _parseJsonFromBytes(Uint8List bodyBytes) {
     try {
       final body = utf8.decode(bodyBytes);
@@ -162,6 +298,14 @@ base class FormRequest {
     }
   }
 
+  /// Parses a URL-encoded form body into [_fields].
+  ///
+  /// Example:
+  /// ```dart
+  /// form._parseFormUrlEncodedFromBytes(
+  ///   Uint8List.fromList(utf8.encode('name=Jane&email=jane@example.com')),
+  /// );
+  /// ```
   void _parseFormUrlEncodedFromBytes(Uint8List bodyBytes) {
     final body = utf8.decode(bodyBytes);
     if (body.isNotEmpty) {
@@ -169,6 +313,17 @@ base class FormRequest {
     }
   }
 
+  /// Parses multipart form data into [_fields] and [_files].
+  ///
+  /// Regular form inputs are stored in [_fields]. File parts are converted into
+  /// [UploadedFile] instances and stored in [_files].
+  ///
+  /// Empty file inputs are represented with [UploadedFile.empty].
+  ///
+  /// Example:
+  /// ```dart
+  /// await form._parseMultipartFormDataFromBytes(bodyBytes, boundary);
+  /// ```
   Future<void> _parseMultipartFormDataFromBytes(
     Uint8List bodyBytes,
     String boundary,
@@ -233,6 +388,19 @@ base class FormRequest {
     }
   }
 
+  /// Parses a `Content-Disposition` header into key/value parameters.
+  ///
+  /// Common extracted values include `name` and `filename`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final params = form._parseContentDisposition(
+  ///   'form-data; name="avatar"; filename="me.png"',
+  /// );
+  ///
+  /// print(params['name']); // avatar
+  /// print(params['filename']); // me.png
+  /// ```
   Map<String, String> _parseContentDisposition(String contentDisposition) {
     final params = <String, String>{};
     final parts = contentDisposition.split(';');

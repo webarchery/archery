@@ -92,74 +92,82 @@ and that the <code>User</code> model is available for persistence.</p>
 
       router.post(&#39;&#47;register&#39;, (request) async {
         try {
+          final validated = await request.validateAll([{
+              &quot;email&quot;: [
+                Rule.required,
+                Rule.email,
+                Rule.max(255),
+                Rule.unique&lt;User&gt;(column: &quot;email&quot;)],}, {
+
+              &quot;name&quot;: [
+                Rule.required,
+                Rule.min(3),
+                Rule.max(100)],},{
+
+              &quot;password&quot;: [
+                Rule.required,
+                Rule.min(6),
+                Rule.max(50)],},]
+          );
+
+          if (!validated) {
+            return request.redirectBack();
+          }
+
           final form = request.form();
           final name = await form.input(&#39;name&#39;);
           final email = await form.input(&#39;email&#39;);
           final password = await form.input(&#39;password&#39;);
 
-          &#47;&#47; Todo- form.validate(field as [.email, .phone, .name, .])
-          &#47;&#47; or use a FormValidator.validate()
-          &#47;&#47; opt 1 gives easy prototyping option
-          &#47;&#47; add a method on FormRequest
-          &#47;&#47; avoid extending Request, use buffered content and _request in FormRequest
-          if (name == null ||
-              name.toString().isEmpty ||
-              email == null ||
-              email.toString().isEmpty ||
-              password == null ||
-              password.toString().isEmpty) {
-            return request.redirectBack();
+          final userRecord = await Model.firstWhere&lt;User&gt;(field: &quot;email&quot;, value: email);
+          if (userRecord != null) {
+            request.flash(key: &quot;error&quot;, message: &quot;User exists&quot;);
+            return request.redirectToLogin();
           }
-
-          final userRecord = await Model.firstWhere&lt;User&gt;(
-            field: &quot;email&quot;,
-            value: email,
-          );
-          if (userRecord != null) return request.redirectBack();
 
           final user = User(name: name, email: email, password: password);
           await user.save();
-
+          request.flash(key: &quot;success&quot;, message: &quot;Account created&quot;);
           return request.redirectToLogin();
-        } catch (e) {
+        } catch (e, stack) {
+          App().archeryLogger.error(&quot;Registration error&quot;, {&quot;origin&quot;: &quot;authRoutes post &#47;register&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: stack.toString()});
+          request.flash(key: &quot;error&quot;, message: &quot;Something went wrong&quot;);
           return request.redirectBack();
         }
       });
 
       router.post(&#39;&#47;login&#39;, (request) async {
         try {
+          final validated = await request.validateAll([{
+
+              &quot;email&quot;: [
+                Rule.required,
+                Rule.email,
+                Rule.max(255)],},{
+
+              &quot;password&quot;: [
+                Rule.required,
+                Rule.max(50)],
+            },
+          ]);
+
+          if (!validated) {
+            return request.redirectBack();
+          }
+
           final form = request.form();
           final email = await form.input(&#39;email&#39;);
           final password = await form.input(&#39;password&#39;);
 
-          if (email == null ||
-              email.toString().isEmpty ||
-              password == null ||
-              password.toString().isEmpty) {
-            return request.redirectBack();
-          }
-
-          if (await Auth.login(email: email, password: password)) {
-            final cookie = Cookie(&#39;archery_session&#39;, App.generateKey())
-              ..httpOnly = true
-              ..secure =
-                  true &#47;&#47; only over HTTPS
-              ..sameSite = SameSite.lax;
-
-            final sessions = App().container.tryMake&lt;List&lt;AuthSession&gt;&gt;();
-
-            final session = sessions?.firstWhereOrNull(
-              (session) =&gt; session.email == email,
-            );
-            if (session != null) {
-              session.cookie = cookie;
-              request.response.cookies.add(cookie);
-            }
+          if (await Auth.login(request: request, email: email, password: password)) {
             return request.redirectToDashboard();
           }
 
+          request.flash(key: &quot;error&quot;, message: &quot;Invalid credentials&quot;);
           return request.redirectBack();
-        } catch (e) {
+        } catch (e, stack) {
+          App().archeryLogger.error(&quot;Login error&quot;, {&quot;origin&quot;: &quot;authRoutes post &#47;login&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: stack.toString()});
+          request.flash(key: &quot;error&quot;, message: &quot;Invalid credentials&quot;);
           return request.redirectBack();
         }
       });
@@ -222,7 +230,7 @@ and that the <code>User</code> model is available for persistence.</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

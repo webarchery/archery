@@ -63,7 +63,17 @@
     </section>
     
 <section class="desc markdown">
-  <p>Sends JSON response with security headers.</p>
+  <p>Writes a JSON response and closes the connection.</p>
+<p>If <code>data</code> is already a string, it is written as-is. Otherwise the value is
+encoded with <code>jsonEncode</code>.</p>
+<p>The response is sent with <code>200 OK</code>, a JSON content type, content length,
+cache headers, and persistent connection enabled.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">return request.json({
+  'message': 'User created',
+  'user': user.toJson(),
+});
+</code></pre>
 </section>
 
 
@@ -71,14 +81,17 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;HttpResponse&gt; json([dynamic data]) async {
-  response.headers.contentType = ContentType.json;
-  _defaultHeaders.forEach((key, value) {
-    response.headers.set(key, value);
-  });
+  final String body = (data is String) ? data : jsonEncode(data);
+  response.headers.contentType = _jsonType;
+
+  response.headers.set(HttpHeaders.cacheControlHeader, &#39;public, max-age=300&#39;);
+  response.headers.contentLength = utf8.encode(body).length;
+  response.headers.set(HttpHeaders.connectionHeader, &#39;keep-alive&#39;);
+  response.persistentConnection = true;
 
   return response
     ..statusCode = HttpStatus.ok
-    ..write(jsonEncode(data))
+    ..write(body)
     ..close();
 }</code></pre>
 </section>
@@ -108,7 +121,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

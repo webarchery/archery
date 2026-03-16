@@ -60,17 +60,24 @@
 </ol>})
     </section>
     
+<section class="desc markdown">
+  <p>Creates an uploaded file from an in-memory byte buffer.</p>
+<p>This constructor caches the provided bytes immediately and stores their
+length for later access.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final file = UploadedFile.fromBytes(
+  filename: 'song.mp3',
+  bytes: Uint8List.fromList([0, 1, 2, 3]),
+  contentType: 'audio/mpeg',
+);
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">UploadedFile.fromBytes({
-  required this.filename,
-  required Uint8List bytes,
-  required this.contentType,
-}) : _cachedBytes = Future.value(bytes),
-     _knownLength = bytes.length;</code></pre>
+  <pre class="language-dart"><code class="language-dart">UploadedFile.fromBytes({required this.filename, required Uint8List bytes, required this.contentType}) : _cachedBytes = Future.value(bytes), _knownLength = bytes.length;</code></pre>
 </section>
 
 
@@ -98,7 +105,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

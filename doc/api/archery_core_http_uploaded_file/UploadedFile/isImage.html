@@ -67,7 +67,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Check if this is an image file</p>
+  <p>Returns <code>true</code> when the file appears to be an image file.</p>
+<p>Detection is based on MIME type and common filename extensions.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">if (file.isImage) {
+  print('Generate a thumbnail');
+}
+</code></pre>
 </section>
 
     
@@ -75,16 +81,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">bool get isImage {
   final mime = contentType.toLowerCase();
-  return mime.startsWith(&#39;image&#47;&#39;) ||
-      [
-        &#39;.jpg&#39;,
-        &#39;.jpeg&#39;,
-        &#39;.png&#39;,
-        &#39;.gif&#39;,
-        &#39;.bmp&#39;,
-        &#39;.webp&#39;,
-        &#39;.svg&#39;,
-      ].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
+  return mime.startsWith(&#39;image&#47;&#39;) || [&#39;.jpg&#39;, &#39;.jpeg&#39;, &#39;.png&#39;, &#39;.gif&#39;, &#39;.bmp&#39;, &#39;.webp&#39;, &#39;.svg&#39;].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
 }</code></pre>
 </section>
 
@@ -115,7 +112,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

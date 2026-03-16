@@ -63,28 +63,52 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Middleware that protects routes requiring authentication.</p>
+<p>This middleware:</p>
+<ul>
+<li>verifies the session cookie exists</li>
+<li>ensures an in-memory session is available</li>
+<li>checks that the session matches the cookie</li>
+<li>validates the session timeout window</li>
+<li>refreshes the last-activity timestamp before continuing</li>
+</ul>
+<p>When validation fails, the request is logged out and redirected to the
+login flow.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>request</code>: The incoming HTTP request.</li>
+<li><code>next</code>: The next middleware or handler in the pipeline.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">router.get(
+  '/dashboard',
+  handler: (request) async =&gt; dashboardController.index(request),
+  middleware: [AuthSession.middleware],
+);
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(
-  HttpRequest request,
-  Future&lt;void&gt; Function() next,
-) async {
-  final cookie = request.cookies.firstWhereOrNull(
-    (cookie) =&gt; cookie.name == &quot;archery_session&quot;,
-  );
-  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
+  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
 
-  if (cookie == null || authSessions == null || authSessions.isEmpty) {
+  if (cookie == null) {
     await logout(request);
     return request.redirectToLogin();
   }
 
-  final session = authSessions.firstWhereOrNull(
-    (session) =&gt; session.cookie?.value == cookie.value,
-  );
+  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
+
+  if (authSessions == null || authSessions.isEmpty) {
+    await logout(request);
+    return request.redirectToLogin();
+  }
+
+  final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
 
   if (session == null) {
     await logout(request);
@@ -126,7 +150,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

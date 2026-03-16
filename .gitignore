@@ -2,10 +2,9 @@
 # Created by `dart pub`
 .idea/
 .dart_tool/
-env.json
 lib/src/config/env.json
-lib/src/storage/database.sqlite
+lib/src/storage/sqlite
 lib/src/storage/json_file_models
-lib/src/storage/logs.log
+lib/src/storage/logs/archery.log
 
 node_modules

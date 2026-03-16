@@ -67,7 +67,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Check if this is a video file</p>
+  <p>Returns <code>true</code> when the file appears to be a video file.</p>
+<p>Detection is based on MIME type and common filename extensions.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">if (file.isVideo) {
+  print('This upload is video');
+}
+</code></pre>
 </section>
 
     
@@ -75,16 +81,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">bool get isVideo {
   final mime = contentType.toLowerCase();
-  return mime.startsWith(&#39;video&#47;&#39;) ||
-      [
-        &#39;.mp4&#39;,
-        &#39;.webm&#39;,
-        &#39;.ogg&#39;,
-        &#39;.ogv&#39;,
-        &#39;.avi&#39;,
-        &#39;.mov&#39;,
-        &#39;.mkv&#39;,
-      ].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
+  return mime.startsWith(&#39;video&#47;&#39;) || [&#39;.mp4&#39;, &#39;.webm&#39;, &#39;.ogg&#39;, &#39;.ogv&#39;, &#39;.avi&#39;, &#39;.mov&#39;, &#39;.mkv&#39;].any((ext) =&gt; filename.toLowerCase().endsWith(ext));
 }</code></pre>
 </section>
 
@@ -115,7 +112,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

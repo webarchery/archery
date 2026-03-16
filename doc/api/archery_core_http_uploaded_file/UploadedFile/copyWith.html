@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../archery_core_http_uploaded_file/UploadedFile-class.html">UploadedFile</a></span>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../archery_core_http_uploaded_file/UploadedFile-class.html">UploadedFile</a></span>&gt;</span></span>
 <span class="name ">copyWith</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="copyWith-param-filename"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">filename</span>, </span></li>
 <li><span class="parameter" id="copyWith-param-contentType"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span></li>
 </ol>})
@@ -64,19 +64,22 @@
     </section>
     
 <section class="desc markdown">
-  <p>Copy this file with new filename</p>
+  <p>Returns a copy of this file with updated metadata.</p>
+<p>This preserves the same underlying file contents while allowing the
+filename and/or content type to be overridden.</p>
+<p>Because the source bytes are stored asynchronously, this method is async.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final renamed = await file.copyWith(filename: 'cover.png');
+print(renamed.filename); // cover.png
+</code></pre>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">UploadedFile copyWith({String? filename, String? contentType}) {
-  return UploadedFile.fromBytes(
-    filename: filename ?? this.filename,
-    bytes: _cachedBytes as Uint8List,
-    contentType: contentType ?? this.contentType,
-  );
+  <pre class="language-dart"><code class="language-dart">Future&lt;UploadedFile&gt; copyWith({String? filename, String? contentType}) async {
+  return UploadedFile.fromBytes(filename: filename ?? this.filename, bytes: await _cachedBytes, contentType: contentType ?? this.contentType);
 }</code></pre>
 </section>
 
@@ -105,7 +108,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

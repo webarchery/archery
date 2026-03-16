@@ -54,7 +54,13 @@
 
     
 <section class="desc markdown">
-  <p>Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send 404 with fallback template.</p>
+  <p>Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to send a 404 response.</p>
+<p>The framework first attempts to render the <code>errors.404</code> template. If the
+template is unavailable or rendering fails, it falls back to a plain-text
+<code>404 Not Found</code> response.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">return request.notFound();
+</code></pre>
 </section>
 
     <section>
@@ -90,7 +96,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/NotFound.html">NotFound</a> extension</span>
       </p>
-  Renders <code>errors.404</code> template or plain 404.
+  Renders <code>errors.404</code> or falls back to a plain 404 response.
   
 
 </dd>
@@ -125,7 +131,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

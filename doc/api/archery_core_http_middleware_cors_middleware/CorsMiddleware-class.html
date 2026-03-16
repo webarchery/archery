@@ -54,6 +54,24 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Middleware that applies Cross-Origin Resource Sharing (CORS) headers
+to outgoing responses.</p>
+<p>This middleware:</p>
+<ul>
+<li>allows requests from any origin</li>
+<li>permits <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, and <code>OPTIONS</code> methods</li>
+<li>allows the <code>Content-Type</code> and <code>Range</code> request headers</li>
+<li>exposes <code>Content-Length</code> and <code>Content-Range</code> response headers</li>
+<li>short-circuits preflight <code>OPTIONS</code> requests</li>
+</ul>
+<p>This type is intended for use in route or global middleware pipelines.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await CorsMiddleware.middleware(request, () async {
+  request.response.write('OK');
+});
+</code></pre>
+</section>
 
 
 
@@ -170,7 +188,7 @@
 
 </dt>
 <dd>
-  
+  Applies CORS headers to the response and handles preflight requests.
   
 
 </dd>
@@ -202,7 +220,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

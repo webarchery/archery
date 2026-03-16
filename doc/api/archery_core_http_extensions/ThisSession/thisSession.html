@@ -66,20 +66,29 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Returns the current guest session associated with the request.</p>
+<p>This getter looks for the <code>archery_guest_session</code> cookie, resolves the
+matching session from the in-memory session registry, updates the
+session's <code>lastActivity</code> timestamp, and returns it.</p>
+<p>Returns <code>null</code> when no matching session can be found or resolution fails.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final session = request.thisSession;
+  if (session != null) {
+    print('Guest session active');
+  }
+</code></pre>
+</section>
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Session? get thisSession {
   try {
-    final cookie = cookies.firstWhereOrNull(
-      (cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;,
-    );
+    final cookie = cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;);
     final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
     if (cookie != null) {
-      final session = sessions?.firstWhereOrNull(
-        (session) =&gt; session.token == cookie.value,
-      );
+      final session = sessions?.firstWhereOrNull((session) =&gt; session.token == cookie.value);
       if (session != null) {
         session.lastActivity = DateTime.now();
         return session;
@@ -119,7 +128,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

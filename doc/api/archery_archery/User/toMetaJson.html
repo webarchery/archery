@@ -67,8 +67,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Serializes metadata fields (<code>id</code>, <code>uuid</code>, timestamps).</p>
-<p>Used internally by backends.</p>
+  <p>Serializes the user into a metadata-oriented JSON map.</p>
+<p>This representation includes internal identifiers and the password field.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final meta = user.toMetaJson();
+print(meta['id']);
+print(meta['uuid']);
+</code></pre>
 </section>
 
 
@@ -114,7 +119,7 @@ Map&lt;String, dynamic&gt; toMetaJson() {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

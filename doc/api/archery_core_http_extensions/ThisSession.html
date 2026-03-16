@@ -57,6 +57,13 @@
   <p>Session helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.</p>
 <p>The guest session is identified by the <code>archery_guest_session</code> cookie and is
 loaded from the in-memory session cache when available.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final session = request.thisSession;
+
+if (session != null) {
+  print(session.token);
+}
+</code></pre>
 </section>
 
     <section>
@@ -89,7 +96,7 @@ loaded from the in-memory session cache when available.</p>
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/ThisSession.html">ThisSession</a> extension</span>
       </p>
-  
+  Returns the current guest session associated with the request.
   <div class="features"><span class="feature">no setter</span></div>
 
 </dd>
@@ -126,7 +133,7 @@ loaded from the in-memory session cache when available.</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

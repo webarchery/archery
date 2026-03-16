@@ -58,6 +58,23 @@
 </ol>)
     </section>
     
+<section class="desc markdown">
+  <p>Creates a user model from a JSON map.</p>
+<p>Expected keys:</p>
+<ul>
+<li><code>name</code></li>
+<li><code>email</code></li>
+<li><code>password</code></li>
+</ul>
+<p>Values are assigned only when present and of the expected type.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final user = User.fromJson({
+  'name': 'Jane Doe',
+  'email': 'jane@example.com',
+  'password': r'$2b$12$...',
+});
+</code></pre>
+</section>
 
 
     
@@ -72,9 +89,7 @@
     email = json[&#39;email&#39;];
   }
 
-  if (json[&#39;password&#39;] != null &amp;&amp;
-      json[&#39;password&#39;] is String &amp;&amp;
-      json[&#39;password&#39;].toString().isNotEmpty) {
+  if (json[&#39;password&#39;] != null &amp;&amp; json[&#39;password&#39;] is String &amp;&amp; json[&#39;password&#39;].toString().isNotEmpty) {
     password = json[&#39;password&#39;];
   }
 }</code></pre>
@@ -105,7 +120,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

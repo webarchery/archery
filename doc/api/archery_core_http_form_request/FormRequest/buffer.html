@@ -62,8 +62,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Explicitly reads the request stream and buffers it.
-Called early (in Kernel) to prevent "Stream already listened" errors.</p>
+  <p>Reads the request stream and buffers its bytes in memory.</p>
+<p>This is typically called early to prevent repeated reads of the request
+stream and avoid <code>"Stream already listened"</code> errors.</p>
+<p>If buffering fails, an empty buffer is stored.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await form.buffer();
+</code></pre>
 </section>
 
 
@@ -111,7 +116,7 @@ Called early (in Kernel) to prevent "Stream already listened" errors.</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

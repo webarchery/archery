@@ -55,7 +55,11 @@
     
 <section class="desc markdown">
   <p>Redirect helpers attached to <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>.</p>
-<p>These are convenience wrappers around <code>HttpResponse.redirect</code>.</p>
+<p>These methods are convenience wrappers around <code>HttpResponse.redirect</code> and
+encode common framework redirect targets.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">request.redirectToLogin();
+</code></pre>
 </section>
 
     <section>
@@ -91,7 +95,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/Redirect.html">Redirect</a> extension</span>
       </p>
-  
+  Redirects the client back to the referring URL.
   
 
 </dd>
@@ -108,7 +112,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/Redirect.html">Redirect</a> extension</span>
       </p>
-  
+  Redirects the client to <code>/</code>.
   
 
 </dd>
@@ -125,7 +129,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/Redirect.html">Redirect</a> extension</span>
       </p>
-  
+  Redirects the client to the provided <code>path</code>.
   
 
 </dd>
@@ -142,7 +146,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/Redirect.html">Redirect</a> extension</span>
       </p>
-  
+  Redirects the client to <code>/user/dashboard</code>.
   
 
 </dd>
@@ -159,7 +163,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/Redirect.html">Redirect</a> extension</span>
       </p>
-  
+  Redirects the client to <code>/login</code>.
   
 
 </dd>
@@ -194,7 +198,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

@@ -58,30 +58,38 @@
 <span class="name ">firstOrFail</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="firstOrFail-param-field"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">field</span>, </span></li>
 <li><span class="parameter" id="firstOrFail-param-value"><span>required</span> <span class="type-annotation">dynamic</span> <span class="parameter-name">value</span>, </span></li>
 <li><span class="parameter" id="firstOrFail-param-comp"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">comp</span> = <span class="default-value">&quot;==&quot;</span>, </span></li>
-<li><span class="parameter" id="firstOrFail-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
+<li><span class="parameter" id="firstOrFail-param-disk"><span class="type-annotation"><a href="../../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Retrieves the first model matching the given field/value pair or fails.</p>
+<p>This method forwards to <code>Model.firstOrFail</code> and includes the current
+request context.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>field</code>: The column or field name to query.</li>
+<li><code>value</code>: The value to compare against.</li>
+<li><code>comp</code>: The comparison operator. Presently forwarded by signature only.</li>
+<li><code>disk</code>: The database disk to query.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final post = await request.firstOrFail&lt;Post&gt;(
+  field: 'slug',
+  value: 'welcome-to-archery',
+);
+</code></pre>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; firstOrFail&lt;T extends Model&gt;({
-  required String field,
-  required dynamic value,
-  String comp = &quot;==&quot;,
-  DatabaseDisk disk = Model.defaultDisk,
-}) async {
-  return await Model.firstOrFail&lt;T&gt;(
-    request: this,
-    field: field,
-    value: value,
-    disk: disk,
-  );
+  <pre class="language-dart"><code class="language-dart">Future&lt;dynamic&gt; firstOrFail&lt;T extends Model&gt;({required String field, required dynamic value, String comp = &quot;==&quot;, DatabaseDisk disk = Model.defaultDisk}) async {
+  return await Model.firstOrFail&lt;T&gt;(request: this, field: field, value: value, disk: disk);
 }</code></pre>
 </section>
 
@@ -110,7 +118,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

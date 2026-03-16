@@ -62,6 +62,26 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Logs out the current session associated with the request.</p>
+<p>This method attempts to:</p>
+<ul>
+<li>locate the current session cookie</li>
+<li>remove the corresponding persisted session record</li>
+<li>remove the session from the in-memory registry</li>
+<li>clear the user bound to the current request session</li>
+</ul>
+<p>Returns <code>true</code> if a matching session was found and removed; otherwise
+returns <code>false</code>.</p>
+<p>Any exception during logout results in <code>false</code>.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final didLogout = await AuthSession.logout(request);
+
+if (didLogout) {
+  print('Session ended successfully');
+}
+</code></pre>
+</section>
 
 
     
@@ -69,20 +89,13 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; logout(HttpRequest request) async {
   try {
-    final cookie = request.cookies.firstWhereOrNull(
-      (cookie) =&gt; cookie.name == &quot;archery_session&quot;,
-    );
+    final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
     final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-    final session = authSessions?.firstWhereOrNull(
-      (session) =&gt; session.cookie?.value == cookie?.value,
-    );
+    final session = authSessions?.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie?.value);
 
     if (session != null) {
-      final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(
-        field: &quot;email&quot;,
-        value: session.email,
-      );
+      final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
       await sessionRecord?.delete();
       authSessions?.remove(session);
       request.thisSession?.user = null;
@@ -120,7 +133,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

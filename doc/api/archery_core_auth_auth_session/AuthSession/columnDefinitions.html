@@ -61,14 +61,20 @@
 
       </section>
       
+<section class="desc markdown">
+  <p>Defines the database columns required for persisting auth sessions.</p>
+<p>Both <code>email</code> and <code>token</code> are required text fields.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final columns = AuthSession.columnDefinitions;
+print(columns['email']); // TEXT NOT NULL
+print(columns['token']); // TEXT NOT NULL
+</code></pre>
+</section>
 
       
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Map&lt;String, String&gt; columnDefinitions = {
-  &#39;email&#39;: &#39;TEXT NOT NULL&#39;,
-  &#39;token&#39;: &#39;TEXT NOT NULL&#39;,
-};</code></pre>
+  <pre class="language-dart"><code class="language-dart">static Map&lt;String, String&gt; columnDefinitions = {&#39;email&#39;: &#39;TEXT NOT NULL&#39;, &#39;token&#39;: &#39;TEXT NOT NULL&#39;};</code></pre>
 </section>
 
 
@@ -97,7 +103,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

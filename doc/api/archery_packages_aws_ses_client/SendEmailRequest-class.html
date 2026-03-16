@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the SendEmailRequest class from the ses_client library, for the Dart programming language.">
+  <title>SendEmailRequest class - ses_client library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_packages_aws_ses_client/">archery&#47;packages&#47;aws&#47;ses_client.dart</a></li>
+    <li class="self-crumb">SendEmailRequest class</li>
+  </ol>
+  <div class="self-name">SendEmailRequest</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="archery_packages_aws_ses_client&#47;archery_packages_aws_ses_client-library-sidebar.html"
+    data-below-sidebar="archery_packages_aws_ses_client&#47;SendEmailRequest-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">SendEmailRequest</span> class 
+    <a href="https://dart.dev/language/class-modifiers#base" class="feature feature-base" title="This class or mixin can only be extended (not implemented or mixed in).">base</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Describes an email send request for SES.</p>
+<p>A request may contain plain-text and/or HTML bodies, optional CC/BCC
+recipients, optional attachments, reply-to settings, and a configuration
+set name.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final request = SendEmailRequest(
+  from: EmailAddress('noreply@example.com', name: 'Archery'),
+  to: [EmailAddress('jane@example.com')],
+  subject: 'Welcome',
+  textBody: 'Welcome to Archery',
+  htmlBody: '&lt;h1&gt;Welcome to Archery&lt;/h1&gt;',
+);
+</code></pre>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="SendEmailRequest.new" class="callable">
+          <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/SendEmailRequest.html">SendEmailRequest</a></span><span class="signature">({<span class="parameter" id="-param-from"><span>required</span> <span class="type-annotation"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span> <span class="parameter-name">from</span>, </span><span class="parameter" id="-param-to"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span></span> <span class="parameter-name">to</span>, </span><span class="parameter" id="-param-cc"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span>?</span> <span class="parameter-name">cc</span>, </span><span class="parameter" id="-param-bcc"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span>?</span> <span class="parameter-name">bcc</span>, </span><span class="parameter" id="-param-subject"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="-param-textBody"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">textBody</span>, </span><span class="parameter" id="-param-htmlBody"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">htmlBody</span>, </span><span class="parameter" id="-param-charset"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">charset</span> = <span class="default-value">&#39;UTF-8&#39;</span>, </span><span class="parameter" id="-param-attachments"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAttachment-class.html">EmailAttachment</a></span>&gt;</span>?</span> <span class="parameter-name">attachments</span>, </span><span class="parameter" id="-param-replyTo"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">replyTo</span>, </span><span class="parameter" id="-param-configurationSetName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">configurationSetName</span></span>})</span>
+        </dt>
+        <dd>
+          Creates an SES email request.
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="attachments" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/attachments.html">attachments</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAttachment-class.html">EmailAttachment</a></span>&gt;</span>?</span>
+  
+
+</dt>
+<dd>
+  Optional email attachments.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="bcc" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/bcc.html">bcc</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span>?</span>
+  
+
+</dt>
+<dd>
+  Optional BCC recipients.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cc" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/cc.html">cc</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span>?</span>
+  
+
+</dt>
+<dd>
+  Optional CC recipients.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="charset" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/charset.html">charset</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Charset used for message subject and body parts.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="configurationSetName" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/configurationSetName.html">configurationSetName</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Optional SES configuration set name.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="from" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/from.html">from</a></span>
+  <span class="signature">&#8594; <a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>
+  
+
+</dt>
+<dd>
+  Sender address.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="htmlBody" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/htmlBody.html">htmlBody</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Optional HTML body.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="replyTo" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/replyTo.html">replyTo</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Optional reply-to address.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="subject" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/subject.html">subject</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  
+
+</dt>
+<dd>
+  Email subject line.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="textBody" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/textBody.html">textBody</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  
+
+</dt>
+<dd>
+  Optional plain-text body.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="to" class="property">
+  <span class="name"><a href="../archery_packages_aws_ses_client/SendEmailRequest/to.html">to</a></span>
+  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_packages_aws_ses_client/EmailAddress-class.html">EmailAddress</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  Primary recipients.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">archery</a></li>
+    <li><a href="../archery_packages_aws_ses_client/">ses_client</a></li>
+    <li class="self-crumb">SendEmailRequest class</li>
+</ol>
+
+    <h5>ses_client library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    archery
+      1.5.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

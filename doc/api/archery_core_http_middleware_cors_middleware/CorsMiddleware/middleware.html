@@ -63,6 +63,24 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Applies CORS headers to the response and handles preflight requests.</p>
+<p>For all requests, this method sets the standard response headers used by
+the framework's default CORS policy.</p>
+<p>If the incoming request method is <code>OPTIONS</code>, the middleware responds with
+<code>200 OK</code>, closes the response, and does not continue the pipeline.</p>
+<p>For all other request methods, control is passed to <code>next</code>.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>request</code>: The active HTTP request.</li>
+<li><code>next</code>: The next middleware or route handler in the pipeline.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await CorsMiddleware.middleware(request, () async {
+  request.response.write(jsonEncode({'status': 'ok'}));
+});
+</code></pre>
+</section>
 
 
     
@@ -115,7 +133,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

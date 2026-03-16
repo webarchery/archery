@@ -79,9 +79,7 @@
   <pre class="language-dart"><code class="language-dart">@override
 bool contains&lt;T&gt;({String? name}) {
   final key = _key&lt;T&gt;(name);
-  return _factories.containsKey(key) ||
-      _singletons.containsKey(key) ||
-      (_parent?.contains&lt;T&gt;(name: name) ?? false);
+  return _factories.containsKey(key) || _singletons.containsKey(key) || (_parent?.contains&lt;T&gt;(name: name) ?? false);
 }</code></pre>
 </section>
 
@@ -110,7 +108,7 @@ bool contains&lt;T&gt;({String? name}) {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

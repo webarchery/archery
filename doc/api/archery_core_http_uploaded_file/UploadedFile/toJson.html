@@ -62,7 +62,21 @@
     </section>
     
 <section class="desc markdown">
-  <p>Get file info as JSON</p>
+  <p>Returns file metadata as a JSON-compatible map.</p>
+<p>Included keys:</p>
+<ul>
+<li><code>filename</code></li>
+<li><code>contentType</code></li>
+<li><code>extension</code></li>
+<li><code>size</code></li>
+<li><code>isAudio</code></li>
+<li><code>isVideo</code></li>
+<li><code>isImage</code></li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final json = await file.toJson();
+print(json['filename']);
+</code></pre>
 </section>
 
 
@@ -70,15 +84,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;Map&lt;String, dynamic&gt;&gt; toJson() async {
-  return {
-    &#39;filename&#39;: filename,
-    &#39;contentType&#39;: contentType,
-    &#39;extension&#39;: extension,
-    &#39;size&#39;: await length,
-    &#39;isAudio&#39;: isAudio,
-    &#39;isVideo&#39;: isVideo,
-    &#39;isImage&#39;: isImage,
-  };
+  return {&#39;filename&#39;: filename, &#39;contentType&#39;: contentType, &#39;extension&#39;: extension, &#39;size&#39;: await length, &#39;isAudio&#39;: isAudio, &#39;isVideo&#39;: isVideo, &#39;isImage&#39;: isImage};
 }</code></pre>
 </section>
 
@@ -107,7 +113,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

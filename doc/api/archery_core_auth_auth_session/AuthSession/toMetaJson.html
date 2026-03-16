@@ -67,8 +67,16 @@
     </section>
     
 <section class="desc markdown">
-  <p>Serializes metadata fields (<code>id</code>, <code>uuid</code>, timestamps).</p>
-<p>Used internally by backends.</p>
+  <p>Serializes the session into a metadata-oriented JSON representation.</p>
+<p>This form includes the database <code>id</code> in addition to the standard session
+fields and timestamp metadata.</p>
+<p>Returns a map useful for administrative or internal inspection.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final meta = session.toMetaJson();
+print(meta['id']);
+print(meta['uuid']);
+print(meta['email']);
+</code></pre>
 </section>
 
 
@@ -77,14 +85,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Map&lt;String, dynamic&gt; toMetaJson() {
-  return {
-    &quot;id&quot;: id,
-    &quot;uuid&quot;: uuid,
-    &#39;email&#39;: email,
-    &#39;token&#39;: token,
-    &quot;created_at&quot;: createdAt?.toIso8601String(),
-    &quot;updated_at&quot;: updatedAt?.toIso8601String(),
-  };
+  return {&quot;id&quot;: id, &quot;uuid&quot;: uuid, &#39;email&#39;: email, &#39;token&#39;: token, &quot;created_at&quot;: createdAt?.toIso8601String(), &quot;updated_at&quot;: updatedAt?.toIso8601String()};
 }</code></pre>
 </section>
 
@@ -113,7 +114,7 @@ Map&lt;String, dynamic&gt; toMetaJson() {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

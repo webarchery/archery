@@ -31,100 +31,203 @@
 
 import 'package:archery/archery/archery.dart';
 
+/// Represents an uploaded file parsed from an incoming HTTP request.
+///
+/// `UploadedFile` provides convenient access to file metadata, raw bytes,
+/// string content, type inspection helpers, disk persistence methods, HTTP
+/// response streaming, and S3 upload support.
+///
+/// Instances are typically created internally while parsing multipart form
+/// data, but they can also be constructed directly from bytes.
+///
+/// Example:
+/// ```dart
+/// final file = UploadedFile.fromBytes(
+///   filename: 'avatar.png',
+///   bytes: Uint8List.fromList([1, 2, 3]),
+///   contentType: 'image/png',
+/// );
+///
+/// print(file.filename); // avatar.png
+/// print(file.isImage); // true
+/// ```
 base class UploadedFile {
+  /// Original filename supplied by the client.
   final String filename;
+
+  /// MIME content type associated with the uploaded file.
   final String contentType;
+
+  /// Cached file bytes stored as a future so callers can await access
+  /// consistently.
   final Future<Uint8List> _cachedBytes;
+
+  /// Known byte length, when already available at construction time.
   final int? _knownLength;
 
-  UploadedFile.fromBytes({
-    required this.filename,
-    required Uint8List bytes,
-    required this.contentType,
-  }) : _cachedBytes = Future.value(bytes),
-       _knownLength = bytes.length;
+  /// Creates an uploaded file from an in-memory byte buffer.
+  ///
+  /// This constructor caches the provided bytes immediately and stores their
+  /// length for later access.
+  ///
+  /// Example:
+  /// ```dart
+  /// final file = UploadedFile.fromBytes(
+  ///   filename: 'song.mp3',
+  ///   bytes: Uint8List.fromList([0, 1, 2, 3]),
+  ///   contentType: 'audio/mpeg',
+  /// );
+  /// ```
+  UploadedFile.fromBytes({required this.filename, required Uint8List bytes, required this.contentType}) : _cachedBytes = Future.value(bytes), _knownLength = bytes.length;
 
-  // Empty factory constructor for invalid files
+  /// Creates an empty placeholder file.
+  ///
+  /// This is used internally to represent an invalid or empty upload field.
+  ///
+  /// Example:
+  /// ```dart
+  /// final file = UploadedFile.empty();
+  /// print(file.isValid); // false
+  /// ```
   factory UploadedFile.empty() {
-    return UploadedFile.fromBytes(
-      filename: '',
-      bytes: Uint8List(0),
-      contentType: 'application/octet-stream',
-    );
+    return UploadedFile.fromBytes(filename: '', bytes: Uint8List(0), contentType: 'application/octet-stream');
   }
 
-  // Add validation property
+  /// Returns `true` when the file has a non-empty filename.
+  ///
+  /// This is commonly used to distinguish real uploads from empty placeholders.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (file.isValid) {
+  ///   print('Uploaded file is usable');
+  /// }
+  /// ```
   bool get isValid => filename.isNotEmpty;
 
-  /// Get the file content as bytes
+  /// Returns the file contents as raw bytes.
+  ///
+  /// Example:
+  /// ```dart
+  /// final bytes = await file.bytes;
+  /// print(bytes.length);
+  /// ```
   Future<Uint8List> get bytes async => await _cachedBytes;
 
-  /// Get the file content as string
+  /// Returns the file contents decoded as UTF-8 text.
+  ///
+  /// This is most useful for text-based uploads.
+  ///
+  /// Example:
+  /// ```dart
+  /// final textFile = UploadedFile.fromBytes(
+  ///   filename: 'notes.txt',
+  ///   bytes: Uint8List.fromList(utf8.encode('Hello world')),
+  ///   contentType: 'text/plain',
+  /// );
+  ///
+  /// print(await textFile.string); // Hello world
+  /// ```
   Future<String> get string async => utf8.decode(await _cachedBytes);
 
-  /// Get the length
+  /// Returns the byte length of the file.
+  ///
+  /// Example:
+  /// ```dart
+  /// final size = await file.length;
+  /// print(size);
+  /// ```
   Future<int> get length async => _knownLength ?? (await _cachedBytes).length;
 
-  /// Check if length is known without calculating it
+  /// Returns `true` when the file length is already known without recomputing
+  /// it.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(file.isLengthKnown);
+  /// ```
   bool get isLengthKnown => _knownLength != null;
 
-  /// Check if this is an audio file
+  /// Returns `true` when the file appears to be an audio file.
+  ///
+  /// Detection is based on MIME type and common filename extensions.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (file.isAudio) {
+  ///   print('This upload is audio');
+  /// }
+  /// ```
   bool get isAudio {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('audio/') ||
-        [
-          '.mp3',
-          '.wav',
-          '.ogg',
-          '.m4a',
-          '.aac',
-          '.flac',
-        ].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('audio/') || ['.mp3', '.wav', '.ogg', '.m4a', '.aac', '.flac'].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
-  /// Check if this is a video file
+  /// Returns `true` when the file appears to be a video file.
+  ///
+  /// Detection is based on MIME type and common filename extensions.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (file.isVideo) {
+  ///   print('This upload is video');
+  /// }
+  /// ```
   bool get isVideo {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('video/') ||
-        [
-          '.mp4',
-          '.webm',
-          '.ogg',
-          '.ogv',
-          '.avi',
-          '.mov',
-          '.mkv',
-        ].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('video/') || ['.mp4', '.webm', '.ogg', '.ogv', '.avi', '.mov', '.mkv'].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
-  /// Check if this is an image file
+  /// Returns `true` when the file appears to be an image file.
+  ///
+  /// Detection is based on MIME type and common filename extensions.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (file.isImage) {
+  ///   print('Generate a thumbnail');
+  /// }
+  /// ```
   bool get isImage {
     final mime = contentType.toLowerCase();
-    return mime.startsWith('image/') ||
-        [
-          '.jpg',
-          '.jpeg',
-          '.png',
-          '.gif',
-          '.bmp',
-          '.webp',
-          '.svg',
-        ].any((ext) => filename.toLowerCase().endsWith(ext));
+    return mime.startsWith('image/') || ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'].any((ext) => filename.toLowerCase().endsWith(ext));
   }
 
-  /// Get file extension
+  /// Returns the lowercase file extension without a leading dot.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(file.extension); // png
+  /// ```
   String get extension {
     final parts = filename.split('.');
     return parts.length > 1 ? parts.last.toLowerCase() : '';
   }
 
-  /// Stream the file content to a StreamSink (memory efficient)
+  /// Streams the file bytes into a [StreamSink].
+  ///
+  /// This is useful when piping the upload into another stream destination.
+  ///
+  /// Example:
+  /// ```dart
+  /// final controller = StreamController<List<int>>();
+  /// await file.streamTo(controller.sink);
+  /// await controller.close();
+  /// ```
   Future<void> streamTo(StreamSink<List<int>> sink) async {
     final bytes = await _cachedBytes;
     sink.add(bytes);
   }
 
-  /// Save the file to the specified path
+  /// Saves the file to the provided filesystem [path].
+  ///
+  /// Returns the written [File].
+  ///
+  /// Example:
+  /// ```dart
+  /// final saved = await file.save('/tmp/avatar.png');
+  /// print(saved.path);
+  /// ```
   Future<File> save(String path) async {
     final file = File(path);
     final bytes = await _cachedBytes;
@@ -132,7 +235,18 @@ base class UploadedFile {
     return file;
   }
 
-  /// Save file to specific public subdirectory
+  /// Saves the file into a subdirectory of the public storage path.
+  ///
+  /// When [autoName] is `true`, a UUID-based filename is generated while
+  /// preserving the original extension when possible.
+  ///
+  /// Returns the written [File].
+  ///
+  /// Example:
+  /// ```dart
+  /// final saved = await file.saveToPublicDir('avatars');
+  /// print(saved.path);
+  /// ```
   Future<File> saveToPublicDir(String subDir, {bool autoName = true}) async {
     final String fileName;
 
@@ -155,6 +269,18 @@ base class UploadedFile {
     return file;
   }
 
+  /// Saves the file into a subdirectory of the private storage path.
+  ///
+  /// When [autoName] is `true`, a UUID-based filename is generated while
+  /// preserving the original extension when possible.
+  ///
+  /// Returns the written [File].
+  ///
+  /// Example:
+  /// ```dart
+  /// final saved = await file.saveToPrivateDir('documents');
+  /// print(saved.path);
+  /// ```
   Future<File> saveToPrivateDir(String subDir, {bool autoName = true}) async {
     final String fileName;
 
@@ -177,11 +303,23 @@ base class UploadedFile {
     return file;
   }
 
-  /// Stream this file back to an HTTP response with proper headers
-  Future<void> streamToResponse(
-    HttpRequest request, {
-    bool handleRange = true,
-  }) async {
+  /// Streams this file to the current HTTP response.
+  ///
+  /// Range requests are supported by default, which is especially useful for
+  /// browser media playback and seeking.
+  ///
+  /// Parameters:
+  /// - `request`: The active request whose response will receive the file.
+  /// - `handleRange`: Whether to honor `Range` headers. Defaults to `true`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final file = await request.form().file('video');
+  /// if (file != null) {
+  ///   await file.streamToResponse(request);
+  /// }
+  /// ```
+  Future<void> streamToResponse(HttpRequest request, {bool handleRange = true}) async {
     final totalLength = await length;
     final bytes = await _cachedBytes;
 
@@ -195,10 +333,22 @@ base class UploadedFile {
     }
   }
 
-  Future<String?> streamToS3({
-    S3Acl acl = .private,
-    bool autoName = true,
-  }) async {
+  /// Uploads the file to S3 and returns the stored object key.
+  ///
+  /// The generated key includes the current application ID and stores uploads
+  /// under the framework upload prefix.
+  ///
+  /// When [autoName] is `true`, a UUID-based filename is generated while
+  /// preserving the extension when possible.
+  ///
+  /// Returns the S3 object key on success, or `null` on failure.
+  ///
+  /// Example:
+  /// ```dart
+  /// final key = await file.streamToS3(acl: S3Acl.private);
+  /// print(key);
+  /// ```
+  Future<String?> streamToS3({S3Acl acl = .private, bool autoName = true}) async {
     final s3Client = App().make<S3Client>();
     final config = App().make<AppConfig>();
     final uuid = App().make<Uuid>();
@@ -213,8 +363,7 @@ base class UploadedFile {
       fileName = filename;
     }
 
-    final String key =
-        "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
+    final String key = "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
 
     if (await s3Client.putObject(
       key: key,
@@ -227,13 +376,23 @@ base class UploadedFile {
     return null;
   }
 
-  /// Handle HTTP range requests for media seeking
-  Future<void> _handleRangeRequest(
-    HttpRequest request,
-    Uint8List bytes,
-    int totalLength,
-    String rangeHeader,
-  ) async {
+  /// Handles an HTTP byte-range request for this file.
+  ///
+  /// If the range is valid, the response is sent as `206 Partial Content`.
+  /// Invalid ranges produce `416 Requested Range Not Satisfiable`.
+  ///
+  /// This method is used internally by [streamToResponse].
+  ///
+  /// Example:
+  /// ```dart
+  /// await file._handleRangeRequest(
+  ///   request,
+  ///   await file.bytes,
+  ///   await file.length,
+  ///   'bytes=0-499',
+  /// );
+  /// ```
+  Future<void> _handleRangeRequest(HttpRequest request, Uint8List bytes, int totalLength, String rangeHeader) async {
     final response = request.response;
 
     try {
@@ -267,12 +426,16 @@ base class UploadedFile {
     }
   }
 
-  /// Send complete file without range support
-  Future<void> _sendFullFile(
-    HttpRequest request,
-    Uint8List bytes,
-    int totalLength,
-  ) async {
+  /// Sends the complete file without range handling.
+  ///
+  /// This method applies content type, length, caching headers, and media CORS
+  /// headers when appropriate.
+  ///
+  /// Example:
+  /// ```dart
+  /// await file._sendFullFile(request, await file.bytes, await file.length);
+  /// ```
+  Future<void> _sendFullFile(HttpRequest request, Uint8List bytes, int totalLength) async {
     final response = request.response;
 
     response.headers
@@ -291,7 +454,15 @@ base class UploadedFile {
     await response.close();
   }
 
-  /// Parse range header like "bytes=0-499"
+  /// Parses a range header such as `bytes=0-499`.
+  ///
+  /// Returns a `(start, end)` record when the range is valid, otherwise `null`.
+  ///
+  /// Example:
+  /// ```dart
+  /// final range = file._parseRangeHeader('bytes=0-499', 1000);
+  /// print(range); // (0, 499)
+  /// ```
   (int, int)? _parseRangeHeader(String rangeHeader, int totalLength) {
     try {
       // Format: "bytes=start-end"
@@ -314,7 +485,16 @@ base class UploadedFile {
     }
   }
 
-  /// Determine proper content type based on filename and extension
+  /// Determines the best [ContentType] for this file.
+  ///
+  /// Known media and image extensions are mapped to browser-friendly MIME
+  /// types. Unknown extensions fall back to the stored [contentType].
+  ///
+  /// Example:
+  /// ```dart
+  /// final type = file._determineContentType();
+  /// print(type);
+  /// ```
   ContentType _determineContentType() {
     final ext = extension;
 
@@ -382,29 +562,48 @@ base class UploadedFile {
     }
   }
 
-  /// Get file info as JSON
+  /// Returns file metadata as a JSON-compatible map.
+  ///
+  /// Included keys:
+  /// - `filename`
+  /// - `contentType`
+  /// - `extension`
+  /// - `size`
+  /// - `isAudio`
+  /// - `isVideo`
+  /// - `isImage`
+  ///
+  /// Example:
+  /// ```dart
+  /// final json = await file.toJson();
+  /// print(json['filename']);
+  /// ```
   Future<Map<String, dynamic>> toJson() async {
-    return {
-      'filename': filename,
-      'contentType': contentType,
-      'extension': extension,
-      'size': await length,
-      'isAudio': isAudio,
-      'isVideo': isVideo,
-      'isImage': isImage,
-    };
+    return {'filename': filename, 'contentType': contentType, 'extension': extension, 'size': await length, 'isAudio': isAudio, 'isVideo': isVideo, 'isImage': isImage};
   }
 
-  /// Copy this file with new filename
-  UploadedFile copyWith({String? filename, String? contentType}) {
-    return UploadedFile.fromBytes(
-      filename: filename ?? this.filename,
-      bytes: _cachedBytes as Uint8List,
-      contentType: contentType ?? this.contentType,
-    );
+  /// Returns a copy of this file with updated metadata.
+  ///
+  /// This preserves the same underlying file contents while allowing the
+  /// filename and/or content type to be overridden.
+  ///
+  /// Because the source bytes are stored asynchronously, this method is async.
+  ///
+  /// Example:
+  /// ```dart
+  /// final renamed = await file.copyWith(filename: 'cover.png');
+  /// print(renamed.filename); // cover.png
+  /// ```
+  Future<UploadedFile> copyWith({String? filename, String? contentType}) async {
+    return UploadedFile.fromBytes(filename: filename ?? this.filename, bytes: await _cachedBytes, contentType: contentType ?? this.contentType);
   }
 
+  /// Returns a developer-friendly string representation of the file.
+  ///
+  /// Example:
+  /// ```dart
+  /// print(file);
+  /// ```
   @override
-  String toString() =>
-      'UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? 'unknown'} bytes)';
+  String toString() => 'UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? 'unknown'} bytes)';
 }

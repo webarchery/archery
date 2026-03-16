@@ -55,6 +55,14 @@
     
 <section class="desc markdown">
   <p>Extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> to render HTML views.</p>
+<p>This extension centralizes template rendering, CSRF token setup, response
+header configuration, and request/session view data composition.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">return request.view('dashboard.index', {
+  'title': 'Dashboard',
+  'posts': posts,
+});
+</code></pre>
 </section>
 
     <section>
@@ -90,7 +98,7 @@
         <span>Available on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a>,
         provided by the <a href="../archery_core_http_extensions/View.html">View</a> extension</span>
       </p>
-  Renders a template and sends HTML response.
+  Renders an HTML template and writes it to the response.
   
 
 </dd>
@@ -125,7 +133,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

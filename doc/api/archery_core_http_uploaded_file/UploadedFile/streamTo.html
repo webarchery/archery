@@ -63,7 +63,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Stream the file content to a StreamSink (memory efficient)</p>
+  <p>Streams the file bytes into a <a href="https://api.dart.dev/stable/3.10.9/dart-async/StreamSink-class.html">StreamSink</a>.</p>
+<p>This is useful when piping the upload into another stream destination.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final controller = StreamController&lt;List&lt;int&gt;&gt;();
+await file.streamTo(controller.sink);
+await controller.close();
+</code></pre>
 </section>
 
 
@@ -101,7 +107,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

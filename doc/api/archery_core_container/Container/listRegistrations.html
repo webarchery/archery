@@ -77,18 +77,12 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 Map&lt;String, List&lt;String&gt;&gt; listRegistrations() {
-  final registrations = &lt;String, List&lt;String&gt;&gt;{
-    &quot;factories&quot;: _factories.keys.toList(),
-    &quot;singletons&quot;: _singletons.keys.toList(),
-    &#39;eager&#39;: _eagerRegistrations.keys.toList(),
-  };
+  final registrations = &lt;String, List&lt;String&gt;&gt;{&quot;factories&quot;: _factories.keys.toList(), &quot;singletons&quot;: _singletons.keys.toList(), &#39;eager&#39;: _eagerRegistrations.keys.toList()};
 
   if (_parent != null) {
     final parentRegistrations = _parent.listRegistrations();
-    registrations[&#39;parent_factories&#39;] =
-        parentRegistrations[&#39;factories&#39;] ?? [];
-    registrations[&#39;parent_singletons&#39;] =
-        parentRegistrations[&#39;singletons&#39;] ?? [];
+    registrations[&#39;parent_factories&#39;] = parentRegistrations[&#39;factories&#39;] ?? [];
+    registrations[&#39;parent_singletons&#39;] = parentRegistrations[&#39;singletons&#39;] ?? [];
     registrations[&#39;parent_eager&#39;] = parentRegistrations[&#39;eager&#39;] ?? [];
   }
 
@@ -121,7 +115,7 @@ Map&lt;String, List&lt;String&gt;&gt; listRegistrations() {
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

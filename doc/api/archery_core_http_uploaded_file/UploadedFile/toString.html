@@ -67,16 +67,10 @@
     </section>
     
 <section class="desc markdown">
-  <p>A string representation of this object.</p>
-<p>Some classes have a default textual representation,
-often paired with a static <code>parse</code> function (like <a href="https://api.dart.dev/stable/3.10.9/dart-core/int/parse.html">int.parse</a>).
-These classes will provide the textual representation as
-their string representation.</p>
-<p>Other classes have no meaningful textual representation
-that a program will care about.
-Such classes will typically override <code>toString</code> to provide
-useful information when inspecting the object,
-mainly for debugging or logging.</p>
+  <p>Returns a developer-friendly string representation of the file.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">print(file);
+</code></pre>
 </section>
 
 
@@ -84,8 +78,7 @@ mainly for debugging or logging.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-String toString() =&gt;
-    &#39;UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? &#39;unknown&#39;} bytes)&#39;;</code></pre>
+String toString() =&gt; &#39;UploadedFile(filename: $filename, type: $contentType, size: ${_knownLength ?? &#39;unknown&#39;} bytes)&#39;;</code></pre>
 </section>
 
 
@@ -113,7 +106,7 @@ String toString() =&gt;
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

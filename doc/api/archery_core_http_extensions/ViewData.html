@@ -61,7 +61,15 @@
 
     
 <section class="desc markdown">
-  <p>Type alias for view data.</p>
+  <p>Type alias for data passed into rendered views.</p>
+<p>View data is a string-keyed map whose values may contain any serializable
+or template-consumable object.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final data = &lt;String, dynamic&gt;{
+  'title': 'Dashboard',
+  'user': currentUser,
+};
+</code></pre>
 </section>
 
     
@@ -93,7 +101,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

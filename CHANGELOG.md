@@ -10,7 +10,7 @@
 ## 1.0.4
 - Form Inputs
 - Body Parsing
--
+
 ## 1.0.5
 - Formatting
 
@@ -69,3 +69,34 @@
   - data       -> {{ session.data }}
 
 ## 1.4.1
+- Minor fixes 
+- Docs
+
+## 1.5.0
+- SES Client
+  - AWS ses client for sending mail
+  - uses config('env.aws')
+  - sesClient.sendEmail({opts});
+- Model Relationships (w/ beta features)
+  - hasOne<T>
+  - hasMany<T>
+  - belongsToOne<T>
+  - belongsToMany<T>()
+  - model.attach(sibling) 
+  - model.detach(sibling)
+- Pivot Tables
+  - used for belongsToMany relationships
+- Roles
+  - built-in user roles
+- Flash Messages
+  - request.flash(key,message)
+  - uses FlashMessaging.middleware() to manage flash data life cycle
+- Request Validation 
+  - request.validate(field, rules)
+  - request.validateAll([{"field" : [Rules]}])
+  - validation Rules
+- Form Data
+  - value = "{{ session.data.<name>}}"
+  - template directive old('<name>') planned
+- Queue
+  - A functional approach to Queues

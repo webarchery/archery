@@ -63,7 +63,16 @@
     </section>
     
 <section class="desc markdown">
-  <p>Gets uploaded file for the given field name</p>
+  <p>Returns the uploaded file associated with <code>key</code>.</p>
+<p>This only resolves files parsed from multipart form data.</p>
+<p>Returns the matching <a href="../../archery_core_http_uploaded_file/UploadedFile-class.html">UploadedFile</a> or <code>null</code> when no file exists for the
+given field.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final avatar = await form.file('avatar');
+if (avatar != null) {
+  print(avatar.filename);
+}
+</code></pre>
 </section>
 
 
@@ -101,7 +110,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

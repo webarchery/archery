@@ -62,7 +62,12 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns all uploaded files</p>
+  <p>Returns all uploaded files parsed from the request.</p>
+<p>The returned map is a copy of the internal file registry.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final files = await form.files();
+print(files.keys);
+</code></pre>
 </section>
 
 
@@ -100,7 +105,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>

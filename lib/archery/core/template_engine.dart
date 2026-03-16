@@ -38,11 +38,11 @@ base class TemplateEngineException implements Exception {
 
   /// Thrown when a variable is referenced but not present in data.
   TemplateEngineException.variableNotFound(String? errorMessage)
-    : message = errorMessage;
+      : message = errorMessage;
 
   /// Thrown when a template file cannot be located.
   TemplateEngineException.templateNotFound(String? errorMessage)
-    : message = errorMessage;
+      : message = errorMessage;
 
   @override
   String toString() {
@@ -70,7 +70,7 @@ base class TemplateEngine {
   ///
   /// Set to `false` during development for automatic template reloading.
   /// Set to `true` in production for better performance.
-  bool shouldCache = false;
+  bool shouldCache = true;
 
   /// Creates a new template engine instance.
   /// [publicDirectory] not necessary but provided for future directives
@@ -78,9 +78,9 @@ base class TemplateEngine {
 
   /// Renders a template with the provided data asynchronously.
   Future<String> render(
-    String templateName, [
-    Map<String, dynamic>? data,
-  ]) async {
+      String templateName, [
+        Map<String, dynamic>? data,
+      ]) async {
     final templateContent = await _loadTemplate(templateName);
     return _compile(templateContent, data ?? {});
   }
@@ -145,10 +145,10 @@ base class TemplateEngine {
   ///
   /// Dart's [replaceAllMapped] does not support async callbacks.
   Future<String> _replaceAllMappedAsync(
-    String input,
-    RegExp regex,
-    Future<String> Function(Match match) replace,
-  ) async {
+      String input,
+      RegExp regex,
+      Future<String> Function(Match match) replace,
+      ) async {
     final StringBuffer buffer = StringBuffer();
     int lastIndex = 0;
 
@@ -165,16 +165,18 @@ base class TemplateEngine {
   // --- Processing Methods ---
 
   String _processInterpolations(String content, Map<String, dynamic> data) {
+    final interpolationRegex = RegExp(r'{!!\s*(.*?)\s*!!}');
     String result = content;
 
     // Process unescaped interpolations {!! !!} first
-    result = result.replaceAllMapped(RegExp(r'{!!\s*(.*?)\s*!!}'), (match) {
+    result = result.replaceAllMapped(interpolationRegex, (match) {
       final expression = match.group(1)!;
       return _evaluateInterpolation(expression, data).toString();
     });
 
     // Process escaped interpolations {{ }} second
-    result = result.replaceAllMapped(RegExp(r'{{\s*(.*?)\s*}}'), (match) {
+    final escapedInterpolationsRegex = RegExp(r'{{\s*(.*?)\s*}}');
+    result = result.replaceAllMapped(escapedInterpolationsRegex, (match) {
       final expression = match.group(1)!;
       final value = _evaluateInterpolation(expression, data).toString();
       return _escapeHtml(value);
@@ -185,6 +187,8 @@ base class TemplateEngine {
 
   dynamic _evaluateInterpolation(String expression, Map<String, dynamic> data) {
     expression = expression.trim();
+
+    // Handle empty expressions
     if (expression.isEmpty) return '';
 
     // Handle string literals
@@ -197,31 +201,31 @@ base class TemplateEngine {
     if (RegExp(r'^-?\d+$').hasMatch(expression)) {
       return int.tryParse(expression) ?? expression;
     }
+
     if (RegExp(r'^-?\d+\.\d+$').hasMatch(expression)) {
       return double.tryParse(expression) ?? expression;
     }
 
-    // Handle booleans/null
+    // Handle booleans
     if (expression == 'true') return true;
     if (expression == 'false') return false;
     if (expression == 'null') return null;
 
-    // Handle arithmetic
-    if (expression.contains('+') ||
-        expression.contains('-') ||
-        expression.contains('*') ||
-        expression.contains('/')) {
+    // Handle simple arithmetic expressions
+    if (expression.contains('+') || expression.contains('-') ||
+        expression.contains('*') || expression.contains('/')) {
       return _evaluateArithmetic(expression, data);
     }
 
-    // Handle method calls
+    // Handle method calls with parentheses
     if (expression.contains('(') && expression.contains(')')) {
       return _evaluateMethodCall(expression, data);
     }
 
-    // Default variable lookup
+    // Default to variable lookup
     return _evaluateExpression(expression, data);
   }
+
 
   dynamic _evaluateArithmetic(String expression, Map<String, dynamic> data) {
     try {
@@ -243,6 +247,12 @@ base class TemplateEngine {
         final left = num.tryParse(parts[0].trim()) ?? 0;
         final right = num.tryParse(parts[1].trim()) ?? 0;
         return left + right;
+      }
+      if (processed.contains('*')) {
+        final parts = processed.split('*');
+        final left = num.tryParse(parts[0].trim()) ?? 0;
+        final right = num.tryParse(parts[1].trim()) ?? 0;
+        return left * right;
       }
 
       return processed;
@@ -342,9 +352,9 @@ base class TemplateEngine {
   }
 
   Future<String> _processLayouts(
-    String content,
-    Map<String, dynamic> data,
-  ) async {
+      String content,
+      Map<String, dynamic> data,
+      ) async {
     final layoutRegex = RegExp(
       r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''',
       dotAll: true,
@@ -379,10 +389,10 @@ base class TemplateEngine {
   }
 
   Future<String> _renderLayout(
-    String layoutName,
-    Map<String, String> sections,
-    Map<String, dynamic> data,
-  ) async {
+      String layoutName,
+      Map<String, String> sections,
+      Map<String, dynamic> data,
+      ) async {
     final layoutContent = await _loadTemplate(layoutName);
 
     // Using _replaceAllMappedAsync isn't strictly necessary here if yield replacements are simple text
@@ -390,7 +400,7 @@ base class TemplateEngine {
     // The yields themselves are sync replacements from the `sections` map.
     return layoutContent.replaceAllMapped(
       RegExp(r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true),
-      (match) {
+          (match) {
         final yieldName = match.group(1)!;
         return sections[yieldName] ?? '';
       },
@@ -398,9 +408,9 @@ base class TemplateEngine {
   }
 
   Future<String> _processIncludes(
-    String content,
-    Map<String, dynamic> data,
-  ) async {
+      String content,
+      Map<String, dynamic> data,
+      ) async {
     final includeRegex = RegExp(
       r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''',
       dotAll: true,
@@ -416,7 +426,7 @@ base class TemplateEngine {
         if (jsonString != null) {
           try {
             final additionalData =
-                jsonDecode(jsonString) as Map<String, dynamic>;
+            jsonDecode(jsonString) as Map<String, dynamic>;
             mergedData.addAll(additionalData);
           } catch (e) {
             print('Warning: Invalid JSON in include: $jsonString');
@@ -438,9 +448,9 @@ base class TemplateEngine {
   }
 
   Future<String> _processControlStructures(
-    String content,
-    Map<String, dynamic> data,
-  ) async {
+      String content,
+      Map<String, dynamic> data,
+      ) async {
     String result = content;
 
     result = await _processForeach(result, data);
@@ -450,17 +460,17 @@ base class TemplateEngine {
   }
 
   Future<String> _processForeach(
-    String content,
-    Map<String, dynamic> data,
-  ) async {
+      String content,
+      Map<String, dynamic> data,
+      ) async {
     final regex = RegExp(
-      r'@foreach\s*\(\s*(\w+)\s+as\s+(\w+)\s*\)(.*?)@endforeach',
+      r'@foreach\s*\(\s*(\w+)\s+in\s+(\w+)\s*\)(.*?)@endforeach',
       dotAll: true,
     );
 
     return _replaceAllMappedAsync(content, regex, (match) async {
-      final collectionName = match.group(1)!;
-      final itemName = match.group(2)!;
+      final collectionName = match.group(2)!;
+      final itemName = match.group(1)!;
       final loopContent = match.group(3)!;
 
       final collection = _evaluateExpression(collectionName, data);

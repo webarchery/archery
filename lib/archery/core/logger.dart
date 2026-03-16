@@ -45,7 +45,7 @@ enum LogLevel {
   success(1),
 
   /// Warning — non-fatal issue that requires attention.
-  warn(2),
+  warning(2),
 
   /// General informational message.
   info(3),
@@ -201,8 +201,8 @@ final class Logger {
       _log(LogLevel.success, message, metadata);
 
   /// Logs a **warning** message.
-  Future<void> warn(String message, [Map<String, dynamic>? metadata]) =>
-      _log(LogLevel.warn, message, metadata);
+  Future<void> warning(String message, [Map<String, dynamic>? metadata]) =>
+      _log(LogLevel.warning, message, metadata);
 
   /// Logs an **info** message.
   Future<void> info(String message, [Map<String, dynamic>? metadata]) =>
@@ -327,7 +327,7 @@ final class ConsoleTransport implements LogTransport {
     final color = switch (level) {
       LogLevel.error => _ansiRed,
       LogLevel.success => _ansiGreen,
-      LogLevel.warn => _ansiYellow,
+      LogLevel.warning => _ansiYellow,
       LogLevel.info => _ansiBlue,
       LogLevel.debug => _ansiCyan,
       LogLevel.trace => _ansiMagenta,
@@ -341,7 +341,7 @@ final class ConsoleTransport implements LogTransport {
     final colored = switch (level) {
       LogLevel.error => '$_ansiRed$message$_ansiReset',
       LogLevel.success => '$_ansiGreen$message$_ansiReset',
-      LogLevel.warn => '$_ansiYellow$message$_ansiReset',
+      LogLevel.warning => '$_ansiYellow$message$_ansiReset',
       LogLevel.info => '$_ansiBlue$message$_ansiReset',
       LogLevel.debug => '$_ansiCyan$message$_ansiReset',
       LogLevel.trace => '$_ansiMagenta$message$_ansiReset',

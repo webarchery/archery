@@ -68,7 +68,7 @@ session is also used as the binding point for CSRF token association.</p>
   <dd>
     <ul class="gt-separated dark clazz-relationships">
       <li><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></li>
-        <li><a href="../archery_core_orm_model/Model-class.html">Model</a></li>
+        <li><a href="../archery_core_orm_model_model/Model-class.html">Model</a></li>
       <li>Session</li>
     </ul>
   </dd>
@@ -78,7 +78,7 @@ session is also used as the binding point for CSRF token association.</p>
   <dt>Mixed-in types</dt>
   <dd>
     <ul class="comma-separated clazz-relationships">
-        <li><a href="../archery_core_orm_model/InstanceDatabaseOps-mixin.html">InstanceDatabaseOps</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_auth_auth_session/Session-class.html">Session</a></span>&gt;</span></li>
+        <li><a href="../archery_core_orm_model_model_operations/InstanceDatabaseOps-mixin.html">InstanceDatabaseOps</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_auth_auth_session/Session-class.html">Session</a></span>&gt;</span></li>
     </ul>
   </dd>
 
@@ -86,7 +86,8 @@ session is also used as the binding point for CSRF token association.</p>
         
   <dt>Available extensions</dt>
   <dd><ul class="comma-separated clazz-relationships">
-      <li><a href="../archery_core_orm_model/Relationships.html">Relationships</a></li>
+      <li><a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a></li>
+      <li><a href="../archery_core_orm_model_model_relationship/ModelRelationships.html">ModelRelationships</a></li>
   </ul></dd>
         
 
@@ -119,7 +120,7 @@ session is also used as the binding point for CSRF token association.</p>
     <h2>Properties</h2>
     <dl class="properties">
         <dt id="createdAt" class="property inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/createdAt.html">createdAt</a></span>
+  <span class="name"><a href="../archery_core_orm_model_model/Model/createdAt.html">createdAt</a></span>
   <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/DateTime-class.html">DateTime</a>?</span>
   
 
@@ -155,8 +156,8 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="disk" class="property inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/disk.html">disk</a></span>
-  <span class="signature">&#8596; <a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span>
+  <span class="name"><a href="../archery_core_orm_model_model/Model/disk.html">disk</a></span>
+  <span class="signature">&#8596; <a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span>
   
 
 </dt>
@@ -168,6 +169,18 @@ session is also used as the binding point for CSRF token association.</p>
 
         <dt id="errors" class="property">
   <span class="name"><a href="../archery_core_auth_auth_session/Session/errors.html">errors</a></span>
+  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="flashMessages" class="property">
+  <span class="name"><a href="../archery_core_auth_auth_session/Session/flashMessages.html">flashMessages</a></span>
   <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
   
 
@@ -191,7 +204,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="id" class="property inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/id.html">id</a></span>
+  <span class="name"><a href="../archery_core_orm_model_model/Model/id.html">id</a></span>
   <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a>?</span>
   
 
@@ -239,7 +252,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="updatedAt" class="property inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/updatedAt.html">updatedAt</a></span>
+  <span class="name"><a href="../archery_core_orm_model_model/Model/updatedAt.html">updatedAt</a></span>
   <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/DateTime-class.html">DateTime</a>?</span>
   
 
@@ -263,7 +276,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="uuid" class="property inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/uuid.html">uuid</a></span>
+  <span class="name"><a href="../archery_core_orm_model_model/Model/uuid.html">uuid</a></span>
   <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
   
 
@@ -283,8 +296,42 @@ session is also used as the binding point for CSRF token association.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="belongsTo" class="callable">
-  <span class="name"><a href="../archery_core_orm_model/Relationships/belongsTo.html">belongsTo</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsTo-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+        <dt id="attach" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps/attach.html">attach</a></span><span class="signature">(<wbr><span class="parameter" id="attach-param-sibling"><span class="type-annotation"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span> <span class="parameter-name">sibling</span>, {</span><span class="parameter" id="attach-param-relationship"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipType.html">ModelRelationshipType</a></span> <span class="parameter-name">relationship</span>, </span><span class="parameter" id="attach-param-table"><span class="type-annotation"><a href="../archery_core_orm_model_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span>?</span> <span class="parameter-name">table</span>, </span><span class="parameter" id="attach-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a> extension</span>
+      </p>
+  Attaches <code>sibling</code> to this model using the given <code>relationship</code> type.
+  
+
+</dd>
+
+        <dt id="belongsToMany" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationships/belongsToMany.html">belongsToMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsToMany-param-table"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_model_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span></span> <span class="parameter-name">table</span>, </span><span class="parameter" id="belongsToMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
+      </p>
+  Resolves many-to-many related models through a pivot table.
+  
+
+</dd>
+
+        <dt id="belongsToOne" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationships/belongsToOne.html">belongsToOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="belongsToOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
   </span>
   
@@ -292,16 +339,16 @@ session is also used as the binding point for CSRF token association.</p>
 </dt>
 <dd>
       <p class="from-extension">
-        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
-        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
       </p>
-  
+  Resolves the parent model for an inverse relationship.
   
 
 </dd>
 
         <dt id="delete" class="callable inherited">
-  <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/delete.html">delete</a></span><span class="signature">(<wbr>{<span class="parameter" id="delete-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
+  <span class="name"><a href="../archery_core_orm_model_model_operations/InstanceDatabaseOps/delete.html">delete</a></span><span class="signature">(<wbr>{<span class="parameter" id="delete-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
   </span>
   
@@ -313,8 +360,51 @@ session is also used as the binding point for CSRF token association.</p>
 
 </dd>
 
+        <dt id="detach" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps/detach.html">detach</a></span><span class="signature">(<wbr><span class="parameter" id="detach-param-sibling"><span class="type-annotation"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span> <span class="parameter-name">sibling</span>, {</span><span class="parameter" id="detach-param-relationship"><span>required</span> <span class="type-annotation"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipType.html">ModelRelationshipType</a></span> <span class="parameter-name">relationship</span>, </span><span class="parameter" id="detach-param-table"><span class="type-annotation"><a href="../archery_core_orm_model_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span>?</span> <span class="parameter-name">table</span>, </span><span class="parameter" id="detach-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a> extension</span>
+      </p>
+  Detaches <code>sibling</code> from this model using the given <code>relationship</code> type.
+  
+
+</dd>
+
+        <dt id="getInstanceTableName" class="callable inherited">
+  <span class="name"><a href="../archery_core_orm_model_model/Model/getInstanceTableName.html">getInstanceTableName</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="getInstanceTableSingularName" class="callable inherited">
+  <span class="name"><a href="../archery_core_orm_model_model/Model/getInstanceTableSingularName.html">getInstanceTableSingularName</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
         <dt id="hasMany" class="callable">
-  <span class="name"><a href="../archery_core_orm_model/Relationships/hasMany.html">hasMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationships/hasMany.html">hasMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasMany-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
   </span>
   
@@ -322,16 +412,16 @@ session is also used as the binding point for CSRF token association.</p>
 </dt>
 <dd>
       <p class="from-extension">
-        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
-        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
       </p>
-  
+  Resolves all one-to-many related models.
   
 
 </dd>
 
         <dt id="hasOne" class="callable">
-  <span class="name"><a href="../archery_core_orm_model/Relationships/hasOne.html">hasOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationships/hasOne.html">hasOne</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="hasOne-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a></span> <span class="parameter-name">disk</span> = <span class="default-value">Model.defaultDisk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span>
   </span>
   
@@ -339,10 +429,28 @@ session is also used as the binding point for CSRF token association.</p>
 </dt>
 <dd>
       <p class="from-extension">
-        <span>Available on <a href="../archery_core_orm_model/Model-class.html">Model</a>,
-        provided by the <a href="../archery_core_orm_model/Relationships.html">Relationships</a> extension</span>
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationships.html">ModelRelationships</a> extension</span>
       </p>
+  Resolves a one-to-one related model.
   
+
+</dd>
+
+        <dt id="load" class="callable">
+  <span class="name"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps/load.html">load</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T extends <a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="load-param-relationship"><span class="type-annotation"><a href="../archery_core_orm_model_model_relationship/ModelRelationshipType.html">ModelRelationshipType</a></span> <span class="parameter-name">relationship</span>, {</span><span class="parameter" id="load-param-table"><span class="type-annotation"><a href="../archery_core_orm_model_pivot_tables/PivotTable-class.html">PivotTable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>, <span class="type-parameter"><a href="../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span>?</span> <span class="parameter-name">table</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+      <p class="from-extension">
+        <span>Available on <a href="../archery_core_orm_model_model/Model-class.html">Model</a>,
+        provided by the <a href="../archery_core_orm_model_model_relationship/ModelRelationshipOps.html">ModelRelationshipOps</a> extension</span>
+      </p>
+  Loads a relationship and returns this model serialized with the related
+data embedded.
   
 
 </dd>
@@ -361,7 +469,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="save" class="callable inherited">
-  <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/save.html">save</a></span><span class="signature">(<wbr>{<span class="parameter" id="save-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
+  <span class="name"><a href="../archery_core_orm_model_model_operations/InstanceDatabaseOps/save.html">save</a></span><span class="signature">(<wbr>{<span class="parameter" id="save-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
   </span>
   
@@ -400,7 +508,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="toString" class="callable inherited">
-  <span class="name"><a href="../archery_core_orm_model/Model/toString.html">toString</a></span><span class="signature">(<wbr>)
+  <span class="name"><a href="../archery_core_orm_model_model/Model/toString.html">toString</a></span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -413,7 +521,7 @@ session is also used as the binding point for CSRF token association.</p>
 </dd>
 
         <dt id="update" class="callable inherited">
-  <span class="name"><a href="../archery_core_orm_model/InstanceDatabaseOps/update.html">update</a></span><span class="signature">(<wbr>{<span class="parameter" id="update-param-withJson"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">withJson</span>, </span><span class="parameter" id="update-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
+  <span class="name"><a href="../archery_core_orm_model_model_operations/InstanceDatabaseOps/update.html">update</a></span><span class="signature">(<wbr>{<span class="parameter" id="update-param-withJson"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">withJson</span>, </span><span class="parameter" id="update-param-disk"><span class="type-annotation"><a href="../archery_core_orm_model_model/DatabaseDisk.html">DatabaseDisk</a>?</span> <span class="parameter-name">disk</span></span>})
     <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
   </span>
   
@@ -510,7 +618,7 @@ session is also used as the binding point for CSRF token association.</p>
 <footer>
   <span class="no-break">
     archery
-      1.4.1
+      1.5.0
   </span>
   
 </footer>
