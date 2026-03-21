@@ -87,7 +87,7 @@ class FlashMessagingMiddleware {
   /// ```
   static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
 
-    if(request.uri.path.startsWith('/api')) {
+    if(request.uri.path.startsWith('/api/')) {
       return await next();
     }
 
