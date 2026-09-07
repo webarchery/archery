@@ -31,8 +31,6 @@
 import 'package:archery/archery/archery.dart';
 import 'package:archery/archery/core/http/middleware/flash_messages_middleware.dart';
 import 'package:archery/src/database/migrations/providers/pgsql_migrations_provider.dart';
-import 'package:archery/src/database/seeders/roles_table_seeder_provider.dart';
-import 'package:archery/src/database/tables/user_role_pivot_table_provider.dart';
 import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 import 'package:archery/src/database/migrations/providers/sqlite_migrations_provider.dart';

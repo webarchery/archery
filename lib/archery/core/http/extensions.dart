@@ -736,11 +736,11 @@ extension RequestUser on HttpRequest {
 
 
 extension BenchView on HttpRequest {
-  static const _minimalViewHeaders = {
-    HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate',
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-  };
+  // static const _minimalViewHeaders = {
+  //   HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate',
+  //   'X-Content-Type-Options': 'nosniff',
+  //   'X-Frame-Options': 'SAMEORIGIN',
+  // };
 
   Future<HttpResponse> benchView(String template, [ViewData? data]) async {
 
