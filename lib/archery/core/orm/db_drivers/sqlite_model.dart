@@ -341,9 +341,6 @@ abstract class SQLiteModel {
 
       const allowedOps = ['=', '==', '!=', '<', '>', '<=', '>=', 'LIKE'];
       if (!allowedOps.contains(comp.toUpperCase()) && comp != "==") {
-        // Todo- Look out for quirks / inconsistent results before changing
-        // "==" is usually handled as "=" in SQL or logic
-        // Adjust logic if "==" is strictly Dart side or SQL side. SQLite uses "=".
         if (comp == "==") {
           comp = "=";
         } else {
@@ -577,7 +574,7 @@ abstract class SQLiteModel {
         return [];
       } finally {
       }
-    }, App());
+    });
   }
 
   static Future<List<T>> whereIn<T extends Model>({required String column, required List<dynamic> values }) async {

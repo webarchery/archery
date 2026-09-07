@@ -29,6 +29,7 @@
 
 // https://webarchery.dev
 
+
 import 'package:archery/archery/archery.dart';
 export 'pivot_tables.dart';
 export 'model_relationship.dart';
@@ -118,29 +119,18 @@ abstract class Model {
     uuid = json['uuid'] as String?;
 
     if (json['created_at'] != null) {
-      //  try here for DateTime.parse
       try {
         createdAt = DateTime.parse(json['created_at']);
       } catch (e) {
-        // Todo - more tests needed here to decide on created_at/updated_at formats
-        // Postgres returns a string which might not parse to date
-        // a string wont have datetime props and methods.
-        // considering a get createdAt =>
-        // first test seem to be passing... leaving for redundancy
-        // key your eye on datetime format behaviors from different dbs
-        // datetime might not be able to parse it!
         createdAt = json['created_at'];
       }
     }
 
     if (json['updated_at'] != null) {
-      //  try here for DateTime.parse
       try {
-        // updatedAt = json['updated_at'];
         updatedAt = DateTime.parse(json['updated_at']);
       } catch (e) {
-        // Todo - more tests needed here to decide on created_at/updated_at formats
-        // Postgres returns a string which might not parse to date
+
         updatedAt = json['updated_at'];
       }
     }

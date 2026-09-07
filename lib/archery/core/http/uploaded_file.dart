@@ -30,6 +30,7 @@
 // https://webarchery.dev
 
 import 'package:archery/archery/archery.dart';
+import 'package:path/path.dart' as p;
 
 /// Represents an uploaded file parsed from an incoming HTTP request.
 ///
@@ -258,7 +259,8 @@ base class UploadedFile {
       fileName = filename;
     }
 
-    final file = File('lib/src/http/public/$subDir/$fileName');
+    final path = p.join('lib/src/http/public', subDir, fileName);
+    final file = File(path);
 
     if (!await file.parent.exists()) {
       await file.parent.create(recursive: true);
@@ -292,7 +294,9 @@ base class UploadedFile {
       fileName = filename;
     }
 
-    final file = File('lib/src/storage/private/$subDir/$fileName');
+
+    final path = p.join('lib/src/storage/private', subDir, fileName);
+    final file = File(path);
 
     if (!await file.parent.exists()) {
       await file.parent.create(recursive: true);
@@ -348,7 +352,7 @@ base class UploadedFile {
   /// final key = await file.streamToS3(acl: S3Acl.private);
   /// print(key);
   /// ```
-  Future<String?> streamToS3({S3Acl acl = .private, bool autoName = true}) async {
+  Future<String?> streamToS3({S3Acl acl = .private, String? subDir, bool autoName = true}) async {
     final s3Client = App().make<S3Client>();
     final config = App().make<AppConfig>();
     final uuid = App().make<Uuid>();
@@ -363,11 +367,26 @@ base class UploadedFile {
       fileName = filename;
     }
 
-    final String key = "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
+
+    String key = '';
+
+    if(subDir != null && subDir.isNotEmpty) {
+
+      String sanitizedSubDir = '';
+
+      sanitizedSubDir = subDir.startsWith("/") ? subDir : "/$subDir";
+      sanitizedSubDir = sanitizedSubDir.endsWith("/") ? sanitizedSubDir : "$sanitizedSubDir/";
+      key = "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads$sanitizedSubDir$fileName";
+
+    } else {
+      key = "archery/web/app-${config.get('app.id', uuid.v4())}/storage/uploads/$fileName";
+    }
+
+
 
     if (await s3Client.putObject(
       key: key,
-      data: await _cachedBytes, // ← Stream directly to S3
+      data: await _cachedBytes,
       acl: acl,
       contentType: contentType,
     )) {

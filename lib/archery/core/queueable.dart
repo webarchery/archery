@@ -411,7 +411,6 @@ class QueueJob extends Model with InstanceDatabaseOps<QueueJob> {
   ///
   /// Parameters:
   /// - `job`: The async function to run in the isolate.
-  /// - `app`: Optional app instance, reserved for future use.
   ///
   /// Example:
   /// ```dart
@@ -420,7 +419,7 @@ class QueueJob extends Model with InstanceDatabaseOps<QueueJob> {
   /// }).then((result) => print(result));
   ///
   /// ```
-  static Future<dynamic> inline(IsolateJob job, [App? app]) async {
+  static Future<dynamic> inline(IsolateJob job) async {
     final receivePort = ReceivePort();
 
     await Isolate.spawn((SendPort sendPort) async {

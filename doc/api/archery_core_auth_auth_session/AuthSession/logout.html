@@ -54,8 +54,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
-<span class="name ">logout</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="logout-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+<span class="name ">logout</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="logout-param-request"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
       
@@ -63,24 +63,10 @@
     </section>
     
 <section class="desc markdown">
-  <p>Logs out the current session associated with the request.</p>
-<p>This method attempts to:</p>
-<ul>
-<li>locate the current session cookie</li>
-<li>remove the corresponding persisted session record</li>
-<li>remove the session from the in-memory registry</li>
-<li>clear the user bound to the current request session</li>
-</ul>
-<p>Returns <code>true</code> if a matching session was found and removed; otherwise
-returns <code>false</code>.</p>
-<p>Any exception during logout results in <code>false</code>.</p>
-<p>Example:</p>
-<pre class="language-dart"><code class="language-dart">final didLogout = await AuthSession.logout(request);
-
-if (didLogout) {
-  print('Session ended successfully');
-}
-</code></pre>
+  <p>Deletes the matching authentication session and clears guest-session state.</p>
+<p>Removes the cookie from request/response collections; it does not emit an
+expired browser cookie. A missing cookie succeeds, while an unknown token
+or a failed deletion returns <code>false</code>.</p>
 </section>
 
 
@@ -90,17 +76,36 @@ if (didLogout) {
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; logout(HttpRequest request) async {
   try {
     final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
-    final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
 
-    final session = authSessions?.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie?.value);
-
-    if (session != null) {
-      final sessionRecord = await Model.firstWhere&lt;AuthSession&gt;(field: &quot;email&quot;, value: session.email);
-      await sessionRecord?.delete();
-      authSessions?.remove(session);
-      request.thisSession?.user = null;
+    if (cookie == null) {
       return true;
     }
+
+    final containerSession = _checkContainer(cookie.value);
+
+    if (containerSession != null) {
+      _cachedSessions?.remove(containerSession);
+      request.cookies.remove(cookie);
+      request.response.cookies.remove(cookie);
+      request.thisSession?.user = null;
+      request.thisSession?.data.clear();
+      request.thisSession?.errors.clear();
+      request.thisSession?.flashMessages.clear();
+      return await containerSession.delete();
+    }
+
+    final dbSession = await _checkDB(cookie.value);
+
+    if (dbSession != null) {
+      request.cookies.remove(cookie);
+      request.response.cookies.remove(cookie);
+      request.thisSession?.user = null;
+      request.thisSession?.data.clear();
+      request.thisSession?.errors.clear();
+      request.thisSession?.flashMessages.clear();
+      return await dbSession.delete();
+    }
+
     return false;
   } catch (e) {
     return false;
@@ -133,7 +138,7 @@ if (didLogout) {
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

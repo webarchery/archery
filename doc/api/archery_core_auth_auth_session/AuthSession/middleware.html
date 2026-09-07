@@ -54,9 +54,9 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
-<span class="name ">middleware</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span></li>
-<li><span class="parameter" id="middleware-param-next"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a></span>
+<span class="name ">middleware</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="middleware-param-request"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span>, </span></li>
+<li><span class="parameter" id="middleware-param-next"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span> <span class="parameter-name">next</span>()</span></li>
 </ol>)
 
       
@@ -68,7 +68,7 @@
 <p>This middleware:</p>
 <ul>
 <li>verifies the session cookie exists</li>
-<li>ensures an in-memory session is available</li>
+<li>ensures an in-memory/db session is available</li>
 <li>checks that the session matches the cookie</li>
 <li>validates the session timeout window</li>
 <li>refreshes the last-activity timestamp before continuing</li>
@@ -84,7 +84,7 @@ login flow.</p>
 <pre class="language-dart"><code class="language-dart">router.get(
   '/dashboard',
   handler: (request) async =&gt; dashboardController.index(request),
-  middleware: [AuthSession.middleware],
+  middleware: [Auth.middleware],
 );
 </code></pre>
 </section>
@@ -94,34 +94,11 @@ login flow.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; middleware(HttpRequest request, Future&lt;void&gt; Function() next) async {
-  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
-
-  if (cookie == null) {
-    await logout(request);
-    return request.redirectToLogin();
+  if (await check(request)) {
+    return await next();
   }
 
-  final authSessions = App().tryMake&lt;List&lt;AuthSession&gt;&gt;();
-
-  if (authSessions == null || authSessions.isEmpty) {
-    await logout(request);
-    return request.redirectToLogin();
-  }
-
-  final session = authSessions.firstWhereOrNull((session) =&gt; session.cookie?.value == cookie.value);
-
-  if (session == null) {
-    await logout(request);
-    return request.redirectToLogin();
-  }
-
-  if (!_validateSession(session)) {
-    await logout(request);
-    return request.redirectToLogin();
-  }
-
-  session.lastActivity = DateTime.now();
-  await next();
+  return request.redirectToLogin();
 }</code></pre>
 </section>
 
@@ -150,7 +127,7 @@ login flow.</p>
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

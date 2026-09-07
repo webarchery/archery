@@ -27,17 +27,8 @@ final class User extends Model with InstanceDatabaseOps<User> {
   /// Passwords passed into the primary constructor are hashed automatically.
   String? password;
 
-  /// Resolves all roles attached to this user through the user/role pivot
-  /// table.
-  ///
-  /// Example:
-  /// ```dart
-  /// final roles = await user.roles;
-  /// print(roles.length);
-  /// ```
-  Future<List<Role>> get roles async {
-    return belongsToMany<Role>(table: UserRolePivotTable());
-  }
+
+
 
   /// Creates a new user instance.
   ///
@@ -108,6 +99,8 @@ final class User extends Model with InstanceDatabaseOps<User> {
       'updated_at': updatedAt?.toIso8601String(),
     };
   }
+
+
 
 
 

@@ -30,12 +30,12 @@
 // https://webarchery.dev
 import 'package:archery/archery/archery.dart';
 import 'package:archery/archery/core/http/middleware/flash_messages_middleware.dart';
+import 'package:archery/src/database/migrations/providers/pgsql_migrations_provider.dart';
+import 'package:archery/src/database/seeders/roles_table_seeder_provider.dart';
+import 'package:archery/src/database/tables/user_role_pivot_table_provider.dart';
 import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 import 'package:archery/src/database/migrations/providers/sqlite_migrations_provider.dart';
-
-
-
 
 Future<void> main(List<String> args) async {
   // ----------------
@@ -56,7 +56,8 @@ Future<void> main(List<String> args) async {
   ]);
 
   app.registerGroup("migrations", [
-    SqliteMigrationsProvider(),
+    ?Model.defaultDisk == .sqlite ? SqliteMigrationsProvider() : null,
+    ?Model.defaultDisk == .pgsql ? PgsqlMigrationsProvider() : null,
     // PgsqlMigrationsProvider(),
     // JsonFileModelsMigrationsProvider(),
   ]);
@@ -71,9 +72,8 @@ Future<void> main(List<String> args) async {
 
   await app.boot().then((_) async {
 
-    // NOTE - protect server after a reboot
-    await Model.truncate<Session>();
-    await Model.truncate<AuthSession>();
+    // await Model.truncate<Session>();
+    // await Model.truncate<AuthSession>();
 
     app.container.bindInstance<List<Session>>([]);
     app.container.bindInstance<List<AuthSession>>([]);
@@ -90,13 +90,11 @@ Future<void> main(List<String> args) async {
   apiRoutes(router);
 
   // pass router to kernel
-  final kernel = AppKernel(
-      router: router,
-      middleware: [
-        FlashMessaging.middleware,
-        VerifyCsrfToken.middleware,
-
-      ]);
+  final kernel = AppKernel(router: router, middleware: [
+    WebSession.middleware,
+    FlashMessaging.middleware,
+    VerifyCsrfToken.middleware
+  ]);
 
   // init port & static files server
   final port = config.get('server.port') ?? 5502;
@@ -108,8 +106,9 @@ Future<void> main(List<String> args) async {
 
   try {
     return HttpServer.bind(InternetAddress.loopbackIPv4, port, shared: true).then((server) async {
-
       server.autoCompress = config.get('server.compress', true);
+
+
 
       server.defaultResponseHeaders.clear(); // Clear Dart's defaults if needed
       server.defaultResponseHeaders.add('X-Content-Type-Options', 'nosniff');
@@ -117,10 +116,11 @@ Future<void> main(List<String> args) async {
       server.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
       server.defaultResponseHeaders.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
+      AppKernel.server = server;
+
       print('🔥 Archery server running at http://localhost:$port');
 
       await for (HttpRequest request in server) {
-
         request.response.persistentConnection = true;
 
         if (request.method == 'OPTIONS') {
@@ -137,4 +137,3 @@ Future<void> main(List<String> args) async {
     await App().shutdown().then((_) => print("App has shut down from a server initialization error"));
   }
 }
-

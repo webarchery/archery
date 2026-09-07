@@ -54,70 +54,71 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../archery_core_auth_auth_session/Session-class.html">Session</a>?</span>&gt;</span></span>
-<span class="name ">init</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="init-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../archery_core_auth_auth_session/Session-class.html">Session</a>?</span>&gt;</span></span>
+<span class="name ">init</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="init-param-request"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Restores or creates a guest session, refreshing activity on each reuse.</p>
+<p>Requests under <code>/api/</code> do not receive a guest session. Expired records are
+deleted and replaced with a new session and cookie.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;Session?&gt; init(HttpRequest request) async {
-
-
-  if(request.uri.path.startsWith(&#39;&#47;api&#47;&#39;)) {
+  &#47;&#47; API routes bypass browser guest-session initialization.
+  if (request.uri.path.startsWith(&#39;&#47;api&#47;&#39;)) {
     return null;
   }
 
-
-
   final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_guest_session&quot;);
-  final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
 
+  &#47;&#47; A first-time visitor has no session token to restore.
   if (cookie == null) {
-    final session = Session(token: App.generateKey());
-    await session.save();
-    sessions?.add(session);
-    request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-    request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-    return session;
-  } else {
-    final session = sessions?.firstWhereOrNull((session) =&gt; session.token == cookie.value);
-    if (session != null) {
-      session.lastActivity = DateTime.now();
-      await session.save();
-      request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      return session;
-    }
+    return await _createNewSession(request);
   }
 
-  if (sessions != null &amp;&amp; sessions.isEmpty) {
-    final sessionRecord = await Model.firstWhere&lt;Session&gt;(field: &quot;token&quot;, value: cookie.value);
+  &#47;&#47; Prefer the shared in-memory instance when it is available.
+  final containerSession = _checkContainer(cookie.value);
 
-    if (sessionRecord != null) {
-      sessionRecord.lastActivity = DateTime.now();
-      await sessionRecord.save();
-      sessions.add(sessionRecord);
-      request.cookies.add(Cookie(&quot;archery_guest_session&quot;, sessionRecord.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, sessionRecord.token));
-      return sessionRecord;
-    } else {
-      final session = Session(token: App.generateKey());
-      await session.save();
-      sessions.add(session);
-      request.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      request.response.cookies.add(Cookie(&quot;archery_guest_session&quot;, session.token));
-      return session;
+  if (containerSession != null) {
+    if (_validateSession(containerSession)) {
+      containerSession.lastActivity = DateTime.now();
+      await containerSession.save();
+      return containerSession;
     }
+
+    await containerSession.delete();
+    _containerSessions?.remove(containerSession);
+    return await _createNewSession(request);
   }
 
-  return null;
+  &#47;&#47; Restore persisted sessions that are absent from the container cache.
+
+  final dbSession = await _checkDB(cookie.value);
+
+  if (dbSession != null) {
+    if (_validateSession(dbSession)) {
+      dbSession.lastActivity = DateTime.now();
+      _containerSessions?.add(dbSession);
+      await dbSession.save();
+      return dbSession;
+    }
+
+    await dbSession.delete();
+    return await _createNewSession(request);
+  }
+
+  &#47;&#47; An unknown cookie token is replaced rather than reused.
+
+  return await _createNewSession(request);
 }</code></pre>
 </section>
 
@@ -146,7 +147,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

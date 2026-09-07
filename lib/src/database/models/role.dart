@@ -231,4 +231,17 @@ extension HasRole on User {
     return {...toJson(), 'roles': await roles};
   }
 
+  /// Resolves all roles attached to this user through the user/role pivot
+  /// table.
+  ///
+  /// Example:
+  /// ```dart
+  /// final roles = await user.roles;
+  /// print(roles.length);
+  /// ```
+  Future<List<Role>> get roles async {
+    return await belongsToMany<Role>(table: UserRolePivotTable());
+  }
+
+
 }

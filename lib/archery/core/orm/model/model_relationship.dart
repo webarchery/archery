@@ -416,6 +416,7 @@ extension ModelRelationshipOps on Model {
             case .sqlite:
             case .pgsql:
               final childField = "${childPrefix}_id";
+
               return await sibling.update(withJson: {childField: null});
 
             case .file:
@@ -423,6 +424,7 @@ extension ModelRelationshipOps on Model {
               final childField = "${childPrefix}_uuid";
               return await sibling.update(withJson: {childField: null});
           }
+
 
         case .belongsToOne:
 
@@ -533,6 +535,8 @@ extension ModelRelationshipOps on Model {
     }
 
   }
+
+
 
 }
 

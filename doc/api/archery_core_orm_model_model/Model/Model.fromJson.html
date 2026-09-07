@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-      <span class="name ">Model.fromJson</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="fromJson-param-json"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">json</span></span></li>
+      <span class="name ">Model.fromJson</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="fromJson-param-json"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">json</span></span></li>
 </ol>)
     </section>
     
@@ -73,29 +73,18 @@
   uuid = json[&#39;uuid&#39;] as String?;
 
   if (json[&#39;created_at&#39;] != null) {
-    &#47;&#47;  try here for DateTime.parse
     try {
       createdAt = DateTime.parse(json[&#39;created_at&#39;]);
     } catch (e) {
-      &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
-      &#47;&#47; Postgres returns a string which might not parse to date
-      &#47;&#47; a string wont have datetime props and methods.
-      &#47;&#47; considering a get createdAt =&gt;
-      &#47;&#47; first test seem to be passing... leaving for redundancy
-      &#47;&#47; key your eye on datetime format behaviors from different dbs
-      &#47;&#47; datetime might not be able to parse it!
       createdAt = json[&#39;created_at&#39;];
     }
   }
 
   if (json[&#39;updated_at&#39;] != null) {
-    &#47;&#47;  try here for DateTime.parse
     try {
-      &#47;&#47; updatedAt = json[&#39;updated_at&#39;];
       updatedAt = DateTime.parse(json[&#39;updated_at&#39;]);
     } catch (e) {
-      &#47;&#47; Todo - more tests needed here to decide on created_at&#47;updated_at formats
-      &#47;&#47; Postgres returns a string which might not parse to date
+
       updatedAt = json[&#39;updated_at&#39;];
     }
   }
@@ -127,7 +116,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

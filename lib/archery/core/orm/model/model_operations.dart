@@ -34,6 +34,8 @@ import 'package:archery/archery/archery.dart';
 /// This mixin forwards instance operations (`save`, `update`, `delete`) to the
 /// static Archery ORM functions while respecting the model's configured [disk]
 /// (or an explicitly provided disk override).
+///
+
 mixin InstanceDatabaseOps<T extends Model> on Model {
   @override
   Future<bool> save({DatabaseDisk? disk}) async => await Model.saveInstance<T>(instance: this as T, disk: disk ?? this.disk);

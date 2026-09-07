@@ -54,8 +54,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
-<span class="name ">check</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="check-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>&gt;</span></span>
+<span class="name ">check</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="check-param-request"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
       
@@ -64,11 +64,9 @@
     
 <section class="desc markdown">
   <p>Determines whether the request is currently authenticated.</p>
-<p>This is a convenience wrapper around <a href="../../archery_core_auth_auth_session/AuthSession/user.html">user</a>.</p>
-<p>Returns <code>true</code> when a valid authenticated user can be resolved;
-otherwise returns <code>false</code>.</p>
+<p>This checks the session record without looking up the associated user.</p>
 <p>Example:</p>
-<pre class="language-dart"><code class="language-dart">if (await AuthSession.check(request)) {
+<pre class="language-dart"><code class="language-dart">if (await Auth.check(request)) {
   print('User is authenticated');
 } else {
   print('Guest request');
@@ -81,7 +79,35 @@ otherwise returns <code>false</code>.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; check(HttpRequest request) async {
-  return await user(request) != null;
+  final cookie = request.cookies.firstWhereOrNull((cookie) =&gt; cookie.name == &quot;archery_session&quot;);
+
+  if (cookie == null) {
+    return false;
+  }
+
+  final containerSession = _checkContainer(cookie.value);
+  if (containerSession != null) {
+    if (!_validateSession(containerSession)) {
+      await logout(request);
+      return false;
+    }
+
+    containerSession.lastActivity = DateTime.now();
+    return await containerSession.save();
+  }
+
+  final sessionRecord = await _checkDB(cookie.value);
+  if (sessionRecord != null) {
+    if (!_validateSession(sessionRecord)) {
+      await logout(request);
+      return false;
+    }
+    sessionRecord.lastActivity = DateTime.now();
+    _cachedSessions?.add(sessionRecord);
+    return await sessionRecord.save();
+  }
+
+  return false;
 }</code></pre>
 </section>
 
@@ -110,7 +136,7 @@ otherwise returns <code>false</code>.</p>
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

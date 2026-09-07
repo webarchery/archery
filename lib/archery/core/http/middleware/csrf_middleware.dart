@@ -131,8 +131,7 @@ base class VerifyCsrfToken {
 
     // Check input
     try {
-      final form = request.form();
-      final inputToken = await form.input('_token');
+      final inputToken = await request.form.input('_token');
 
       if (inputToken != null) return inputToken.toString();
     } catch (e) {

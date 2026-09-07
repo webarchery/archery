@@ -100,3 +100,18 @@
   - template directive old('<name>') planned
 - Queue
   - A functional approach to Queues
+
+## 1.6.0
+- Template Engine rewrite
+  - From regex based template parsing to AST 
+- Sessions and Auth rewrite
+  - From single auth session to multi-auth sessions
+  - user remains logged in on server restart
+- request.form() to request.form
+  - changed extension from method to getter to expressiveness
+- frontend assets
+  - added support for css/js with vite
+  - adopted alpine js and tailwind by default
+- AppStatus.shuttingDown to AppStatus.shutdown
+- App.env as static getter
+- Cleanup at shutdown

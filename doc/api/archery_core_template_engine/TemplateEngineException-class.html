@@ -55,7 +55,7 @@
 
     
 <section class="desc markdown">
-  <p>Exception thrown by <a href="../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a> during rendering.</p>
+  <p>An error raised while locating, parsing, or rendering a template.</p>
 </section>
 
 
@@ -67,7 +67,7 @@
   <dt>Implemented types</dt>
   <dd>
     <ul class="comma-separated clazz-relationships">
-        <li><a href="https://api.dart.dev/stable/3.10.9/dart-core/Exception-class.html">Exception</a></li>
+        <li><a href="https://api.flutter.dev/flutter/dart-core/Exception-class.html">Exception</a></li>
     </ul>
   </dd>
         
@@ -85,22 +85,28 @@
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="TemplateEngineException.new" class="callable">
-          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.html">TemplateEngineException</a></span><span class="signature">(<span class="parameter" id="-param-message"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">message</span></span>)</span>
+          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.html">TemplateEngineException</a></span><span class="signature">(<span class="parameter" id="param-message"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">message</span></span>)</span>
         </dt>
         <dd>
-          
+          Creates a template exception with <code>message</code>.
+        </dd>
+        <dt id="TemplateEngineException.parseError" class="callable">
+          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.parseError.html">TemplateEngineException.parseError</a></span><span class="signature">(<span class="parameter" id="parseError-param-m"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">m</span></span>)</span>
+        </dt>
+        <dd>
+          Creates an exception for invalid template or expression syntax.
         </dd>
         <dt id="TemplateEngineException.templateNotFound" class="callable">
-          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.templateNotFound.html">TemplateEngineException.templateNotFound</a></span><span class="signature">(<span class="parameter" id="templateNotFound-param-errorMessage"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">errorMessage</span></span>)</span>
+          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.templateNotFound.html">TemplateEngineException.templateNotFound</a></span><span class="signature">(<span class="parameter" id="templateNotFound-param-m"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">m</span></span>)</span>
         </dt>
         <dd>
-          Thrown when a template file cannot be located.
+          Creates an exception for a template file that cannot be found.
         </dd>
         <dt id="TemplateEngineException.variableNotFound" class="callable">
-          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.variableNotFound.html">TemplateEngineException.variableNotFound</a></span><span class="signature">(<span class="parameter" id="variableNotFound-param-errorMessage"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">errorMessage</span></span>)</span>
+          <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/TemplateEngineException.variableNotFound.html">TemplateEngineException.variableNotFound</a></span><span class="signature">(<span class="parameter" id="variableNotFound-param-m"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">m</span></span>)</span>
         </dt>
         <dd>
-          Thrown when a variable is referenced but not present in data.
+          Creates an exception for a variable that cannot be resolved.
         </dd>
     </dl>
   </section>
@@ -111,8 +117,8 @@
     <h2>Properties</h2>
     <dl class="properties">
         <dt id="hashCode" class="property inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
   
 
 </dt>
@@ -124,19 +130,19 @@
 
         <dt id="message" class="property">
   <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/message.html">message</a></span>
-  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>
   
 
 </dt>
 <dd>
-  
+  A human-readable description of the template error.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
 
         <dt id="runtimeType" class="property inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
   
 
 </dt>
@@ -156,7 +162,7 @@
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="noSuchMethod" class="callable inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
   </span>
   
@@ -170,7 +176,7 @@
 
         <dt id="toString" class="callable">
   <span class="name"><a href="../archery_core_template_engine/TemplateEngineException/toString.html">toString</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
 
@@ -190,8 +196,8 @@
     <h2>Operators</h2>
     <dl class="callables">
         <dt id="operator ==" class="callable inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   </span>
   
 
@@ -231,7 +237,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

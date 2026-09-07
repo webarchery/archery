@@ -54,9 +54,10 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a>?</span>&gt;</span></span>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>&gt;</span></span>
 <span class="name ">streamToS3</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="streamToS3-param-acl"><span class="type-annotation"><a href="../../archery_packages_aws_s3_client/S3Acl.html">S3Acl</a></span> <span class="parameter-name">acl</span> = <span class="default-value">.private</span>, </span></li>
-<li><span class="parameter" id="streamToS3-param-autoName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoName</span> = <span class="default-value">true</span>, </span></li>
+<li><span class="parameter" id="streamToS3-param-subDir"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">subDir</span>, </span></li>
+<li><span class="parameter" id="streamToS3-param-autoName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoName</span> = <span class="default-value">true</span>, </span></li>
 </ol>})
 
       
@@ -80,7 +81,7 @@ print(key);
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;String?&gt; streamToS3({S3Acl acl = .private, bool autoName = true}) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;String?&gt; streamToS3({S3Acl acl = .private, String? subDir, bool autoName = true}) async {
   final s3Client = App().make&lt;S3Client&gt;();
   final config = App().make&lt;AppConfig&gt;();
   final uuid = App().make&lt;Uuid&gt;();
@@ -95,11 +96,26 @@ print(key);
     fileName = filename;
   }
 
-  final String key = &quot;archery&#47;web&#47;app-${config.get(&#39;app.id&#39;, uuid.v4())}&#47;storage&#47;uploads&#47;$fileName&quot;;
+
+  String key = &#39;&#39;;
+
+  if(subDir != null &amp;&amp; subDir.isNotEmpty) {
+
+    String sanitizedSubDir = &#39;&#39;;
+
+    sanitizedSubDir = subDir.startsWith(&quot;&#47;&quot;) ? subDir : &quot;&#47;$subDir&quot;;
+    sanitizedSubDir = sanitizedSubDir.endsWith(&quot;&#47;&quot;) ? sanitizedSubDir : &quot;$sanitizedSubDir&#47;&quot;;
+    key = &quot;archery&#47;web&#47;app-${config.get(&#39;app.id&#39;, uuid.v4())}&#47;storage&#47;uploads$sanitizedSubDir$fileName&quot;;
+
+  } else {
+    key = &quot;archery&#47;web&#47;app-${config.get(&#39;app.id&#39;, uuid.v4())}&#47;storage&#47;uploads&#47;$fileName&quot;;
+  }
+
+
 
   if (await s3Client.putObject(
     key: key,
-    data: await _cachedBytes, &#47;&#47; ← Stream directly to S3
+    data: await _cachedBytes,
     acl: acl,
     contentType: contentType,
   )) {
@@ -134,7 +150,7 @@ print(key);
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

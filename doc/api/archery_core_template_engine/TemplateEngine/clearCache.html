@@ -61,14 +61,15 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Removes all parsed templates from the in-memory AST cache.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void clearCache() {
-  _cache.clear();
-}</code></pre>
+  <pre class="language-dart"><code class="language-dart">void clearCache() =&gt; _astCache.clear();</code></pre>
 </section>
 
 
@@ -96,7 +97,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

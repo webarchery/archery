@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Archery • Welcome</title>
 
-    <!-- Tailwind via CDN for new apps; swap to a compiled build in production -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <!-- Color scheme: follow system by default -->
@@ -27,8 +26,16 @@
         }
     </style>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js" defer></script>
+
+
+<!--    Dark mode only works with this enabled-->
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
 
 
 </head>
@@ -42,18 +49,11 @@
         @include('includes._main-header')
         <!-- Hero -->
         <section class="mt-16">
-            <p class="text-xs opacity-75">{{ session.user.name }}</p>
 
             <h1 class="text-3xl sm:text-4xl font-black tracking-tight animate__animated animate__slideInLeft">
                 You’re up and running.
             </h1>
 
-
-
-            <div class="my-8">
-
-
-            </div>
 
 
             <p class="mt-3 text-zinc-600 dark:text-zinc-400 max-w-prose">
@@ -65,7 +65,7 @@
             <div class="mt-8 flex flex-wrap items-center gap-3">
 
 
-                <a href="https://webarchery.dev"
+                <a href="https://docs.webarchery.dev"
                    class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium bg-stone-700 text-zinc-100 hover:bg-zinc-800 active:bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                          class="size-4 text-yellow-400 dark:text-red-500">
@@ -131,6 +131,8 @@
                 </div>
             </div>
         </section>
+
+
 
         <section class="mt-16">
             @include('includes._main-footer')

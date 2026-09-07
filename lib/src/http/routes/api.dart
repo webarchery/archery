@@ -17,7 +17,7 @@ void apiRoutes(Router router) {
       });
 
       router.get('/json', (request) async {
-        return request.json({"name": "Archery Web Framework", "version": "1.5.0"});
+        return request.json({"name": "Archery Web Framework", "version": "1.6.0"});
       });
     },
   );

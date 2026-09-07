@@ -30,291 +30,808 @@
 // https://webarchery.dev
 import 'package:archery/archery/archery.dart';
 
-/// Exception thrown by [TemplateEngine] during rendering.
+/// An error raised while locating, parsing, or rendering a template.
 base class TemplateEngineException implements Exception {
+  /// A human-readable description of the template error.
   String? message;
 
+  /// Creates a template exception with [message].
   TemplateEngineException(this.message);
 
-  /// Thrown when a variable is referenced but not present in data.
-  TemplateEngineException.variableNotFound(String? errorMessage)
-      : message = errorMessage;
+  /// Creates an exception for a variable that cannot be resolved.
+  TemplateEngineException.variableNotFound(String? m) : message = m;
 
-  /// Thrown when a template file cannot be located.
-  TemplateEngineException.templateNotFound(String? errorMessage)
-      : message = errorMessage;
+  /// Creates an exception for a template file that cannot be found.
+  TemplateEngineException.templateNotFound(String? m) : message = m;
+
+  /// Creates an exception for invalid template or expression syntax.
+  TemplateEngineException.parseError(String? m) : message = m;
 
   @override
-  String toString() {
-    return "Template Error: $message";
+  String toString() => "Template Error: $message";
+}
+
+/// Base type for expressions embedded in template output and directives.
+abstract class Expr {}
+
+/// An expression containing a constant string, number, boolean, or null value.
+class LiteralExpr extends Expr {
+  /// The constant value represented by this expression.
+  final dynamic value;
+
+  /// Creates a literal expression containing [value].
+  LiteralExpr(this.value);
+}
+
+/// A reference to a value in the render context.
+///
+/// Dotted references such as `user.profile.name` are stored as individual
+/// path segments and resolved during rendering.
+class VariableExpr extends Expr {
+  /// The ordered segments of the dotted variable path.
+  final List<String> path;
+
+  /// Creates a variable reference from [path].
+  VariableExpr(this.path);
+}
+
+/// A logical negation expression, such as `!user.isActive`.
+class UnaryNotExpr extends Expr {
+  /// The expression whose truthiness is negated.
+  final Expr operand;
+
+  /// Creates a logical negation of [operand].
+  UnaryNotExpr(this.operand);
+}
+
+/// An expression that applies a binary operator to two operands.
+class BinaryExpr extends Expr {
+  /// The expression evaluated on the left of [op].
+  final Expr left;
+
+  /// The arithmetic, equality, or comparison operator.
+  ///
+  /// Supported values are `+`, `-`, `*`, `/`, `==`, `!=`, `<`, `<=`, `>`,
+  /// and `>=`.
+  final String op;
+
+  /// The expression evaluated on the right of [op].
+  final Expr right;
+
+  /// Creates a binary expression from [left], [op], and [right].
+  BinaryExpr(this.left, this.op, this.right);
+}
+
+enum _ExprTokenType { number, string, ident, op, lparen, rparen, eof }
+
+class _ExprToken {
+  final _ExprTokenType type;
+  final dynamic value;
+  _ExprToken(this.type, this.value);
+}
+
+List<_ExprToken> _lexExpr(String src) {
+  final tokens = <_ExprToken>[];
+  int i = 0;
+  bool isIdentStart(String c) => RegExp(r'[a-zA-Z_]').hasMatch(c);
+  bool isIdentPart(String c) => RegExp(r'[a-zA-Z0-9_]').hasMatch(c);
+
+  while (i < src.length) {
+    final c = src[i];
+
+    if (c == ' ' || c == '\t' || c == '\n') {
+      i++;
+      continue;
+    }
+
+    if (c == "'" || c == '"') {
+      final quote = c;
+      final sb = StringBuffer();
+      i++;
+      while (i < src.length && src[i] != quote) {
+        sb.write(src[i]);
+        i++;
+      }
+      i++;
+      tokens.add(_ExprToken(_ExprTokenType.string, sb.toString()));
+      continue;
+    }
+
+    if (RegExp(r'[0-9]').hasMatch(c)) {
+      final start = i;
+      while (i < src.length && RegExp(r'[0-9.]').hasMatch(src[i])) {
+        i++;
+      }
+      final text = src.substring(start, i);
+      tokens.add(_ExprToken(_ExprTokenType.number, num.parse(text)));
+      continue;
+    }
+
+    if (isIdentStart(c)) {
+      final sb = StringBuffer();
+      while (i < src.length && isIdentPart(src[i])) {
+        sb.write(src[i]);
+        i++;
+      }
+      while (i < src.length &&
+          src[i] == '.' &&
+          i + 1 < src.length &&
+          isIdentStart(src[i + 1])) {
+        sb.write('.');
+        i++;
+        while (i < src.length && isIdentPart(src[i])) {
+          sb.write(src[i]);
+          i++;
+        }
+      }
+      if (i + 1 < src.length && src[i] == '(' && src[i + 1] == ')') {
+        i += 2;
+      }
+      tokens.add(_ExprToken(_ExprTokenType.ident, sb.toString()));
+      continue;
+    }
+
+    if (i + 1 < src.length) {
+      final two = src.substring(i, i + 2);
+      if (['==', '!=', '<=', '>='].contains(two)) {
+        tokens.add(_ExprToken(_ExprTokenType.op, two));
+        i += 2;
+        continue;
+      }
+    }
+
+    if (c == '(') {
+      tokens.add(_ExprToken(_ExprTokenType.lparen, c));
+      i++;
+      continue;
+    }
+    if (c == ')') {
+      tokens.add(_ExprToken(_ExprTokenType.rparen, c));
+      i++;
+      continue;
+    }
+    if ('+-*/<>!'.contains(c)) {
+      tokens.add(_ExprToken(_ExprTokenType.op, c));
+      i++;
+      continue;
+    }
+
+    throw TemplateEngineException.parseError(
+      "Unexpected character '$c' in expression: $src",
+    );
+  }
+
+  tokens.add(_ExprToken(_ExprTokenType.eof, null));
+  return tokens;
+}
+
+/// Parses the expression language used inside template tags and directives.
+///
+/// Operators follow conventional precedence: unary negation, multiplication
+/// and division, addition and subtraction, comparisons, then equality.
+class ExprParser {
+  final List<_ExprToken> _tokens;
+  int _pos = 0;
+
+  /// Creates a parser and tokenizes [source].
+  ExprParser(String source) : _tokens = _lexExpr(source);
+
+  _ExprToken get _cur => _tokens[_pos];
+
+  /// Parses [source] and returns its expression tree.
+  ///
+  /// Throws [TemplateEngineException] when the expression is malformed.
+  Expr parse() {
+    final e = _equality();
+    return e;
+  }
+
+  Expr _equality() {
+    var left = _comparison();
+    while (_cur.type == _ExprTokenType.op &&
+        (_cur.value == '==' || _cur.value == '!=')) {
+      final op = _cur.value as String;
+      _pos++;
+      left = BinaryExpr(left, op, _comparison());
+    }
+    return left;
+  }
+
+  Expr _comparison() {
+    var left = _additive();
+    while (_cur.type == _ExprTokenType.op &&
+        ['<', '<=', '>', '>='].contains(_cur.value)) {
+      final op = _cur.value as String;
+      _pos++;
+      left = BinaryExpr(left, op, _additive());
+    }
+    return left;
+  }
+
+  Expr _additive() {
+    var left = _multiplicative();
+    while (_cur.type == _ExprTokenType.op &&
+        (_cur.value == '+' || _cur.value == '-')) {
+      final op = _cur.value as String;
+      _pos++;
+      left = BinaryExpr(left, op, _multiplicative());
+    }
+    return left;
+  }
+
+  Expr _multiplicative() {
+    var left = _unary();
+    while (_cur.type == _ExprTokenType.op &&
+        (_cur.value == '*' || _cur.value == '/')) {
+      final op = _cur.value as String;
+      _pos++;
+      left = BinaryExpr(left, op, _unary());
+    }
+    return left;
+  }
+
+  Expr _unary() {
+    if (_cur.type == _ExprTokenType.op && _cur.value == '!') {
+      _pos++;
+      return UnaryNotExpr(_unary());
+    }
+    return _primary();
+  }
+
+  Expr _primary() {
+    final t = _cur;
+    switch (t.type) {
+      case _ExprTokenType.number:
+        _pos++;
+        return LiteralExpr(t.value);
+      case _ExprTokenType.string:
+        _pos++;
+        return LiteralExpr(t.value);
+      case _ExprTokenType.ident:
+        _pos++;
+        if (t.value == 'true') return LiteralExpr(true);
+        if (t.value == 'false') return LiteralExpr(false);
+        if (t.value == 'null') return LiteralExpr(null);
+        return VariableExpr((t.value as String).split('.'));
+      case _ExprTokenType.lparen:
+        _pos++;
+        final inner = _equality();
+        if (_cur.type != _ExprTokenType.rparen) {
+          throw TemplateEngineException.parseError('Expected ) in expression');
+        }
+        _pos++;
+        return inner;
+      default:
+      // Empty expression, e.g. {{ }} — treat as empty string literal.
+        return LiteralExpr('');
+    }
   }
 }
 
-/// A powerful, Laravel Blade-inspired templating engine for Dart.
+/// Base type for nodes in a parsed template.
+abstract class Node {}
+
+/// A literal block of template text.
+class TextNode extends Node {
+  /// The text emitted exactly as it appears in the template.
+  final String text;
+
+  /// Creates a text node containing [text].
+  TextNode(this.text);
+}
+
+/// An expression whose result is written to the rendered output.
+class OutputNode extends Node {
+  /// The expression evaluated when this node is rendered.
+  final Expr expression;
+
+  /// Whether HTML-sensitive characters in the result are escaped.
+  final bool escaped;
+
+  /// Creates an output node for [expression].
+  OutputNode(this.expression, this.escaped);
+}
+
+/// A conditional block created from an `@if` directive.
+class IfNode extends Node {
+  /// The expression used to select a branch.
+  final Expr condition;
+
+  /// Nodes rendered when [condition] is truthy.
+  final List<Node> thenBranch;
+
+  /// Nodes rendered when [condition] is falsey.
+  final List<Node> elseBranch;
+
+  /// Creates a conditional node with its two possible branches.
+  IfNode(this.condition, this.thenBranch, this.elseBranch);
+}
+
+/// A loop created from an `@foreach(item in collection)` directive.
+class ForeachNode extends Node {
+  /// The context variable assigned to each collection element.
+  final String itemName;
+
+  /// The expression that resolves to the collection being iterated.
+  final Expr collection;
+
+  /// The nodes rendered once for each collection element.
+  final List<Node> body;
+
+  /// Creates a loop over [collection], binding each value to [itemName].
+  ForeachNode(this.itemName, this.collection, this.body);
+}
+
+/// A named content block supplied to a layout.
+class SectionNode extends Node {
+  /// The name used to match this section to a [YieldNode].
+  final String name;
+
+  /// The content belonging to this section.
+  final List<Node> body;
+
+  /// Creates a section named [name].
+  SectionNode(this.name, this.body);
+}
+
+/// A layout placeholder populated by a matching [SectionNode].
+class YieldNode extends Node {
+  /// The name of the section to render at this location.
+  final String name;
+
+  /// Creates a placeholder for the section called [name].
+  YieldNode(this.name);
+}
+
+/// A reference to another template that should be rendered inline.
+class IncludeNode extends Node {
+  /// The dot-delimited name of the included template.
+  final String templateName;
+
+  /// Optional raw data text supplied after the template name.
+  ///
+  /// The parser preserves this value for future evaluation; the current
+  /// renderer passes the existing render context to included templates.
+  final String? dataJson;
+
+  /// Creates an include node for [templateName].
+  IncludeNode(this.templateName, this.dataJson);
+}
+
+/// A directive that emits a hidden CSRF-token input.
+class CsrfNode extends Node {}
+
+/// The root of a parsed template.
+class TemplateNode {
+  /// Top-level nodes in source order.
+  final List<Node> children;
+
+  /// Optional dot-delimited layout name declared by `@layout`.
+  final String? layoutName;
+
+  /// Creates a template root with [children] and an optional [layoutName].
+  TemplateNode(this.children, this.layoutName);
+}
+
+// --- Template tokenizer ----------------------------------------------------
+
+enum _TokenType { text, output, directive, eof }
+
+class _Token {
+  final _TokenType type;
+  final String? text;
+  final bool escaped;
+  final String? name;
+  final String? args;
+  _Token.text(this.text)
+      : type = _TokenType.text,
+        escaped = false,
+        name = null,
+        args = null;
+
+  _Token.output(this.text, this.escaped)
+      : type = _TokenType.output,
+        name = null,
+        args = null;
+
+  _Token.directive(this.name, this.args)
+      : type = _TokenType.directive,
+        text = null,
+        escaped = false;
+
+  _Token.eof()
+      : type = _TokenType.eof,
+        text = null,
+        escaped = false,
+        name = null,
+        args = null;
+}
+
+const _directiveNames =
+    'if|else|endif|foreach|endforeach|section|endsection|yield|include|csrf|layout|unless|endunless';
+final RegExp _tokenPattern = RegExp(
+  r'\{!!\s*(.*?)\s*!!\}'
+  r'|\{\{\s*(.*?)\s*\}\}'
+  r'|@@'
+  '|@($_directiveNames)(?!\\w)(\\((?:[^()]|\\([^()]*\\))*\\))?',
+  dotAll: true,
+);
+
+List<_Token> _tokenizeTemplate(String source) {
+  final tokens = <_Token>[];
+  int pos = 0;
+
+  for (final m in _tokenPattern.allMatches(source)) {
+    if (m.start > pos) {
+      tokens.add(_Token.text(source.substring(pos, m.start)));
+    }
+    if (m.group(1) != null) {
+      tokens.add(_Token.output(m.group(1)!, false));
+    } else if (m.group(2) != null) {
+      tokens.add(_Token.output(m.group(2)!, true));
+    } else if (m.group(3) != null) {
+      final raw = m.group(4);
+      final args = raw?.substring(1, raw.length - 1).trim();
+      tokens.add(_Token.directive(m.group(3)!, args));
+    }
+    pos = m.end;
+  }
+  if (pos < source.length) {
+    tokens.add(_Token.text(source.substring(pos)));
+  }
+  tokens.add(_Token.eof());
+  return tokens;
+}
+
+String _stripQuotes(String s) {
+  s = s.trim();
+  if (s.length >= 2 &&
+      ((s.startsWith("'") && s.endsWith("'")) ||
+          (s.startsWith('"') && s.endsWith('"')))) {
+    return s.substring(1, s.length - 1);
+  }
+  return s;
+}
+
+/// Converts template source into a [TemplateNode] syntax tree.
 ///
-/// Supports layouts, includes, control structures, and secure interpolation.
+/// The parser recognizes escaped (`{{ ... }}`) and raw (`{!! ... !!}`)
+/// output, plus layout, section, yield, include, CSRF, conditional, and loop
+/// directives.
+class TemplateParser {
+  final List<_Token> _tokens;
+  int _position = 0;
+
+  /// Creates a parser and tokenizes [source].
+  TemplateParser(String source) : _tokens = _tokenizeTemplate(source);
+
+  _Token get _current => _tokens[_position];
+
+  /// Parses the complete source and returns its template tree.
+  ///
+  /// A leading `@layout` directive is recorded in [TemplateNode.layoutName].
+  TemplateNode parseTemplate() {
+    String? layoutName;
+    if (_current.type == _TokenType.directive && _current.name == 'layout') {
+      layoutName = _stripQuotes(_current.args ?? '');
+      _position++;
+    }
+    final children = parseNodes(stopAt: const {});
+    return TemplateNode(children, layoutName);
+  }
+
+  /// Parses nodes until end-of-file or a directive named in [stopAt].
+  ///
+  /// Stop directives are not consumed, allowing the enclosing directive
+  /// parser to handle them.
+  List<Node> parseNodes({required Set<String> stopAt}) {
+    final nodes = <Node>[];
+    while (_current.type != _TokenType.eof) {
+      if (_current.type == _TokenType.directive &&
+          stopAt.contains(_current.name)) {
+        break;
+      }
+      nodes.add(_parseNode());
+    }
+    return nodes;
+  }
+
+  Node _parseNode() {
+    final token = _current;
+    switch (token.type) {
+      case _TokenType.text:
+        _position++;
+        return TextNode(token.text!);
+      case _TokenType.output:
+        _position++;
+        return OutputNode(ExprParser(token.text!).parse(), token.escaped);
+      case _TokenType.directive:
+        return _parseDirective();
+      case _TokenType.eof:
+        throw TemplateEngineException.parseError('Unexpected end of template');
+    }
+  }
+
+  Node _parseDirective() {
+    switch (_current.name) {
+      case 'if':
+        return _parseIf();
+      case 'foreach':
+        return _parseForeach();
+      case 'section':
+        return _parseSection();
+      case 'include':
+        return _parseInclude();
+      case 'yield':
+        final name = _stripQuotes(_current.args ?? '');
+        _position++;
+        return YieldNode(name);
+      case 'csrf':
+        _position++;
+        return CsrfNode();
+      default:
+        throw TemplateEngineException.parseError(
+          'Unexpected @${_current.name}',
+        );
+    }
+  }
+
+  void _expect(String name) {
+    if (_current.type != _TokenType.directive || _current.name != name) {
+      throw TemplateEngineException.parseError('Expected @$name');
+    }
+    _position++;
+  }
+
+  Node _parseIf() {
+    final condition = ExprParser(_current.args ?? '').parse();
+    _position++;
+    final thenBranch = parseNodes(stopAt: {'else', 'endif'});
+    List<Node> elseBranch = [];
+    if (_current.type == _TokenType.directive && _current.name == 'else') {
+      _position++;
+      elseBranch = parseNodes(stopAt: {'endif'});
+    }
+    _expect('endif');
+    return IfNode(condition, thenBranch, elseBranch);
+  }
+
+  Node _parseForeach() {
+    final args = _current.args ?? '';
+    _position++;
+    final parts = args.split(' in ').map((s) => s.trim()).toList();
+    if (parts.length != 2) {
+      throw TemplateEngineException.parseError('Malformed @foreach($args)');
+    }
+    final body = parseNodes(stopAt: {'endforeach'});
+    _expect('endforeach');
+    return ForeachNode(parts[0], ExprParser(parts[1]).parse(), body);
+  }
+
+  Node _parseSection() {
+    final name = _stripQuotes(_current.args ?? '');
+    _position++;
+    final body = parseNodes(stopAt: {'endsection'});
+    _expect('endsection');
+    return SectionNode(name, body);
+  }
+
+  Node _parseInclude() {
+    final args = _current.args ?? '';
+    _position++;
+    final trimmed = args.trim();
+    final quote = trimmed.startsWith('"') ? '"' : "'";
+    final closeIdx = trimmed.indexOf(quote, 1);
+    if (!trimmed.startsWith(quote) || closeIdx == -1) {
+      throw TemplateEngineException.parseError('Malformed @include($args)');
+    }
+    final name = trimmed.substring(1, closeIdx);
+    var rest = trimmed.substring(closeIdx + 1).trim();
+    if (rest.startsWith(',')) rest = rest.substring(1).trim();
+    return IncludeNode(name, rest.isEmpty ? null : rest);
+  }
+}
+
+/// Parses and renders Archery HTML templates.
 ///
-/// **Async Support:** render() and internal processing are now asynchronous
-/// to prevent blocking the event loop on file I/O.
+/// Templates are loaded from [viewsDirectory] by converting dot-delimited
+/// names to paths and appending `.html`. For example, `users.profile` resolves
+/// to `users/profile.html`. Parsed syntax trees are cached when [shouldCache]
+/// is true.
 base class TemplateEngine {
-  /// Directory containing `.html` view templates.
+  /// Directory containing template files.
   final String viewsDirectory;
 
-  /// Public assets directory.
+  /// Directory containing publicly served assets.
   final String publicDirectory;
 
-  /// In-memory cache of compiled template content.
-  final Map<String, String> _cache = {};
+  final Map<String, TemplateNode> _astCache = {};
 
-  /// Whether to enable template caching.
-  ///
-  /// Set to `false` during development for automatic template reloading.
-  /// Set to `true` in production for better performance.
+  /// Whether parsed file templates are retained between render calls.
   bool shouldCache = true;
 
-  /// Creates a new template engine instance.
-  /// [publicDirectory] not necessary but provided for future directives
+  /// Creates a template engine using the given view and public directories.
   TemplateEngine({required this.viewsDirectory, required this.publicDirectory});
 
-  /// Renders a template with the provided data asynchronously.
+  /// Loads and renders the template identified by [templateName].
+  ///
+  /// Values in [data] are available to expressions by key. Throws
+  /// [TemplateEngineException] if the template cannot be found or parsed.
   Future<String> render(
       String templateName, [
         Map<String, dynamic>? data,
       ]) async {
-    final templateContent = await _loadTemplate(templateName);
-    return _compile(templateContent, data ?? {});
+    final ast = await _loadAst(templateName);
+    return _renderTemplate(ast, data ?? {});
   }
 
-  /// Loads template content from disk with optional caching.
-  ///
-  /// Uses async I/O.
-  Future<String> _loadTemplate(String templateName) async {
-    if (shouldCache) {
-      if (_cache.containsKey(templateName)) {
-        return _cache[templateName]!;
-      }
+  /// Parses and renders template [source] without using the AST cache.
+  Future<String> renderString(
+      String source, [
+        Map<String, dynamic>? data,
+      ]) async {
+    final ast = TemplateParser(source).parseTemplate();
+    return _renderTemplate(ast, data ?? {});
+  }
+
+  Future<TemplateNode> _loadAst(String templateName) async {
+    if (shouldCache && _astCache.containsKey(templateName)) {
+      return _astCache[templateName]!;
     }
 
-    // Convert dot syntax to file path
     final templatePath =
         '${viewsDirectory.replaceAll(RegExp(r'/+$'), '')}/'
         '${templateName.replaceAll('.', '/')}.html';
-
     final file = File(templatePath);
-
     if (!await file.exists()) {
       throw TemplateEngineException.templateNotFound(
         "HTML view for '$templateName' was not found at path: $templatePath",
       );
     }
 
-    final content = await file.readAsString();
-    if (shouldCache) {
-      _cache[templateName] = content;
-    }
-    return content;
+    final source = await file.readAsString();
+    final ast = TemplateParser(source).parseTemplate();
+    if (shouldCache) _astCache[templateName] = ast;
+
+    return ast;
   }
 
-  /// Compiles template content through the full processing pipeline.
-  Future<String> _compile(String content, Map<String, dynamic> data) async {
-    String result = content;
-
-    // Process layouts first as they define the overall structure
-    result = await _processLayouts(result, data);
-
-    // Process includes to resolve partial templates
-    result = await _processIncludes(result, data);
-
-    // Process control structures (loops and conditionals)
-    result = await _processControlStructures(result, data);
-
-    // Process CSRF directive
-    result = _processCsrf(result, data);
-
-    // Process interpolations last (variables and expressions)
-    // Interpolation is CPU-bound string manipulation, so it remains sync-style
-    // but called within this async flow.
-    result = _processInterpolations(result, data);
-
-    return result;
-  }
-
-  // --- Async Regex Helper ---
-
-  /// Asynchronously replaces matches in a string.
-  ///
-  /// Dart's [replaceAllMapped] does not support async callbacks.
-  Future<String> _replaceAllMappedAsync(
-      String input,
-      RegExp regex,
-      Future<String> Function(Match match) replace,
+  Future<String> _renderTemplate(
+      TemplateNode ast,
+      Map<String, dynamic> data,
       ) async {
-    final StringBuffer buffer = StringBuffer();
-    int lastIndex = 0;
-
-    for (final match in regex.allMatches(input)) {
-      buffer.write(input.substring(lastIndex, match.start));
-      buffer.write(await replace(match));
-      lastIndex = match.end;
+    if (ast.layoutName != null) {
+      final sections = <String, List<Node>>{
+        for (final n in ast.children)
+          if (n is SectionNode) n.name: n.body,
+      };
+      final layoutAst = await _loadAst(ast.layoutName!);
+      return _renderNodes(layoutAst.children, data, sections);
     }
+    return _renderNodes(ast.children, data, const {});
+  }
 
-    buffer.write(input.substring(lastIndex));
+  Future<String> _renderNodes(
+      List<Node> nodes,
+      Map<String, dynamic> data,
+      Map<String, List<Node>> sections,
+      ) async {
+    final buffer = StringBuffer();
+    for (final node in nodes) {
+      buffer.write(await _renderNode(node, data, sections));
+    }
     return buffer.toString();
   }
 
-  // --- Processing Methods ---
+  Future<String> _renderNode(
+      Node node,
+      Map<String, dynamic> data,
+      Map<String, List<Node>> sections,
+      ) async {
+    switch (node) {
+      case TextNode n:
+        return n.text;
 
-  String _processInterpolations(String content, Map<String, dynamic> data) {
-    final interpolationRegex = RegExp(r'{!!\s*(.*?)\s*!!}');
-    String result = content;
+      case OutputNode n:
+        final value = _evaluate(n.expression, data);
+        final str = value?.toString() ?? '';
+        return n.escaped ? _escapeHtml(str) : str;
 
-    // Process unescaped interpolations {!! !!} first
-    result = result.replaceAllMapped(interpolationRegex, (match) {
-      final expression = match.group(1)!;
-      return _evaluateInterpolation(expression, data).toString();
-    });
+      case IfNode n:
+        final branch = _truthy(_evaluate(n.condition, data))
+            ? n.thenBranch
+            : n.elseBranch;
+        return _renderNodes(branch, data, sections);
 
-    // Process escaped interpolations {{ }} second
-    final escapedInterpolationsRegex = RegExp(r'{{\s*(.*?)\s*}}');
-    result = result.replaceAllMapped(escapedInterpolationsRegex, (match) {
-      final expression = match.group(1)!;
-      final value = _evaluateInterpolation(expression, data).toString();
-      return _escapeHtml(value);
-    });
-
-    return result;
-  }
-
-  dynamic _evaluateInterpolation(String expression, Map<String, dynamic> data) {
-    expression = expression.trim();
-
-    // Handle empty expressions
-    if (expression.isEmpty) return '';
-
-    // Handle string literals
-    if ((expression.startsWith("'") && expression.endsWith("'")) ||
-        (expression.startsWith('"') && expression.endsWith('"'))) {
-      return expression.substring(1, expression.length - 1);
-    }
-
-    // Handle numbers
-    if (RegExp(r'^-?\d+$').hasMatch(expression)) {
-      return int.tryParse(expression) ?? expression;
-    }
-
-    if (RegExp(r'^-?\d+\.\d+$').hasMatch(expression)) {
-      return double.tryParse(expression) ?? expression;
-    }
-
-    // Handle booleans
-    if (expression == 'true') return true;
-    if (expression == 'false') return false;
-    if (expression == 'null') return null;
-
-    // Handle simple arithmetic expressions
-    if (expression.contains('+') || expression.contains('-') ||
-        expression.contains('*') || expression.contains('/')) {
-      return _evaluateArithmetic(expression, data);
-    }
-
-    // Handle method calls with parentheses
-    if (expression.contains('(') && expression.contains(')')) {
-      return _evaluateMethodCall(expression, data);
-    }
-
-    // Default to variable lookup
-    return _evaluateExpression(expression, data);
-  }
-
-
-  dynamic _evaluateArithmetic(String expression, Map<String, dynamic> data) {
-    try {
-      var processed = expression;
-      final variablePattern = RegExp(
-        r'[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*',
-      );
-
-      for (final match in variablePattern.allMatches(expression)) {
-        final varName = match.group(0)!;
-        if (!_isOperator(varName)) {
-          final value = _evaluateExpression(varName, data);
-          processed = processed.replaceFirst(varName, value.toString());
+      case ForeachNode n:
+        final collection = _evaluate(n.collection, data);
+        if (collection is! List) return '';
+        final buf = StringBuffer();
+        for (final item in collection) {
+          final loopData = Map<String, dynamic>.from(data)..[n.itemName] = item;
+          buf.write(await _renderNodes(n.body, loopData, sections));
         }
-      }
+        return buf.toString();
 
-      if (processed.contains('+')) {
-        final parts = processed.split('+');
-        final left = num.tryParse(parts[0].trim()) ?? 0;
-        final right = num.tryParse(parts[1].trim()) ?? 0;
-        return left + right;
-      }
-      if (processed.contains('*')) {
-        final parts = processed.split('*');
-        final left = num.tryParse(parts[0].trim()) ?? 0;
-        final right = num.tryParse(parts[1].trim()) ?? 0;
-        return left * right;
-      }
+      case SectionNode n:
+        return _renderNodes(n.body, data, sections);
 
-      return processed;
-    } catch (e) {
-      return expression;
+      case YieldNode n:
+        final body = sections[n.name];
+        if (body == null) return '';
+        return _renderNodes(body, data, sections);
+
+      case IncludeNode n:
+        final includedAst = await _loadAst(n.templateName);
+
+        return _renderTemplate(includedAst, data);
+
+      case CsrfNode _:
+        final token = data['csrf_token']?.toString() ?? '';
+        return '<input type="hidden" name="_token" value="$token">';
+
+      default:
+        return '';
     }
   }
 
-  bool _isOperator(String token) {
-    return token == '+' || token == '-' || token == '*' || token == '/';
-  }
-
-  dynamic _evaluateMethodCall(String expression, Map<String, dynamic> data) {
-    try {
-      if (!expression.endsWith(')')) {
-        return _evaluateExpression(expression, data);
-      }
-
-      final methodMatch = RegExp(
-        r'^([a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*)\(\)$',
-      ).firstMatch(expression);
-
-      if (methodMatch != null) {
-        final propertyPath = methodMatch.group(1)!;
-        return _evaluateExpression(propertyPath, data);
-      }
-
-      final propertyPath = expression.replaceAll(RegExp(r'\(\)$'), '');
-      return _evaluateExpression(propertyPath, data);
-    } catch (e) {
-      return expression;
+  dynamic _evaluate(Expr expr, Map<String, dynamic> data) {
+    switch (expr) {
+      case LiteralExpr e:
+        return e.value;
+      case VariableExpr e:
+        return _resolvePath(e.path, data);
+      case UnaryNotExpr e:
+        return !_truthy(_evaluate(e.operand, data));
+      case BinaryExpr e:
+        final l = _evaluate(e.left, data);
+        final r = _evaluate(e.right, data);
+        return _applyOp(e.op, l, r);
+      default:
+        return null;
     }
   }
 
-  String _escapeHtml(String text) {
-    return text
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#x27;')
-        .replaceAll('/', '&#x2F;');
+  dynamic _applyOp(String op, dynamic l, dynamic r) {
+    switch (op) {
+      case '+':
+        if (l is num && r is num) return l + r;
+        return '${l ?? ''}${r ?? ''}';
+      case '-':
+        return (l as num) - (r as num);
+      case '*':
+        return (l as num) * (r as num);
+      case '/':
+        return (l as num) / (r as num);
+      case '==':
+        return l == r;
+      case '!=':
+        return l != r;
+      case '<':
+        return (l as num) < (r as num);
+      case '<=':
+        return (l as num) <= (r as num);
+      case '>':
+        return (l as num) > (r as num);
+      case '>=':
+        return (l as num) >= (r as num);
+      default:
+        throw TemplateEngineException('Unknown operator $op');
+    }
   }
 
-  dynamic _evaluateExpression(String expression, Map<String, dynamic> data) {
-    final parts = expression.split('.');
+  bool _truthy(dynamic v) => v != null && v != false && v != '' && v != 0;
+
+  dynamic _resolvePath(List<String> path, Map<String, dynamic> data) {
     dynamic current = data;
-
-    for (final part in parts) {
+    for (final part in path) {
       if (current is Map<String, dynamic>) {
-        if (!current.containsKey(part)) {
-          return '';
-        }
+        if (!current.containsKey(part)) return '';
         current = current[part];
       } else if (current is List) {
-        if (int.tryParse(part) != null) {
-          final index = int.parse(part);
-          if (index < current.length) {
-            current = current[index];
-          } else {
-            return '';
-          }
+        final idx = int.tryParse(part);
+        if (idx != null) {
+          current = idx < current.length ? current[idx] : '';
         } else if (part == 'length') {
           return current.length;
         } else if (part == 'isEmpty') {
@@ -325,261 +842,27 @@ base class TemplateEngine {
           return '';
         }
       } else if (current is String) {
-        if (part == 'length') {
-          return current.length;
-        } else if (part == 'isEmpty') {
-          return current.isEmpty;
-        } else if (part == 'isNotEmpty') {
-          return current.isNotEmpty;
-        } else {
-          return '';
-        }
+        if (part == 'length') return current.length;
+        if (part == 'isEmpty') return current.isEmpty;
+        if (part == 'isNotEmpty') return current.isNotEmpty;
+        return '';
       } else if (current == null) {
         return '';
       } else {
-        try {
-          if (part == 'toString') {
-            return current.toString();
-          }
-          return '';
-        } catch (e) {
-          return '';
-        }
+        return '';
       }
     }
-
     return current ?? '';
   }
 
-  Future<String> _processLayouts(
-      String content,
-      Map<String, dynamic> data,
-      ) async {
-    final layoutRegex = RegExp(
-      r'''@layout\(\s*['"]([^'"]+)['"]\s*\)''',
-      dotAll: true,
-    );
+  String _escapeHtml(String text) => text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#x27;')
+      .replaceAll('/', '&#x2F;');
 
-    final match = layoutRegex.firstMatch(content);
-    if (match == null) {
-      return content;
-    }
-
-    final layoutName = match.group(1)!;
-    final sections = _extractSections(content);
-
-    return _renderLayout(layoutName, sections, data);
-  }
-
-  Map<String, String> _extractSections(String content) {
-    final sectionRegex = RegExp(
-      r'''@section\(\s*['"]([^'"]+)['"]\s*\)(.*?)@endsection''',
-      dotAll: true,
-    );
-
-    final sections = <String, String>{};
-
-    sectionRegex.allMatches(content).forEach((match) {
-      final sectionName = match.group(1)!;
-      final sectionContent = match.group(2)!;
-      sections[sectionName] = sectionContent.trim();
-    });
-
-    return sections;
-  }
-
-  Future<String> _renderLayout(
-      String layoutName,
-      Map<String, String> sections,
-      Map<String, dynamic> data,
-      ) async {
-    final layoutContent = await _loadTemplate(layoutName);
-
-    // Using _replaceAllMappedAsync isn't strictly necessary here if yield replacements are simple text
-    // but _loadTemplate was async, so this function is async.
-    // The yields themselves are sync replacements from the `sections` map.
-    return layoutContent.replaceAllMapped(
-      RegExp(r'''@yield\(\s*['"]([^'"]+)['"]\s*\)''', dotAll: true),
-          (match) {
-        final yieldName = match.group(1)!;
-        return sections[yieldName] ?? '';
-      },
-    );
-  }
-
-  Future<String> _processIncludes(
-      String content,
-      Map<String, dynamic> data,
-      ) async {
-    final includeRegex = RegExp(
-      r'''@include\(\s*['"]([^'"]+)['"]\s*(?:,\s*(\{[\s\S]*?\}))?\s*\)''',
-      dotAll: true,
-    );
-
-    Future<String> process(String text) {
-      return _replaceAllMappedAsync(text, includeRegex, (match) async {
-        final templateName = match.group(1)!;
-        final jsonString = match.group(2);
-
-        Map<String, dynamic> mergedData = Map<String, dynamic>.from(data);
-
-        if (jsonString != null) {
-          try {
-            final additionalData =
-            jsonDecode(jsonString) as Map<String, dynamic>;
-            mergedData.addAll(additionalData);
-          } catch (e) {
-            print('Warning: Invalid JSON in include: $jsonString');
-          }
-        }
-
-        return await render(templateName, mergedData);
-      });
-    }
-
-    String result = content;
-    String previousResult;
-    do {
-      previousResult = result;
-      result = await process(result);
-    } while (result != previousResult && result.contains('@include'));
-
-    return result;
-  }
-
-  Future<String> _processControlStructures(
-      String content,
-      Map<String, dynamic> data,
-      ) async {
-    String result = content;
-
-    result = await _processForeach(result, data);
-    result = _processIfStatements(result, data);
-
-    return result;
-  }
-
-  Future<String> _processForeach(
-      String content,
-      Map<String, dynamic> data,
-      ) async {
-    final regex = RegExp(
-      r'@foreach\s*\(\s*(\w+)\s+in\s+(\w+)\s*\)(.*?)@endforeach',
-      dotAll: true,
-    );
-
-    return _replaceAllMappedAsync(content, regex, (match) async {
-      final collectionName = match.group(2)!;
-      final itemName = match.group(1)!;
-      final loopContent = match.group(3)!;
-
-      final collection = _evaluateExpression(collectionName, data);
-
-      if (collection is! List) {
-        return '';
-      }
-
-      final buffer = StringBuffer();
-
-      for (final item in collection) {
-        final loopData = Map<String, dynamic>.from(data);
-        loopData[itemName] = item;
-        buffer.write(await _compile(loopContent, loopData));
-      }
-
-      return buffer.toString();
-    });
-  }
-
-  String _processCsrf(String content, Map<String, dynamic> data) {
-    if (!content.contains('@csrf')) return content;
-
-    final token = data['csrf_token'] as String? ?? '';
-    final input = '<input type="hidden" name="_token" value="$token">';
-    return content.replaceAll('@csrf', input);
-  }
-
-  String _processIfStatements(String content, Map<String, dynamic> data) {
-    final regex = RegExp(
-      r'@if\s*\((.*?)\)(.*?)(?:@else(.*?))?@endif',
-      dotAll: true,
-    );
-
-    return content.replaceAllMapped(regex, (match) {
-      final condition = match.group(1)!;
-      final ifContent = match.group(2)!;
-      final elseContent = match.group(3);
-
-      final conditionResult = _evaluateCondition(condition, data);
-
-      if (conditionResult) {
-        return ifContent;
-      } else if (elseContent != null) {
-        return elseContent;
-      }
-
-      return '';
-    });
-  }
-
-  bool _evaluateCondition(String condition, Map<String, dynamic> data) {
-    condition = condition.trim();
-
-    if (condition.contains('==')) {
-      final parts = condition.split('==').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      return left == right;
-    }
-
-    if (condition.contains('!=')) {
-      final parts = condition.split('!=').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      return left != right;
-    }
-
-    if (condition.contains('>=')) {
-      final parts = condition.split('>=').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      if (left is num && right is num) return left >= right;
-    }
-
-    if (condition.contains('<=')) {
-      final parts = condition.split('<=').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      if (left is num && right is num) return left <= right;
-    }
-
-    if (condition.contains('>')) {
-      final parts = condition.split('>').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      if (left is num && right is num) return left > right;
-    }
-
-    if (condition.contains('<')) {
-      final parts = condition.split('<').map((e) => e.trim()).toList();
-      final left = _evaluateInterpolation(parts[0], data);
-      final right = _evaluateInterpolation(parts[1], data);
-      if (left is num && right is num) return left < right;
-    }
-
-    if (condition == 'true') return true;
-    if (condition == 'false') return false;
-
-    if (condition.startsWith('!')) {
-      final subCondition = condition.substring(1).trim();
-      return !_evaluateCondition(subCondition, data);
-    }
-
-    final value = _evaluateInterpolation(condition, data);
-    return value != null && value != false && value != '' && value != 0;
-  }
-
-  void clearCache() {
-    _cache.clear();
-  }
+  /// Removes all parsed templates from the in-memory AST cache.
+  void clearCache() => _astCache.clear();
 }

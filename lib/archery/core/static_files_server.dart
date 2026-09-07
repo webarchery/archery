@@ -217,10 +217,28 @@ base class StaticFilesServer {
       final res = req.response;
 
       // Set caching headers
-      res.headers.set(
-        HttpHeaders.cacheControlHeader,
-        'public, max-age=$maxAgeSeconds',
-      );
+      // can also use config('app.debug')
+
+      // frontend assets are cached, affecting dx
+      // res.headers.set(
+      //   HttpHeaders.cacheControlHeader,
+      //   'public, max-age=$maxAgeSeconds',
+      // );
+
+
+
+      if(App.env == 'production') {
+        res.headers.set(
+          HttpHeaders.cacheControlHeader,
+          'public, max-age=$maxAgeSeconds',
+        );
+      } else {
+        res.headers.set(
+          HttpHeaders.cacheControlHeader,
+          'no-store, private',
+        );
+      }
+
       res.headers.set(HttpHeaders.etagHeader, etag);
       res.headers.set(
         HttpHeaders.lastModifiedHeader,

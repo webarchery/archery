@@ -54,10 +54,9 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
-<span class="name ">inline</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="inline-param-job"><span class="type-annotation"><a href="../../archery_core_queueable/IsolateJob.html">IsolateJob</a></span> <span class="parameter-name">job</span>, [</span></li>
-<li><span class="parameter" id="inline-param-app"><span class="type-annotation"><a href="../../archery_core_application/App-class.html">App</a>?</span> <span class="parameter-name">app</span></span></li>
-</ol>])
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a></span>
+<span class="name ">inline</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="inline-param-job"><span class="type-annotation"><a href="../../archery_core_queueable/IsolateJob.html">IsolateJob</a></span> <span class="parameter-name">job</span></span></li>
+</ol>)
 
       
 
@@ -71,7 +70,6 @@ result.</p>
 <p>Parameters:</p>
 <ul>
 <li><code>job</code>: The async function to run in the isolate.</li>
-<li><code>app</code>: Optional app instance, reserved for future use.</li>
 </ul>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">QueueJob.inline(() async {
@@ -85,7 +83,7 @@ result.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; inline(IsolateJob job, [App? app]) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; inline(IsolateJob job) async {
   final receivePort = ReceivePort();
 
   await Isolate.spawn((SendPort sendPort) async {
@@ -125,7 +123,7 @@ result.</p>
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

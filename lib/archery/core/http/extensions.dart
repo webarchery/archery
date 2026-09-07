@@ -194,7 +194,8 @@ extension View on HttpRequest {
   /// for HTML responses.
   static const _viewHeaders = {
     HttpHeaders.varyHeader: 'Accept-Encoding',
-    HttpHeaders.cacheControlHeader: 'public, max-age=3600',
+    HttpHeaders.cacheControlHeader: 'no-store, private',
+    HttpHeaders.pragmaHeader: 'no-cache',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -290,10 +291,19 @@ extension View on HttpRequest {
         ..add(bodyBytes) // Use .add() for bytes to bypass re-encoding strings
         ..close();
 
-    } catch (e) {
+    } catch (e, stackTrace) {
+
+      if(App.env == 'local') {
+        Error.throwWithStackTrace(e, stackTrace);
+      }
+
       return response
-        ..write("error") // Use .add() for bytes to bypass re-encoding strings
+        ..statusCode = HttpStatus.internalServerError
+        ..write("Error loading view")
         ..close();
+
+
+
     }
   }
 }
@@ -628,7 +638,7 @@ final _formRequestCache = Expando<FormRequest>();
 /// final form = request.form();
 /// final email = await form.input('email');
 /// ```
-extension HttpRequestFormExtension on HttpRequest {
+extension HttpFormRequestExtension on HttpRequest {
   /// Returns the cached [FormRequest] wrapper for this request.
   ///
   /// A new wrapper is created only once per request instance.
@@ -638,7 +648,7 @@ extension HttpRequestFormExtension on HttpRequest {
   /// final form = request.form();
   /// final values = await form.all();
   /// ```
-  FormRequest form() {
+  FormRequest get form {
     if (_formRequestCache[this] == null) {
       _formRequestCache[this] = FormRequest(this);
     }
@@ -723,3 +733,33 @@ extension RequestUser on HttpRequest {
   }
 }
 
+
+
+extension BenchView on HttpRequest {
+  static const _minimalViewHeaders = {
+    HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+  };
+
+  Future<HttpResponse> benchView(String template, [ViewData? data]) async {
+
+    // final csrfCookie = cookies.firstWhereOrNull((c) => c.name == 'archery_csrf_token');
+    // final String token = csrfCookie?.value ?? "static_bench_token";
+
+    try {
+
+      final engine = App().container.make<TemplateEngine>();
+      final html = await engine.render(template, {...?data});
+
+      response.headers.contentType = ContentType.html;
+      // _minimalViewHeaders.forEach(response.headers.set);
+
+
+
+      return response..write(html)..close();
+    } catch (e) {
+      return response..write("error: $e")..close();
+    }
+  }
+}

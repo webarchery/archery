@@ -54,13 +54,37 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a></span>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a></span>
 <span class="name ">isoIndex</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>)
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Loads all records for model type <code>T</code> from SQLite inside a separate
+isolate.</p>
+<p>This is a work-in-progress helper intended for prototyping heavier
+database reads away from the main isolate. It opens the SQLite database
+directly, queries the table for <code>T</code>, and reconstructs model instances
+using the registered JSON constructor.</p>
+<p>Records are returned in descending <code>id</code> order.</p>
+<p>Returns an empty list when:</p>
+<ul>
+<li>no JSON constructor has been registered for <code>T</code></li>
+<li>the query fails</li>
+</ul>
+<p>Current notes:</p>
+<ul>
+<li>this implementation is SQLite-specific</li>
+<li>it executes through <a href="../../archery_core_queueable/QueueJob/inline.html">QueueJob.inline</a></li>
+<li>it is marked WIP and should be treated as experimental</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final users = await SQLiteModel.isoIndex&lt;User&gt;();
+print(users.length);
+</code></pre>
+</section>
 
 
     
@@ -95,7 +119,7 @@
       return [];
     } finally {
     }
-  }, App());
+  });
 }</code></pre>
 </section>
 
@@ -124,7 +148,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

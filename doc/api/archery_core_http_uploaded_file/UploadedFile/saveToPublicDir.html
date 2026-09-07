@@ -54,9 +54,9 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-io/File-class.html">File</a></span>&gt;</span></span>
-<span class="name ">saveToPublicDir</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="saveToPublicDir-param-subDir"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">subDir</span>, {</span></li>
-<li><span class="parameter" id="saveToPublicDir-param-autoName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoName</span> = <span class="default-value">true</span>, </span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-io/File-class.html">File</a></span>&gt;</span></span>
+<span class="name ">saveToPublicDir</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="saveToPublicDir-param-subDir"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">subDir</span>, {</span></li>
+<li><span class="parameter" id="saveToPublicDir-param-autoName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">autoName</span> = <span class="default-value">true</span>, </span></li>
 </ol>})
 
       
@@ -67,7 +67,7 @@
   <p>Saves the file into a subdirectory of the public storage path.</p>
 <p>When <code>autoName</code> is <code>true</code>, a UUID-based filename is generated while
 preserving the original extension when possible.</p>
-<p>Returns the written <a href="https://api.dart.dev/stable/3.10.9/dart-io/File-class.html">File</a>.</p>
+<p>Returns the written <a href="https://api.flutter.dev/flutter/dart-io/File-class.html">File</a>.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">final saved = await file.saveToPublicDir('avatars');
 print(saved.path);
@@ -89,7 +89,8 @@ print(saved.path);
     fileName = filename;
   }
 
-  final file = File(&#39;lib&#47;src&#47;http&#47;public&#47;$subDir&#47;$fileName&#39;);
+  final path = p.join(&#39;lib&#47;src&#47;http&#47;public&#39;, subDir, fileName);
+  final file = File(path);
 
   if (!await file.parent.exists()) {
     await file.parent.create(recursive: true);
@@ -126,7 +127,7 @@ print(saved.path);
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

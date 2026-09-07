@@ -28,25 +28,15 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 // https://webarchery.dev
-
 import 'package:archery/archery/archery.dart';
-
-/// Alias for [AuthSession].
-///
-/// This allows concise usage at call sites: `Auth.user(request)`, `Auth.check(request)`.
-typedef Auth = AuthSession;
-
-/// Alias for [GuestSession].
-///
-/// This is typically used as a middleware guard for pages like login/register
-/// (redirect authenticated users away from guest-only pages).
-typedef Guest = GuestSession;
 
 /// Guest session record used for unauthenticated visitors.
 ///
 /// Archery uses this model to track a visitor session token (stored in the
 /// `archery_guest_session` cookie) and last activity timestamp. This guest
 /// session is also used as the binding point for CSRF token association.
+/// Sessions are looked up in the application container before the database and
+/// expire after one hour of inactivity.
 class Session extends Model with InstanceDatabaseOps<Session> {
   late String token;
   late DateTime lastActivity = DateTime.now();
@@ -56,66 +46,70 @@ class Session extends Model with InstanceDatabaseOps<Session> {
   Map<String, dynamic> flashMessages = {};
 
   User? user;
-
-  // set in view engine
   String? csrf;
 
   Session({required this.token}) : super.fromJson({});
 
+  static List<Session>? get _containerSessions {
+    return App().tryMake<List<Session>>();
+  }
 
+  /// Restores or creates a guest session, refreshing activity on each reuse.
+  ///
+  /// Requests under `/api/` do not receive a guest session. Expired records are
+  /// deleted and replaced with a new session and cookie.
   static Future<Session?> init(HttpRequest request) async {
-
-
-    if(request.uri.path.startsWith('/api/')) {
+    // API routes bypass browser guest-session initialization.
+    if (request.uri.path.startsWith('/api/')) {
       return null;
     }
 
-
-
     final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_guest_session");
-    final sessions = App().tryMake<List<Session>>();
 
+    // A first-time visitor has no session token to restore.
     if (cookie == null) {
-      final session = Session(token: App.generateKey());
-      await session.save();
-      sessions?.add(session);
-      request.cookies.add(Cookie("archery_guest_session", session.token));
-      request.response.cookies.add(Cookie("archery_guest_session", session.token));
-      return session;
-    } else {
-      final session = sessions?.firstWhereOrNull((session) => session.token == cookie.value);
-      if (session != null) {
-        session.lastActivity = DateTime.now();
-        await session.save();
-        request.cookies.add(Cookie("archery_guest_session", session.token));
-        request.response.cookies.add(Cookie("archery_guest_session", session.token));
-        return session;
-      }
+      return await _createNewSession(request);
     }
 
-    if (sessions != null && sessions.isEmpty) {
-      final sessionRecord = await Model.firstWhere<Session>(field: "token", value: cookie.value);
+    // Prefer the shared in-memory instance when it is available.
+    final containerSession = _checkContainer(cookie.value);
 
-      if (sessionRecord != null) {
-        sessionRecord.lastActivity = DateTime.now();
-        await sessionRecord.save();
-        sessions.add(sessionRecord);
-        request.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
-        request.response.cookies.add(Cookie("archery_guest_session", sessionRecord.token));
-        return sessionRecord;
-      } else {
-        final session = Session(token: App.generateKey());
-        await session.save();
-        sessions.add(session);
-        request.cookies.add(Cookie("archery_guest_session", session.token));
-        request.response.cookies.add(Cookie("archery_guest_session", session.token));
-        return session;
+    if (containerSession != null) {
+      if (_validateSession(containerSession)) {
+        containerSession.lastActivity = DateTime.now();
+        await containerSession.save();
+        return containerSession;
       }
+
+      await containerSession.delete();
+      _containerSessions?.remove(containerSession);
+      return await _createNewSession(request);
     }
 
-    return null;
+    // Restore persisted sessions that are absent from the container cache.
+
+    final dbSession = await _checkDB(cookie.value);
+
+    if (dbSession != null) {
+      if (_validateSession(dbSession)) {
+        dbSession.lastActivity = DateTime.now();
+        _containerSessions?.add(dbSession);
+        await dbSession.save();
+        return dbSession;
+      }
+
+      await dbSession.delete();
+      return await _createNewSession(request);
+    }
+
+    // An unknown cookie token is replaced rather than reused.
+
+    return await _createNewSession(request);
   }
 
+  /// Restores the token and activity timestamp from a stored record.
+  ///
+  /// Missing or malformed activity timestamps retain the current-time default.
   Session.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     if (json['token'] != null && json['token'] is String) {
       token = json['token'];
@@ -130,8 +124,30 @@ class Session extends Model with InstanceDatabaseOps<Session> {
     }
   }
 
+  /// Defines the database columns required for persisting sessions.
+  ///
+  /// Both `email` and `token` are required text fields.
+  ///
+  /// Example:
+  /// ```dart
+  /// final columns = AuthSession.columnDefinitions;
+  /// print(columns['last_activity']); // TEXT NOT NULL
+  /// print(columns['token']); // TEXT NOT NULL
+  /// ```
   static Map<String, String> columnDefinitions = {'token': 'TEXT NOT NULL', 'last_activity': "TEXT NOT NULL"};
 
+  /// Serializes the session into its standard JSON representation.
+  ///
+  /// Includes the model UUID, email, token, and timestamp metadata.
+  ///
+  /// Returns a map suitable for storage or transport.
+  ///
+  /// Example:
+  /// ```dart
+  /// final json = session.toJson();
+  /// print(json['email']);
+  /// print(json['token']);
+  /// ```
   @override
   Map<String, dynamic> toJson() {
     return {
@@ -158,31 +174,63 @@ class Session extends Model with InstanceDatabaseOps<Session> {
       "updated_at": updatedAt?.toIso8601String(),
     };
   }
+
+  static Session? _checkContainer(String cookieValue) {
+    return _containerSessions?.firstWhereOrNull((session) => session.token == cookieValue);
+  }
+
+  static Future<Session?> _checkDB(String cookieValue) async {
+    return await Model.firstWhere<Session>(field: "token", value: cookieValue);
+  }
+
+  /// Persists a fresh guest session and exposes its cookie to this request
+  /// and the browser response.
+  static Future<Session> _createNewSession(HttpRequest request) async {
+    final cookie = Cookie('archery_guest_session', App.generateKey())
+      ..httpOnly = true
+      ..secure = true
+      ..sameSite = SameSite.lax;
+
+    final session = Session(token: cookie.value);
+    await session.save();
+
+    _containerSessions?.add(session);
+    request.cookies.add(cookie);
+    request.response.cookies.add(cookie);
+    return session;
+  }
+
+  /// Accepts sessions whose last activity was less than one hour ago.
+  static bool _validateSession(Session session) {
+    final currentTime = DateTime.now();
+    final difference = currentTime.difference(session.lastActivity);
+    return difference.inHours < 1;
+  }
 }
 
-/// Middleware guard for routes intended only for *guests* (unauthenticated users).
+/// Alias for [GuestSession].
 ///
-/// If an auth session exists for the current request, the request is redirected
-/// to the dashboard. Otherwise the request continues.
+/// This is typically used as a middleware guard for pages like login/register
+/// (redirect authenticated users away from guest-only pages).
+typedef Guest = GuestSession;
+
+/// Restricts routes such as login and registration to unauthenticated visitors.
 class GuestSession {
+  /// Redirects authenticated visitors to the dashboard; otherwise runs [next].
   static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
-    final authSessions = App().tryMake<List<AuthSession>>();
-
-    if (cookie == null || authSessions == null || authSessions.isEmpty) {
-      await next();
-      return;
-    }
-
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
-
-    if (session != null) {
+    if (await Auth.check(request)) {
       return request.redirectToDashboard();
     }
 
     await next();
   }
 }
+
+/// Alias for [AuthSession].
+///
+/// This allows concise usage at call sites: `Auth.user(request)`, `Auth.check(request)`.
+typedef Auth = AuthSession;
+
 
 /// Represents an authenticated user session backed by both persistent storage
 /// and an in-memory session registry.
@@ -201,7 +249,6 @@ class GuestSession {
 /// - `email`: Email address of the authenticated user.
 /// - `token`: Persistent session token stored with the record.
 /// - `lastActivity`: Tracks recent activity for idle-timeout validation.
-/// - `cookie`: In-memory cookie associated with the active request session.
 ///
 /// Example:
 /// ```dart
@@ -211,31 +258,14 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
   late String email;
   late String token;
   late DateTime lastActivity = DateTime.now();
-  Cookie? cookie;
 
-  /// Defines the database columns required for persisting auth sessions.
-  ///
-  /// Both `email` and `token` are required text fields.
-  ///
-  /// Example:
-  /// ```dart
-  /// final columns = AuthSession.columnDefinitions;
-  /// print(columns['email']); // TEXT NOT NULL
-  /// print(columns['token']); // TEXT NOT NULL
-  /// ```
-  static Map<String, String> columnDefinitions = {'email': 'TEXT NOT NULL', 'token': 'TEXT NOT NULL'};
-
-  /// Creates a new `AuthSession` instance for the given email.
-  ///
-  /// This constructor initializes the model from an empty JSON payload and is
-  /// typically used when preparing a new session instance before persistence.
-  ///
-  /// Example:
-  /// ```dart
-  /// final session = AuthSession(email: 'jane@example.com');
-  /// print(session.email); // jane@example.com
-  /// ```
+  /// Creates an unsaved session; its token must be assigned before serialization.
   AuthSession({required this.email}) : super.fromJson({});
+
+  /// Optional shared cache registered in the application container.
+  static List<AuthSession>? get _cachedSessions {
+    return App().tryMake<List<AuthSession>>();
+  }
 
   /// Creates an `AuthSession` from a JSON map.
   ///
@@ -264,7 +294,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     }
   }
 
-  /// Serializes the session into its standard JSON representation.
+  /// Serializes the session into its public-oriented JSON representation.
   ///
   /// Includes the model UUID, email, token, and timestamp metadata.
   ///
@@ -281,7 +311,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     return {"uuid": uuid, "email": email, 'token': token, "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
   }
 
-  /// Serializes the session into a metadata-oriented JSON representation.
+  /// Serializes the session into a DB-oriented JSON representation.
   ///
   /// This form includes the database `id` in addition to the standard session
   /// fields and timestamp metadata.
@@ -300,244 +330,17 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     return {"id": id, "uuid": uuid, 'email': email, 'token': token, "created_at": createdAt?.toIso8601String(), "updated_at": updatedAt?.toIso8601String()};
   }
 
-  /// Resolves the currently authenticated user from the incoming request.
+  /// Defines the database columns required for persisting auth sessions.
   ///
-  /// Workflow:
-  /// 1. Reads the `archery_session` cookie from the request.
-  /// 2. Looks up the matching in-memory session.
-  /// 3. Verifies the session is still valid.
-  /// 4. Updates the session activity timestamp.
-  /// 5. Loads and returns the corresponding `User` record.
-  ///
-  /// If any step fails, the request is logged out and `null` is returned.
-  ///
-  /// Returns the authenticated `User`, or `null` when authentication fails.
+  /// Both `email` and `token` are required text fields.
   ///
   /// Example:
   /// ```dart
-  /// final currentUser = await AuthSession.user(request);
-  ///
-  /// if (currentUser != null) {
-  ///   print('Authenticated as ${currentUser.email}');
-  /// }
+  /// final columns = AuthSession.columnDefinitions;
+  /// print(columns['email']); // TEXT NOT NULL
+  /// print(columns['token']); // TEXT NOT NULL
   /// ```
-  static Future<User?> user(HttpRequest request) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
-    if (cookie == null) {
-      await logout(request);
-      return null;
-    }
-
-    final authSessions = App().tryMake<List<AuthSession>>();
-
-    if (authSessions == null || authSessions.isEmpty) {
-      await logout(request);
-      return null;
-    }
-
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
-
-    if (session == null) {
-      await logout(request);
-      return null;
-    }
-
-    if (!_validateSession(session)) {
-      await logout(request);
-      return null;
-    }
-
-    session.lastActivity = DateTime.now();
-
-    final sessionRecord = await Model.firstWhere<AuthSession>(field: "email", value: session.email);
-
-    if (sessionRecord != null) {
-      return await Model.firstWhere<User>(field: "email", value: sessionRecord.email);
-    }
-    return null;
-  }
-
-  /// Determines whether the request is currently authenticated.
-  ///
-  /// This is a convenience wrapper around [user].
-  ///
-  /// Returns `true` when a valid authenticated user can be resolved;
-  /// otherwise returns `false`.
-  ///
-  /// Example:
-  /// ```dart
-  /// if (await AuthSession.check(request)) {
-  ///   print('User is authenticated');
-  /// } else {
-  ///   print('Guest request');
-  /// }
-  /// ```
-  static Future<bool> check(HttpRequest request) async {
-    return await user(request) != null;
-  }
-
-  /// Logs out the current session associated with the request.
-  ///
-  /// This method attempts to:
-  /// - locate the current session cookie
-  /// - remove the corresponding persisted session record
-  /// - remove the session from the in-memory registry
-  /// - clear the user bound to the current request session
-  ///
-  /// Returns `true` if a matching session was found and removed; otherwise
-  /// returns `false`.
-  ///
-  /// Any exception during logout results in `false`.
-  ///
-  /// Example:
-  /// ```dart
-  /// final didLogout = await AuthSession.logout(request);
-  ///
-  /// if (didLogout) {
-  ///   print('Session ended successfully');
-  /// }
-  /// ```
-  static Future<bool> logout(HttpRequest request) async {
-    try {
-      final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
-      final authSessions = App().tryMake<List<AuthSession>>();
-
-      final session = authSessions?.firstWhereOrNull((session) => session.cookie?.value == cookie?.value);
-
-      if (session != null) {
-        final sessionRecord = await Model.firstWhere<AuthSession>(field: "email", value: session.email);
-        await sessionRecord?.delete();
-        authSessions?.remove(session);
-        request.thisSession?.user = null;
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /// Attempts to authenticate a user and establish a session.
-  ///
-  /// Behavior:
-  /// - Creates a secure, HTTP-only session cookie.
-  /// - Reuses an existing in-memory session when available for the email.
-  /// - Otherwise verifies the user's password and creates a new persisted
-  ///   session record.
-  /// - Registers the session in memory and attaches the cookie to the response.
-  ///
-  /// Parameters:
-  /// - `request`: The active HTTP request.
-  /// - `email`: The user's email address.
-  /// - `password`: The plain-text password to verify.
-  ///
-  /// Returns `true` when login succeeds; otherwise returns `false`.
-  ///
-  /// Example:
-  /// ```dart
-  /// final success = await AuthSession.login(
-  ///   request: request,
-  ///   email: 'jane@example.com',
-  ///   password: 'super-secret-password',
-  /// );
-  ///
-  /// if (success) {
-  ///   print('Login successful');
-  /// }
-  /// ```
-  static Future<bool> login({required HttpRequest request, required String email, required String password}) async {
-    try {
-      final cookie = Cookie('archery_session', App.generateKey())
-        ..httpOnly = true
-        ..secure = true
-        ..sameSite = SameSite.lax;
-
-      final authSessions = App().tryMake<List<AuthSession>>();
-      if (authSessions == null) return false;
-
-      final authSession = authSessions.firstWhereOrNull((session) => session.email == email);
-
-      if (authSession != null) {
-        request.response.cookies.add(cookie);
-        authSession.cookie = cookie;
-        authSession.lastActivity = DateTime.now();
-        return true;
-      } else {
-        final user = await Model.firstWhere<User>(field: "email", value: email);
-
-        if (user != null && Hasher.check(key: password, hash: user.password)) {
-          final newAuthSession = await Model.create<AuthSession>(fromJson: {"email": user.email, "token": App.generateKey()});
-          if (newAuthSession == null) return false;
-
-          newAuthSession.lastActivity = DateTime.now();
-          newAuthSession.cookie = cookie;
-          authSessions.add(newAuthSession);
-
-          request.response.cookies.add(cookie);
-
-          return true;
-        }
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /// Middleware that protects routes requiring authentication.
-  ///
-  /// This middleware:
-  /// - verifies the session cookie exists
-  /// - ensures an in-memory session is available
-  /// - checks that the session matches the cookie
-  /// - validates the session timeout window
-  /// - refreshes the last-activity timestamp before continuing
-  ///
-  /// When validation fails, the request is logged out and redirected to the
-  /// login flow.
-  ///
-  /// Parameters:
-  /// - `request`: The incoming HTTP request.
-  /// - `next`: The next middleware or handler in the pipeline.
-  ///
-  /// Example:
-  /// ```dart
-  /// router.get(
-  ///   '/dashboard',
-  ///   handler: (request) async => dashboardController.index(request),
-  ///   middleware: [AuthSession.middleware],
-  /// );
-  /// ```
-  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
-    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
-
-    if (cookie == null) {
-      await logout(request);
-      return request.redirectToLogin();
-    }
-
-    final authSessions = App().tryMake<List<AuthSession>>();
-
-    if (authSessions == null || authSessions.isEmpty) {
-      await logout(request);
-      return request.redirectToLogin();
-    }
-
-    final session = authSessions.firstWhereOrNull((session) => session.cookie?.value == cookie.value);
-
-    if (session == null) {
-      await logout(request);
-      return request.redirectToLogin();
-    }
-
-    if (!_validateSession(session)) {
-      await logout(request);
-      return request.redirectToLogin();
-    }
-
-    session.lastActivity = DateTime.now();
-    await next();
-  }
+  static Map<String, String> columnDefinitions = {'email': 'TEXT NOT NULL', 'token': 'TEXT NOT NULL'};
 
   /// Validates whether the given session is still active.
   ///
@@ -556,7 +359,297 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
     final difference = currentTime.difference(session.lastActivity);
     return difference.inHours < 1;
   }
+
+  static AuthSession? _checkContainer(String cookieValue) {
+    return _cachedSessions?.firstWhereOrNull((session) => session.token == cookieValue);
+  }
+
+  static Future<AuthSession?> _checkDB(String cookieValue) async {
+    return await Model.firstWhere<AuthSession>(field: "token", value: cookieValue);
+  }
+
+  /// Resolves the currently authenticated user from the incoming request.
+  ///
+  /// Workflow:
+  /// 1. Reads the `archery_session` cookie from the request.
+  /// 2. Looks up the matching in-memory and db sessions.
+  /// 3. Verifies the session is still valid.
+  /// 4. Updates the session activity timestamp.
+  /// 5. Loads and returns the corresponding `User` record.
+  ///
+  /// If any step fails, the request is logged out and `null` is returned.
+  ///
+  /// Returns the authenticated `User`, or `null` when authentication fails.
+  ///
+  /// Example:
+  /// ```dart
+  /// final currentUser = await Auth.user(request);
+  ///
+  /// if (currentUser != null) {
+  ///   print('Authenticated as ${currentUser.email}');
+  /// }
+  /// ```
+  static Future<User?> user(HttpRequest request) async {
+    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+
+    if (cookie == null) {
+      return null;
+    }
+
+    final containerSession = _checkContainer(cookie.value);
+    if (containerSession != null) {
+      if (!_validateSession(containerSession)) {
+        await logout(request);
+        return null;
+      }
+
+      containerSession.lastActivity = DateTime.now();
+      await containerSession.save();
+
+      return await Model.firstWhere<User>(field: "email", value: containerSession.email);
+    }
+
+    final sessionRecord = await _checkDB(cookie.value);
+    if (sessionRecord != null) {
+      if (!_validateSession(sessionRecord)) {
+        await logout(request);
+        return null;
+      }
+
+      sessionRecord.lastActivity = DateTime.now();
+      _cachedSessions?.add(sessionRecord);
+
+      await sessionRecord.save();
+
+      return await Model.firstWhere<User>(field: "email", value: sessionRecord.email);
+    }
+
+    return null;
+  }
+
+  /// Determines whether the request is currently authenticated.
+  ///
+  /// This checks the session record without looking up the associated user.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (await Auth.check(request)) {
+  ///   print('User is authenticated');
+  /// } else {
+  ///   print('Guest request');
+  /// }
+  /// ```
+  static Future<bool> check(HttpRequest request) async {
+    final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+
+    if (cookie == null) {
+      return false;
+    }
+
+    final containerSession = _checkContainer(cookie.value);
+    if (containerSession != null) {
+      if (!_validateSession(containerSession)) {
+        await logout(request);
+        return false;
+      }
+
+      containerSession.lastActivity = DateTime.now();
+      return await containerSession.save();
+    }
+
+    final sessionRecord = await _checkDB(cookie.value);
+    if (sessionRecord != null) {
+      if (!_validateSession(sessionRecord)) {
+        await logout(request);
+        return false;
+      }
+      sessionRecord.lastActivity = DateTime.now();
+      _cachedSessions?.add(sessionRecord);
+      return await sessionRecord.save();
+    }
+
+    return false;
+  }
+
+  /// Middleware that protects routes requiring authentication.
+  ///
+  /// This middleware:
+  /// - verifies the session cookie exists
+  /// - ensures an in-memory/db session is available
+  /// - checks that the session matches the cookie
+  /// - validates the session timeout window
+  /// - refreshes the last-activity timestamp before continuing
+  ///
+  /// When validation fails, the request is logged out and redirected to the
+  /// login flow.
+  ///
+  /// Parameters:
+  /// - `request`: The incoming HTTP request.
+  /// - `next`: The next middleware or handler in the pipeline.
+  ///
+  /// Example:
+  /// ```dart
+  /// router.get(
+  ///   '/dashboard',
+  ///   handler: (request) async => dashboardController.index(request),
+  ///   middleware: [Auth.middleware],
+  /// );
+  /// ```
+  static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
+    if (await check(request)) {
+      return await next();
+    }
+
+    return request.redirectToLogin();
+  }
+
+  /// Logs in with form credentials, or an existing cookie when [usingCookie].
+  static Future<bool> login(HttpRequest request, {bool usingCookie = false}) async {
+    try {
+      if (usingCookie) {
+        return await loginWithCookie(request);
+      }
+
+      final email = await request.form.input('email');
+      final password = await request.form.input('password');
+
+      return loginWithEmailAndPassword(request, email: email, password: password);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Creates a new session for the user resolved from the current cookie.
+  ///
+  /// Issues a fresh token without deleting the previous session record.
+  /// Returns `false` when no user is resolved or session creation fails.
+  static Future<bool> loginWithCookie(HttpRequest request) async {
+    try {
+      final authUser = await user(request);
+
+      if (authUser != null) {
+        final cookie = Cookie('archery_session', App.generateKey())
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax;
+
+        final newAuthSession = await Model.create<AuthSession>(fromJson: {"email": authUser.email, "token": cookie.value});
+
+        if (newAuthSession == null) return false;
+
+        newAuthSession.lastActivity = DateTime.now();
+        _cachedSessions?.add(newAuthSession);
+
+        request.response.cookies.add(cookie);
+        request.cookies.add(cookie);
+
+        return await newAuthSession.save();
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Verifies credentials and issues a new authentication cookie.
+  ///
+  /// Requires a registered session cache and rejects already authenticated
+  /// requests. Multiple sessions may share an email, each with its own token.
+  static Future<bool> loginWithEmailAndPassword(HttpRequest request, {required String email, required String password}) async {
+    try {
+      if (_cachedSessions == null) {
+        return false;
+      }
+
+      if (await check(request)) {
+        return false;
+      }
+
+      // < v1.6 allowed for only one authSession per email.
+      // now allowing multiple... will base on cookie value
+
+      // use check to limit login sessions
+
+      // final sessions = await Model.where<AuthSession>(field: "email", value: email);
+      //
+      // if( sessions.length >= 5 ) {
+      //   return false;
+      // }
+
+      final user = await Model.firstWhere<User>(field: "email", value: email);
+
+      if (user != null && Hasher.check(key: password, hash: user.password)) {
+        final cookie = Cookie('archery_session', App.generateKey())
+          ..httpOnly = true
+          ..secure = true
+          ..sameSite = SameSite.lax;
+
+        final newAuthSession = await Model.create<AuthSession>(fromJson: {"email": user.email, "token": cookie.value});
+
+        if (newAuthSession == null) return false;
+
+        newAuthSession.lastActivity = DateTime.now();
+        _cachedSessions?.add(newAuthSession);
+
+        request.response.cookies.add(cookie);
+        request.cookies.add(cookie);
+
+        return await newAuthSession.save();
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Deletes the matching authentication session and clears guest-session state.
+  ///
+  /// Removes the cookie from request/response collections; it does not emit an
+  /// expired browser cookie. A missing cookie succeeds, while an unknown token
+  /// or a failed deletion returns `false`.
+
+  static Future<bool> logout(HttpRequest request) async {
+    try {
+      final cookie = request.cookies.firstWhereOrNull((cookie) => cookie.name == "archery_session");
+
+      if (cookie == null) {
+        return true;
+      }
+
+      final containerSession = _checkContainer(cookie.value);
+
+      if (containerSession != null) {
+        _cachedSessions?.remove(containerSession);
+        request.cookies.remove(cookie);
+        request.response.cookies.remove(cookie);
+        request.thisSession?.user = null;
+        request.thisSession?.data.clear();
+        request.thisSession?.errors.clear();
+        request.thisSession?.flashMessages.clear();
+        return await containerSession.delete();
+      }
+
+      final dbSession = await _checkDB(cookie.value);
+
+      if (dbSession != null) {
+        request.cookies.remove(cookie);
+        request.response.cookies.remove(cookie);
+        request.thisSession?.user = null;
+        request.thisSession?.data.clear();
+        request.thisSession?.errors.clear();
+        request.thisSession?.flashMessages.clear();
+        return await dbSession.delete();
+      }
+
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
 }
+
 
 /// Adds password hashing helpers related to authentication.
 ///
@@ -625,34 +718,28 @@ void authRoutes(Router router) {
 
       router.post('/register', (request) async {
         try {
-          final validated = await request.validateAll([{
-              "email": [
-                Rule.required,
-                Rule.email,
-                Rule.max(255),
-                Rule.unique<User>(column: "email")],}, {
-
-              "name": [
-                Rule.required,
-                Rule.min(3),
-                Rule.max(100)],},{
-
-              "password": [
-                Rule.required,
-                Rule.min(6),
-                Rule.max(50)],},]
-          );
+          final validated = await request.validateAll([
+            {
+              "email": [Rule.required, Rule.max(255), Rule.email, Rule.unique<User>(column: "email")],
+            },
+            {
+              "name": [Rule.required, Rule.min(3), Rule.max(100)],
+            },
+            {
+              "password": [Rule.required, Rule.min(6), Rule.max(50)],
+            },
+          ]);
 
           if (!validated) {
             return request.redirectBack();
           }
 
-          final form = request.form();
-          final name = await form.input('name');
-          final email = await form.input('email');
-          final password = await form.input('password');
+          final name = await request.form.input('name');
+          final email = await request.form.input('email');
+          final password = await request.form.input('password');
 
           final userRecord = await Model.firstWhere<User>(field: "email", value: email);
+
           if (userRecord != null) {
             request.flash(key: "error", message: "User exists");
             return request.redirectToLogin();
@@ -671,16 +758,12 @@ void authRoutes(Router router) {
 
       router.post('/login', (request) async {
         try {
-          final validated = await request.validateAll([{
-
-              "email": [
-                Rule.required,
-                Rule.email,
-                Rule.max(255)],},{
-
-              "password": [
-                Rule.required,
-                Rule.max(50)],
+          final validated = await request.validateAll([
+            {
+              "email": [Rule.required, Rule.email, Rule.max(255)],
+            },
+            {
+              "password": [Rule.required, Rule.max(50)],
             },
           ]);
 
@@ -688,11 +771,7 @@ void authRoutes(Router router) {
             return request.redirectBack();
           }
 
-          final form = request.form();
-          final email = await form.input('email');
-          final password = await form.input('password');
-
-          if (await Auth.login(request: request, email: email, password: password)) {
+          if (await Auth.login(request)) {
             return request.redirectToDashboard();
           }
 
@@ -714,7 +793,7 @@ void authRoutes(Router router) {
         prefix: "/user",
         middleware: [Auth.middleware],
         routes: () {
-          // - grouped for profile & dashboard crud
+          // - grouped for profile & dashboard crud endpoints
           router.group(
             prefix: "/profile",
             routes: () {

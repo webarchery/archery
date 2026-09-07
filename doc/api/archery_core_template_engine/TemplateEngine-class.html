@@ -55,10 +55,11 @@
 
     
 <section class="desc markdown">
-  <p>A powerful, Laravel Blade-inspired templating engine for Dart.</p>
-<p>Supports layouts, includes, control structures, and secure interpolation.</p>
-<p><strong>Async Support:</strong> render() and internal processing are now asynchronous
-to prevent blocking the event loop on file I/O.</p>
+  <p>Parses and renders Archery HTML templates.</p>
+<p>Templates are loaded from <a href="../archery_core_template_engine/TemplateEngine/viewsDirectory.html">viewsDirectory</a> by converting dot-delimited
+names to paths and appending <code>.html</code>. For example, <code>users.profile</code> resolves
+to <code>users/profile.html</code>. Parsed syntax trees are cached when <a href="../archery_core_template_engine/TemplateEngine/shouldCache.html">shouldCache</a>
+is true.</p>
 </section>
 
 
@@ -68,11 +69,10 @@ to prevent blocking the event loop on file I/O.</p>
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="TemplateEngine.new" class="callable">
-          <span class="name"><a href="../archery_core_template_engine/TemplateEngine/TemplateEngine.html">TemplateEngine</a></span><span class="signature">({<span class="parameter" id="-param-viewsDirectory"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">viewsDirectory</span>, </span><span class="parameter" id="-param-publicDirectory"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">publicDirectory</span></span>})</span>
+          <span class="name"><a href="../archery_core_template_engine/TemplateEngine/TemplateEngine.html">TemplateEngine</a></span><span class="signature">({<span class="parameter" id="param-viewsDirectory"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">viewsDirectory</span>, </span><span class="parameter" id="param-publicDirectory"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">publicDirectory</span></span>})</span>
         </dt>
         <dd>
-          Creates a new template engine instance.
-<code>publicDirectory</code> not necessary but provided for future directives
+          Creates a template engine using the given view and public directories.
         </dd>
     </dl>
   </section>
@@ -83,8 +83,8 @@ to prevent blocking the event loop on file I/O.</p>
     <h2>Properties</h2>
     <dl class="properties">
         <dt id="hashCode" class="property inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/hashCode.html">hashCode</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/int-class.html">int</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
   
 
 </dt>
@@ -96,19 +96,19 @@ to prevent blocking the event loop on file I/O.</p>
 
         <dt id="publicDirectory" class="property">
   <span class="name"><a href="../archery_core_template_engine/TemplateEngine/publicDirectory.html">publicDirectory</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   
 
 </dt>
 <dd>
-  Public assets directory.
+  Directory containing publicly served assets.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
 
         <dt id="runtimeType" class="property inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/runtimeType.html">runtimeType</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/Type-class.html">Type</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
   
 
 </dt>
@@ -120,24 +120,24 @@ to prevent blocking the event loop on file I/O.</p>
 
         <dt id="shouldCache" class="property">
   <span class="name"><a href="../archery_core_template_engine/TemplateEngine/shouldCache.html">shouldCache</a></span>
-  <span class="signature">&#8596; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   
 
 </dt>
 <dd>
-  Whether to enable template caching.
+  Whether parsed file templates are retained between render calls.
   <div class="features"><span class="feature">getter/setter pair</span></div>
 
 </dd>
 
         <dt id="viewsDirectory" class="property">
   <span class="name"><a href="../archery_core_template_engine/TemplateEngine/viewsDirectory.html">viewsDirectory</a></span>
-  <span class="signature">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   
 
 </dt>
 <dd>
-  Directory containing <code>.html</code> view templates.
+  Directory containing template files.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -159,13 +159,13 @@ to prevent blocking the event loop on file I/O.</p>
 
 </dt>
 <dd>
-  
+  Removes all parsed templates from the in-memory AST cache.
   
 
 </dd>
 
         <dt id="noSuchMethod" class="callable inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
   </span>
   
@@ -178,21 +178,34 @@ to prevent blocking the event loop on file I/O.</p>
 </dd>
 
         <dt id="render" class="callable">
-  <span class="name"><a href="../archery_core_template_engine/TemplateEngine/render.html">render</a></span><span class="signature">(<wbr><span class="parameter" id="render-param-templateName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">templateName</span>, [</span><span class="parameter" id="render-param-data"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">data</span></span>])
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  <span class="name"><a href="../archery_core_template_engine/TemplateEngine/render.html">render</a></span><span class="signature">(<wbr><span class="parameter" id="render-param-templateName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">templateName</span>, [</span><span class="parameter" id="render-param-data"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">data</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Renders a template with the provided data asynchronously.
+  Loads and renders the template identified by <code>templateName</code>.
+  
+
+</dd>
+
+        <dt id="renderString" class="callable">
+  <span class="name"><a href="../archery_core_template_engine/TemplateEngine/renderString.html">renderString</a></span><span class="signature">(<wbr><span class="parameter" id="renderString-param-source"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">source</span>, [</span><span class="parameter" id="renderString-param-data"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">data</span></span>])
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Parses and renders template <code>source</code> without using the AST cache.
   
 
 </dd>
 
         <dt id="toString" class="callable inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
 
@@ -212,8 +225,8 @@ to prevent blocking the event loop on file I/O.</p>
     <h2>Operators</h2>
     <dl class="callables">
         <dt id="operator ==" class="callable inherited">
-  <span class="name"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/3.10.9/dart-core/bool-class.html">bool</a></span>
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   </span>
   
 
@@ -253,7 +266,7 @@ to prevent blocking the event loop on file I/O.</p>
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

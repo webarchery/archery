@@ -49,6 +49,8 @@ base class AppKernel {
   /// Executed in order. Each calls `next()` to continue.
   final List<HttpMiddleware> middleware;
 
+  static late final HttpServer? server;
+
   /// The router responsible for route matching and dispatch.
   final Router router;
 
@@ -80,7 +82,7 @@ base class AppKernel {
     // For GET/HEAD requests with no body, we skip buffering to improve performance
     if (request.contentLength > 0) {
       try {
-        await request.form().buffer();
+        await request.form.buffer();
       } catch (e) {
         App().archeryLogger.error("Error buffering request body", {
           "origin": "Kernel.handle()",

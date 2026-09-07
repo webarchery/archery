@@ -54,9 +54,9 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>&gt;</span></span>
-<span class="name ">render</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="render-param-templateName"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">templateName</span>, [</span></li>
-<li><span class="parameter" id="render-param-data"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">data</span></span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+<span class="name ">render</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="render-param-templateName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">templateName</span>, [</span></li>
+<li><span class="parameter" id="render-param-data"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span>?</span> <span class="parameter-name">data</span></span></li>
 </ol>])
 
       
@@ -64,7 +64,9 @@
     </section>
     
 <section class="desc markdown">
-  <p>Renders a template with the provided data asynchronously.</p>
+  <p>Loads and renders the template identified by <code>templateName</code>.</p>
+<p>Values in <code>data</code> are available to expressions by key. Throws
+<a href="../../archery_core_template_engine/TemplateEngineException-class.html">TemplateEngineException</a> if the template cannot be found or parsed.</p>
 </section>
 
 
@@ -75,8 +77,8 @@
     String templateName, [
       Map&lt;String, dynamic&gt;? data,
     ]) async {
-  final templateContent = await _loadTemplate(templateName);
-  return _compile(templateContent, data ?? {});
+  final ast = await _loadAst(templateName);
+  return _renderTemplate(ast, data ?? {});
 }</code></pre>
 </section>
 
@@ -105,7 +107,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

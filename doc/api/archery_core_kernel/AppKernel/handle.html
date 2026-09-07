@@ -54,8 +54,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
-<span class="name ">handle</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handle-param-request"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">handle</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="handle-param-request"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></span> <span class="parameter-name">request</span></span></li>
 </ol>)
 
       
@@ -63,7 +63,7 @@
     </section>
     
 <section class="desc markdown">
-  <p>Handles an incoming <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a> by running global middleware,
+  <p>Handles an incoming <a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a> by running global middleware,
 then dispatching to the router.</p>
 <p>This is the <strong>main entry point</strong> for HTTP request processing.</p>
 <pre class="language-dart"><code class="language-dart">HttpServer.bind('0.0.0.0', 8080).then((server) {
@@ -83,7 +83,7 @@ then dispatching to the router.</p>
   &#47;&#47; For GET&#47;HEAD requests with no body, we skip buffering to improve performance
   if (request.contentLength &gt; 0) {
     try {
-      await request.form().buffer();
+      await request.form.buffer();
     } catch (e) {
       App().archeryLogger.error(&quot;Error buffering request body&quot;, {
         &quot;origin&quot;: &quot;Kernel.handle()&quot;,
@@ -120,7 +120,7 @@ then dispatching to the router.</p>
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

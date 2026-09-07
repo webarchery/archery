@@ -295,7 +295,7 @@ extension RequestValidation on HttpRequest {
   /// }
   /// ```
   Future<bool> validate({required String field, required List<dynamic> rules}) async {
-    final data = await form().all();
+    final data = await form.all();
 
     // for old('name')
     // value="{{ session.data.<name>}}"
@@ -345,6 +345,8 @@ extension RequestValidation on HttpRequest {
     final results = await Future.wait(tasks);
     return results.every((validation) => validation == true);
   }
+
+
 
 
 }

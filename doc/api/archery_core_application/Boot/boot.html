@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
 <span class="name ">boot</span>(<wbr>)
 
       
@@ -69,7 +69,7 @@
 <li><a href="../../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a> with views and public paths</li>
 <li><a href="../../archery_core_static_files_server/StaticFilesServer-class.html">StaticFilesServer</a></li>
 <li><a href="https://pub.dev/documentation/uuid/4.5.3/uuid/Uuid-class.html">Uuid</a> generator</li>
-<li>SQLite <a href="https://pub.dev/documentation/sqflite_common/2.5.6/archery_archery/Database-class.html">Database</a> in <code>lib/src/storage/database.sqlite</code></li>
+<li>SQLite <a href="https://pub.dev/documentation/sqflite_common/2.5.11/sqlite_api/Database-class.html">Database</a> in <code>lib/src/storage/database.sqlite</code></li>
 </ul>
 <p>Then boots all registered providers and triggers <code>onBooted</code> callbacks.</p>
 <p>Sets <a href="../../archery_core_application/App/status.html">status</a> to <a href="../../archery_core_application/AppStatus.html">AppStatus.ready</a> on success, or <a href="../../archery_core_application/AppStatus.html">AppStatus.error</a> on failure.</p>
@@ -105,18 +105,15 @@
   final Uuid uuid = Uuid();
   container.bindInstance&lt;Uuid&gt;(uuid);
 
-  switch(Model.defaultDisk) {
+  switch (Model.defaultDisk) {
     case .file:
     case DatabaseDisk.s3:
     case DatabaseDisk.sqlite:
       await _initSQLite();
     case DatabaseDisk.pgsql:
-      await _initSQLite();
+      &#47;&#47; await _initSQLite();
       await _initPostgres();
   }
-
-
-
 
   await container.initialize();
 
@@ -169,7 +166,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

@@ -30,12 +30,8 @@
 // https://webarchery.dev
 import 'package:archery/archery/archery.dart';
 
-typedef Sessions = StartSession;
 
-base class StartSession {
-  static Future<dynamic> start(HttpRequest request, Future<void> Function() next) async {
-    return await middleware(request, next);
-  }
+base class WebSession {
 
   static Future<dynamic> middleware(HttpRequest request, Future<void> Function() next) async {
     await Session.init(request);

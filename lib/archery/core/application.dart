@@ -32,6 +32,7 @@
 import 'package:archery/archery/archery.dart';
 import 'package:postgres/postgres.dart';
 
+
 /// Enum representing the lifecycle status of the [App] instance.
 enum AppStatus {
   /// The application is in the process of initializing.
@@ -47,7 +48,7 @@ enum AppStatus {
   error,
 
   /// The application is in the process of shutting down.
-  shuttingDown,
+  shutdown,
 }
 
 /// The main application class that serves as a singleton service container
@@ -57,7 +58,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.5.0";
+  static final String version = "1.6.0";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
@@ -73,6 +74,11 @@ class App {
 
   /// The singleton instance of [App].
   static final App _instance = App._internal();
+
+  static String get env  {
+    final config = App().container.make<AppConfig>();
+    return config.get('app.env');
+  }
 
   /// Factory constructor returning the singleton instance.
   factory App() => _instance;
@@ -118,16 +124,29 @@ class App {
   /// Currently logs shutdown message. Extend to close DB connections,
   /// stop servers, flush caches, etc.
   Future<void> shutdown() async {
-    status = AppStatus.shuttingDown;
+    status = AppStatus.shutdown;
     print('Shutting down...');
-    // TODO: Implement cleanup (close DB, stop HTTP server, etc.)
+
+    await PostgresModel.database?.close(force: true);
+    await AppKernel.server?.close(force: true);
+
+    await container.dispose();
+
   }
+
 
   /// Generates a secure random 32-byte key encoded in URL-safe base64.
   ///
   /// Used for application encryption key, session secrets, etc.
+  static final Random _secureRandom = Random.secure();
+
+  /// Facade to cheaply grab a generator
+  static Random get secureRandom => _secureRandom;
+
+
+
   static String generateKey() {
-    return base64Url.encode(List.generate(32, (i) => Random.secure().nextInt(256)));
+    return base64Url.encode(List.generate(32, (_) => _secureRandom.nextInt(256)));
   }
 
   /// Ensures `lib/src/config/app.json` exists and populates it with default config.
@@ -156,6 +175,7 @@ class App {
 
     final config = <String, dynamic>{
       "name": "Archery Web Application",
+      "env": "local",
       "version": version,
       "timestamp": DateTime.now().toUtc().toIso8601String(),
       "key": generateKey(),
@@ -206,18 +226,15 @@ extension Boot on App {
     final Uuid uuid = Uuid();
     container.bindInstance<Uuid>(uuid);
 
-    switch(Model.defaultDisk) {
+    switch (Model.defaultDisk) {
       case .file:
       case DatabaseDisk.s3:
       case DatabaseDisk.sqlite:
         await _initSQLite();
       case DatabaseDisk.pgsql:
-        await _initSQLite();
+        // await _initSQLite();
         await _initPostgres();
     }
-
-
-
 
     await container.initialize();
 
@@ -321,10 +338,8 @@ extension GetLoggers on App {
 }
 
 extension InitDatabases on App {
-
   Future<void> _initPostgres() async {
     // Default Postgres DB
-    // Todo - uncomment to init postgres when you config is set
 
     try {
       final postgresConnection = await PostgresDatabase.open(
@@ -357,19 +372,18 @@ extension InitDatabases on App {
     final SQLiteDatabase sqliteDatabase = await databaseFactoryFfi.openDatabase(
       file.absolute.path,
       options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: (db, version) async {},
+        version: 1,
+        onCreate: (db, version) async {},
         onOpen: (db) async {
           // 1. Wait up to 5 seconds for a lock to clear before failing
-          await db.execute('PRAGMA busy_timeout = 5000;');
+          // await db.execute('PRAGMA busy_timeout = 5000;');
 
           // 2. Enable Write-Ahead Logging for multi-process/isolate support
-          await db.execute('PRAGMA journal_mode = WAL;');
+          // await db.execute('PRAGMA journal_mode = WAL;');
 
           // 3. Optimize synchronization for speed
-          await db.execute('PRAGMA synchronous = NORMAL;');
+          // await db.execute('PRAGMA synchronous = NORMAL;');
         },
-
       ),
     );
     container.singleton<SQLiteDatabase>(factory: (_, [_]) => sqliteDatabase, eager: true);

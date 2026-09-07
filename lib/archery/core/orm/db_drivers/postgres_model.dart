@@ -43,6 +43,7 @@ import 'package:postgres/postgres.dart' hide Type;
 /// with a constructor (and optional column definitions).
 abstract class PostgresModel {
   static PostgresDatabase get _database => App().make<PostgresDatabase>();
+  static PostgresDatabase? get database => _database;
 
   static Uuid get _uuid => App().make<Uuid>();
 

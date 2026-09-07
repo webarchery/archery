@@ -41,6 +41,7 @@ class SqliteMigrationsProvider extends Provider {
 /// await _migrateSQLiteModels();
 /// ```
 Future<void> _migrateSQLiteModels() async {
+
   await SQLiteModel.migrate<User>(
     constructor: User.fromJson,
     columnDefinitions: User.columnDefinitions,

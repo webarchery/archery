@@ -1,10 +1,12 @@
 {
   "name": "archery",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Laravel‑inspired developer flow. Dart‑native performance. Minimal, composable primitives.",
   "main": "bin/server.dart",
   "scripts": {
-    "serve": "dartmon bin/server.dart --ignore  lib/src/storage/json_file_models/auth_sessions.json,lib/src/storage/json_file_models/sessions.json",
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "serve": "dartmon bin/server.dart --ignore lib/src/storage/sqlite/database.sqlite,lib/src/storage/sqlite/database.sqlite-journal,lib/src/storage/json_file_models/auth_sessions.json,lib/src/storage/json_file_models/sessions.json",
     "start": "browser-sync start --proxy \"localhost:5501\" --files \"lib/**/*.html,lib/**/*.js,lib/**/*.css,lib/**/*.dart\" --no-notify"
   },
   "repository": {
@@ -21,13 +23,15 @@
     "url": "https://github.com/webarchery/archery/issues"
   },
   "homepage": "https://webarchery.dev",
-
-
   "dependencies": {
-
+    "@tailwindcss/vite": "^4.1.11",
+    "alpinejs": "^3.15.12"
   },
   "devDependencies": {
-    "browser-sync": "^3.0"
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.20",
+    "browser-sync": "^3.0.4",
+    "vite": "^7.1.1"
   },
   "type": "module"
 }

@@ -54,8 +54,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.9/archery_archery/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpResponse-class.html">HttpResponse</a></span>&gt;</span></span>
-<span class="name ">benchView</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="benchView-param-template"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.9/dart-core/String-class.html">String</a></span> <span class="parameter-name">template</span>, [</span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-io/HttpResponse-class.html">HttpResponse</a></span>&gt;</span></span>
+<span class="name ">benchView</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="benchView-param-template"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">template</span>, [</span></li>
 <li><span class="parameter" id="benchView-param-data"><span class="type-annotation"><a href="../../archery_core_http_extensions/ViewData.html">ViewData</a>?</span> <span class="parameter-name">data</span></span></li>
 </ol>])
 
@@ -70,16 +70,16 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;HttpResponse&gt; benchView(String template, [ViewData? data]) async {
 
-  final csrfCookie = cookies.firstWhereOrNull((c) =&gt; c.name == &#39;archery_csrf_token&#39;);
-  final String token = csrfCookie?.value ?? &quot;static_bench_token&quot;;
+  &#47;&#47; final csrfCookie = cookies.firstWhereOrNull((c) =&gt; c.name == &#39;archery_csrf_token&#39;);
+  &#47;&#47; final String token = csrfCookie?.value ?? &quot;static_bench_token&quot;;
 
   try {
 
     final engine = App().container.make&lt;TemplateEngine&gt;();
-    final html = await engine.render(template, {...?data, &#39;csrf_token&#39;: token});
+    final html = await engine.render(template, {...?data});
 
     response.headers.contentType = ContentType.html;
-    _minimalViewHeaders.forEach(response.headers.set);
+    &#47;&#47; _minimalViewHeaders.forEach(response.headers.set);
 
 
 
@@ -106,7 +106,7 @@
     <li class="self-crumb">benchView method</li>
 </ol>
 
-    <h5>BenchView extension on <a href="https://api.dart.dev/stable/3.10.9/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
+    <h5>BenchView extension on <a href="https://api.flutter.dev/flutter/dart-io/HttpRequest-class.html">HttpRequest</a></h5>
     <div id="dartdoc-sidebar-left-content"></div>
   </div><!--/.sidebar-offcanvas-->
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
@@ -115,7 +115,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>

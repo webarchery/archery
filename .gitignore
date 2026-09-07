@@ -3,6 +3,7 @@
 .idea/
 .dart_tool/
 lib/src/config/env.json
+lib/src/config/app.json
 lib/src/storage/sqlite
 lib/src/storage/json_file_models
 lib/src/storage/logs/archery.log

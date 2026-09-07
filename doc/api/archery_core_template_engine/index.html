@@ -64,12 +64,148 @@
     <section class="summary offset-anchor" id="classes">
       <h2>Classes</h2>
       <dl>
+          <dt id="BinaryExpr">
+  <span class="name "><a href="../archery_core_template_engine/BinaryExpr-class.html">BinaryExpr</a></span> 
+
+</dt>
+<dd>
+  An expression that applies a binary operator to two operands.
+</dd>
+
+          <dt id="CsrfNode">
+  <span class="name "><a href="../archery_core_template_engine/CsrfNode-class.html">CsrfNode</a></span> 
+
+</dt>
+<dd>
+  A directive that emits a hidden CSRF-token input.
+</dd>
+
+          <dt id="Expr">
+  <span class="name "><a href="../archery_core_template_engine/Expr-class.html">Expr</a></span> 
+
+</dt>
+<dd>
+  Base type for expressions embedded in template output and directives.
+</dd>
+
+          <dt id="ExprParser">
+  <span class="name "><a href="../archery_core_template_engine/ExprParser-class.html">ExprParser</a></span> 
+
+</dt>
+<dd>
+  Parses the expression language used inside template tags and directives.
+</dd>
+
+          <dt id="ForeachNode">
+  <span class="name "><a href="../archery_core_template_engine/ForeachNode-class.html">ForeachNode</a></span> 
+
+</dt>
+<dd>
+  A loop created from an <code>@foreach(item in collection)</code> directive.
+</dd>
+
+          <dt id="IfNode">
+  <span class="name "><a href="../archery_core_template_engine/IfNode-class.html">IfNode</a></span> 
+
+</dt>
+<dd>
+  A conditional block created from an <code>@if</code> directive.
+</dd>
+
+          <dt id="IncludeNode">
+  <span class="name "><a href="../archery_core_template_engine/IncludeNode-class.html">IncludeNode</a></span> 
+
+</dt>
+<dd>
+  A reference to another template that should be rendered inline.
+</dd>
+
+          <dt id="LiteralExpr">
+  <span class="name "><a href="../archery_core_template_engine/LiteralExpr-class.html">LiteralExpr</a></span> 
+
+</dt>
+<dd>
+  An expression containing a constant string, number, boolean, or null value.
+</dd>
+
+          <dt id="Node">
+  <span class="name "><a href="../archery_core_template_engine/Node-class.html">Node</a></span> 
+
+</dt>
+<dd>
+  Base type for nodes in a parsed template.
+</dd>
+
+          <dt id="OutputNode">
+  <span class="name "><a href="../archery_core_template_engine/OutputNode-class.html">OutputNode</a></span> 
+
+</dt>
+<dd>
+  An expression whose result is written to the rendered output.
+</dd>
+
+          <dt id="SectionNode">
+  <span class="name "><a href="../archery_core_template_engine/SectionNode-class.html">SectionNode</a></span> 
+
+</dt>
+<dd>
+  A named content block supplied to a layout.
+</dd>
+
           <dt id="TemplateEngine">
   <span class="name "><a href="../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a></span> 
 
 </dt>
 <dd>
-  A powerful, Laravel Blade-inspired templating engine for Dart.
+  Parses and renders Archery HTML templates.
+</dd>
+
+          <dt id="TemplateNode">
+  <span class="name "><a href="../archery_core_template_engine/TemplateNode-class.html">TemplateNode</a></span> 
+
+</dt>
+<dd>
+  The root of a parsed template.
+</dd>
+
+          <dt id="TemplateParser">
+  <span class="name "><a href="../archery_core_template_engine/TemplateParser-class.html">TemplateParser</a></span> 
+
+</dt>
+<dd>
+  Converts template source into a <a href="../archery_core_template_engine/TemplateNode-class.html">TemplateNode</a> syntax tree.
+</dd>
+
+          <dt id="TextNode">
+  <span class="name "><a href="../archery_core_template_engine/TextNode-class.html">TextNode</a></span> 
+
+</dt>
+<dd>
+  A literal block of template text.
+</dd>
+
+          <dt id="UnaryNotExpr">
+  <span class="name "><a href="../archery_core_template_engine/UnaryNotExpr-class.html">UnaryNotExpr</a></span> 
+
+</dt>
+<dd>
+  A logical negation expression, such as <code>!user.isActive</code>.
+</dd>
+
+          <dt id="VariableExpr">
+  <span class="name "><a href="../archery_core_template_engine/VariableExpr-class.html">VariableExpr</a></span> 
+
+</dt>
+<dd>
+  A reference to a value in the render context.
+</dd>
+
+          <dt id="YieldNode">
+  <span class="name "><a href="../archery_core_template_engine/YieldNode-class.html">YieldNode</a></span> 
+
+</dt>
+<dd>
+  A layout placeholder populated by a matching <a href="../archery_core_template_engine/SectionNode-class.html">SectionNode</a>.
 </dd>
 
       </dl>
@@ -91,7 +227,7 @@
 
 </dt>
 <dd>
-  Exception thrown by <a href="../archery_core_template_engine/TemplateEngine-class.html">TemplateEngine</a> during rendering.
+  An error raised while locating, parsing, or rendering a template.
 </dd>
 
       </dl>
@@ -156,7 +292,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.5.0
+      1.6.0
   </span>
   
 </footer>
