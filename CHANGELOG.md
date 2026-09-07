@@ -108,7 +108,7 @@
   - From single auth session to multi-auth sessions
   - user remains logged in on server restart
 - request.form() to request.form
-  - changed extension from method to getter to expressiveness
+  - changed extension from method to getter
 - frontend assets
   - added support for css/js with vite
   - adopted alpine js and tailwind by default

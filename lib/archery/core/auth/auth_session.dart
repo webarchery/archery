@@ -513,7 +513,7 @@ class AuthSession extends Model with InstanceDatabaseOps<AuthSession> {
       final email = await request.form.input('email');
       final password = await request.form.input('password');
 
-      return loginWithEmailAndPassword(request, email: email, password: password);
+      return await loginWithEmailAndPassword(request, email: email, password: password);
     } catch (e) {
       return false;
     }
