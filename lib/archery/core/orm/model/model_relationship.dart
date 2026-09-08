@@ -93,12 +93,12 @@ extension ModelRelationships on Model {
         case DatabaseDisk.file:
         case DatabaseDisk.s3:
           final foreignUuidKey = "${foreignTableSingular}_uuid";
-          return Model.firstWhere<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
+          return await Model.firstWhere<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
 
         case DatabaseDisk.sqlite:
         case DatabaseDisk.pgsql:
           final foreignIdKey = "${foreignTableSingular}_id";
-          return Model.firstWhere<T>(field: foreignIdKey, value: data['id'], disk: disk);
+          return await Model.firstWhere<T>(field: foreignIdKey, value: data['id'], disk: disk);
       }
     } catch (e,stack) {
       App().archeryLogger.error("Error resolving hasOne", {"origin": "ext ModelRelationships hasOne", "error": e.toString(), "stack": stack.toString()});
@@ -128,12 +128,12 @@ extension ModelRelationships on Model {
         case DatabaseDisk.file:
         case DatabaseDisk.s3:
           final foreignUuidKey = "${foreignTableSingular}_uuid";
-          return Model.where<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
+          return await Model.where<T>(field: foreignUuidKey, value: data['uuid'], disk: disk);
 
         case DatabaseDisk.sqlite:
         case DatabaseDisk.pgsql:
           final foreignIdKey = "${foreignTableSingular}_id";
-          return Model.where<T>(field: foreignIdKey, value: data['id'], disk: disk);
+          return await Model.where<T>(field: foreignIdKey, value: data['id'], disk: disk);
       }
     } catch (e, stack) {
       App().archeryLogger.error("Error resolving hasMany", {"origin": "ext ModelRelationships hasMany", "error": e.toString(), "stack": stack.toString()});
@@ -323,7 +323,7 @@ extension ModelRelationshipOps on Model {
             case .sqlite:
             case .pgsql:
               final siblingField = "${siblingPrefix}_id";
-              return  update(withJson: {siblingField: sibling.id});
+              return  await update(withJson: {siblingField: sibling.id});
 
             case .file:
             case .s3:
@@ -432,7 +432,7 @@ extension ModelRelationshipOps on Model {
             case .sqlite:
             case .pgsql:
               final siblingField = "${siblingPrefix}_id";
-              return  update(withJson: {siblingField: null});
+              return  await update(withJson: {siblingField: null});
 
             case .file:
             case .s3:

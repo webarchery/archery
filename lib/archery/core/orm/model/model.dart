@@ -281,7 +281,7 @@ abstract class Model {
   ///
   /// Alias for `index<T>()`.
   static Future<List<T>> all<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
-    return index<T>(disk: disk);
+    return await index<T>(disk: disk);
   }
 
   /// Retrieves all instances of type [T].
@@ -827,7 +827,7 @@ abstract class Model {
   static Future<dynamic> isoIndex<T extends Model>({DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
       case DatabaseDisk.sqlite:
-        return SQLiteModel.isoIndex<T>();
+        return await SQLiteModel.isoIndex<T>();
 
       //--------------------------
       // todo
