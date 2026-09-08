@@ -115,3 +115,6 @@
 - AppStatus.shuttingDown to AppStatus.shutdown
 - App.env as static getter
 - Cleanup at shutdown
+
+## 1.6.1
+## 1.6.11

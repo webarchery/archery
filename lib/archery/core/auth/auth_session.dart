@@ -798,7 +798,7 @@ void authRoutes(Router router) {
             prefix: "/profile",
             routes: () {
               router.get("/", (request) async {
-                return request.view("auth.user.profile");
+                return await request.view("auth.user.profile");
               });
             },
           );
@@ -807,7 +807,7 @@ void authRoutes(Router router) {
             prefix: "/dashboard",
             routes: () {
               router.get("/", (request) async {
-                return request.view("auth.user.dashboard");
+                return await request.view("auth.user.dashboard");
               });
             },
           );

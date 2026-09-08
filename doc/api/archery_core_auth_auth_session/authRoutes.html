@@ -172,7 +172,7 @@ and that the <code>User</code> model is available for persistence.</p>
             prefix: &quot;&#47;profile&quot;,
             routes: () {
               router.get(&quot;&#47;&quot;, (request) async {
-                return request.view(&quot;auth.user.profile&quot;);
+                return await request.view(&quot;auth.user.profile&quot;);
               });
             },
           );
@@ -181,7 +181,7 @@ and that the <code>User</code> model is available for persistence.</p>
             prefix: &quot;&#47;dashboard&quot;,
             routes: () {
               router.get(&quot;&#47;&quot;, (request) async {
-                return request.view(&quot;auth.user.dashboard&quot;);
+                return await request.view(&quot;auth.user.dashboard&quot;);
               });
             },
           );
@@ -216,7 +216,7 @@ and that the <code>User</code> model is available for persistence.</p>
 <footer>
   <span class="no-break">
     archery
-      1.6.0
+      1.6.11
   </span>
   
 </footer>
