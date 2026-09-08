@@ -166,14 +166,14 @@ extension ModelRelationships on Model {
           final foreignUuidKey = "${foreignTableSingular}_uuid";
           final val = data[foreignUuidKey];
           if (val == null) return null;
-          return Model.firstWhere<T>(field: "uuid", value: val, disk: disk);
+          return await Model.firstWhere<T>(field: "uuid", value: val, disk: disk);
 
         case DatabaseDisk.sqlite:
         case DatabaseDisk.pgsql:
           final foreignIdKey = "${foreignTableSingular}_id";
           final val = data[foreignIdKey];
           if (val == null) return null;
-          return Model.firstWhere<T>(field: "id", value: val, disk: disk);
+          return await Model.firstWhere<T>(field: "id", value: val, disk: disk);
       }
     } catch (e, stack) {
       App().archeryLogger.error("Error resolving belongsToOne", {"origin": "ext ModelRelationships belongsToOne", "error": e.toString(), "stack": stack.toString()});
