@@ -654,9 +654,9 @@ abstract class Model {
             model.disk = .file;
             return model;
           }
-          return request.notFound();
+          return await request.notFound();
         } catch (e) {
-          return request.notFound();
+          return await request.notFound();
         }
       case DatabaseDisk.sqlite:
         try {
@@ -665,9 +665,9 @@ abstract class Model {
             model.disk = .sqlite;
             return model;
           }
-          return request.notFound();
+          return await request.notFound();
         } catch (e) {
-          return request.notFound();
+          return await request.notFound();
         }
       case DatabaseDisk.s3:
         try {
@@ -676,9 +676,9 @@ abstract class Model {
             model.disk = .s3;
             return model;
           }
-          return request.notFound();
+          return await request.notFound();
         } catch (e) {
-          return request.notFound();
+          return await request.notFound();
         }
       case DatabaseDisk.pgsql:
         try {
@@ -687,9 +687,9 @@ abstract class Model {
             model.disk = .pgsql;
             return model;
           }
-          return request.notFound();
+          return await request.notFound();
         } catch (e) {
-          return request.notFound();
+          return await request.notFound();
         }
     }
   }
