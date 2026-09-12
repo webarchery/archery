@@ -90,14 +90,14 @@ if (author != null) {
         final foreignUuidKey = &quot;${foreignTableSingular}_uuid&quot;;
         final val = data[foreignUuidKey];
         if (val == null) return null;
-        return Model.firstWhere&lt;T&gt;(field: &quot;uuid&quot;, value: val, disk: disk);
+        return await Model.firstWhere&lt;T&gt;(field: &quot;uuid&quot;, value: val, disk: disk);
 
       case DatabaseDisk.sqlite:
       case DatabaseDisk.pgsql:
         final foreignIdKey = &quot;${foreignTableSingular}_id&quot;;
         final val = data[foreignIdKey];
         if (val == null) return null;
-        return Model.firstWhere&lt;T&gt;(field: &quot;id&quot;, value: val, disk: disk);
+        return await Model.firstWhere&lt;T&gt;(field: &quot;id&quot;, value: val, disk: disk);
     }
   } catch (e, stack) {
     App().archeryLogger.error(&quot;Error resolving belongsToOne&quot;, {&quot;origin&quot;: &quot;ext ModelRelationships belongsToOne&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: stack.toString()});
@@ -131,7 +131,7 @@ if (author != null) {
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

@@ -127,7 +127,7 @@ await user.detach(
           case .sqlite:
           case .pgsql:
             final siblingField = &quot;${siblingPrefix}_id&quot;;
-            return  update(withJson: {siblingField: null});
+            return  await update(withJson: {siblingField: null});
 
           case .file:
           case .s3:
@@ -208,7 +208,7 @@ await user.detach(
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

@@ -86,9 +86,9 @@
           model.disk = .file;
           return model;
         }
-        return request.notFound();
+        return await request.notFound();
       } catch (e) {
-        return request.notFound();
+        return await request.notFound();
       }
     case DatabaseDisk.sqlite:
       try {
@@ -97,9 +97,9 @@
           model.disk = .sqlite;
           return model;
         }
-        return request.notFound();
+        return await request.notFound();
       } catch (e) {
-        return request.notFound();
+        return await request.notFound();
       }
     case DatabaseDisk.s3:
       try {
@@ -108,9 +108,9 @@
           model.disk = .s3;
           return model;
         }
-        return request.notFound();
+        return await request.notFound();
       } catch (e) {
-        return request.notFound();
+        return await request.notFound();
       }
     case DatabaseDisk.pgsql:
       try {
@@ -119,9 +119,9 @@
           model.disk = .pgsql;
           return model;
         }
-        return request.notFound();
+        return await request.notFound();
       } catch (e) {
-        return request.notFound();
+        return await request.notFound();
       }
   }
 }</code></pre>
@@ -152,7 +152,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

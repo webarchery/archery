@@ -81,8 +81,6 @@
     response.headers.contentType = ContentType.html;
     &#47;&#47; _minimalViewHeaders.forEach(response.headers.set);
 
-
-
     return response..write(html)..close();
   } catch (e) {
     return response..write(&quot;error: $e&quot;)..close();
@@ -115,7 +113,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

@@ -74,7 +74,7 @@ Intended to run queries in a separate isolate</p>
   <pre class="language-dart"><code class="language-dart">static Future&lt;dynamic&gt; isoIndex&lt;T extends Model&gt;({DatabaseDisk disk = Model.defaultDisk}) async {
   switch (disk) {
     case DatabaseDisk.sqlite:
-      return SQLiteModel.isoIndex&lt;T&gt;();
+      return await SQLiteModel.isoIndex&lt;T&gt;();
 
     &#47;&#47;--------------------------
     &#47;&#47; todo
@@ -117,7 +117,7 @@ Intended to run queries in a separate isolate</p>
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

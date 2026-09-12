@@ -97,10 +97,8 @@
   final container = App().container; &#47;&#47; Cache reference
   final engine = container.make&lt;TemplateEngine&gt;();
 
-  &#47;&#47; 1. Parallelize data fetching if possible, but definitely cache user
   thisSession?.user = await Auth.user(this);
 
-  &#47;&#47; 2. Optimized Cookie Access: Search cookies ONCE
   Cookie? csrfCookie;
   Cookie? guestCookie;
   for (var c in cookies) {
@@ -122,7 +120,6 @@
   }
 
   try {
-    &#47;&#47; 3. Merging data: Use a single map spread
     final viewData = {
       ...?data,
       &quot;session&quot;: thisSession?.toJson(),
@@ -132,7 +129,6 @@
     final html = await engine.render(template, viewData);
     final bodyBytes = utf8.encode(html);
 
-    &#47;&#47; 4. Batch Header Setting
     response.headers.contentLength = bodyBytes.length;
     _viewHeaders.forEach(response.headers.set);
     response.persistentConnection = true;
@@ -145,7 +141,6 @@
       );
     }
 
-    &#47;&#47; 5. Direct lookup for sessions list
     final sessions = App().tryMake&lt;List&lt;Session&gt;&gt;();
     if (sessions != null &amp;&amp; guestCookie != null) {
       final session = sessions.firstWhereOrNull((s) =&gt; s.token == guestCookie!.value);
@@ -153,7 +148,7 @@
     }
 
     return response
-      ..add(bodyBytes) &#47;&#47; Use .add() for bytes to bypass re-encoding strings
+      ..add(bodyBytes)
       ..close();
 
   } catch (e, stackTrace) {
@@ -198,7 +193,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

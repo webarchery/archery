@@ -79,11 +79,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void group({
-  String prefix = &#39;&#39;,
-  List&lt;HttpMiddleware&gt; middleware = const [],
-  required void Function() routes,
-}) {
+  <pre class="language-dart"><code class="language-dart">void group({String prefix = &#39;&#39;, List&lt;HttpMiddleware&gt; middleware = const [], required void Function() routes}) {
   _prefixStack.add(_join(_currentPrefix, _normalizePrefix(prefix)));
   _mwStack.add([..._currentMiddleware, ...middleware]);
 
@@ -121,7 +117,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

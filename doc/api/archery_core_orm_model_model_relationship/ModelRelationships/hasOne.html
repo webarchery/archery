@@ -88,12 +88,12 @@ if (profile != null) {
       case DatabaseDisk.file:
       case DatabaseDisk.s3:
         final foreignUuidKey = &quot;${foreignTableSingular}_uuid&quot;;
-        return Model.firstWhere&lt;T&gt;(field: foreignUuidKey, value: data[&#39;uuid&#39;], disk: disk);
+        return await Model.firstWhere&lt;T&gt;(field: foreignUuidKey, value: data[&#39;uuid&#39;], disk: disk);
 
       case DatabaseDisk.sqlite:
       case DatabaseDisk.pgsql:
         final foreignIdKey = &quot;${foreignTableSingular}_id&quot;;
-        return Model.firstWhere&lt;T&gt;(field: foreignIdKey, value: data[&#39;id&#39;], disk: disk);
+        return await Model.firstWhere&lt;T&gt;(field: foreignIdKey, value: data[&#39;id&#39;], disk: disk);
     }
   } catch (e,stack) {
     App().archeryLogger.error(&quot;Error resolving hasOne&quot;, {&quot;origin&quot;: &quot;ext ModelRelationships hasOne&quot;, &quot;error&quot;: e.toString(), &quot;stack&quot;: stack.toString()});
@@ -127,7 +127,7 @@ if (profile != null) {
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

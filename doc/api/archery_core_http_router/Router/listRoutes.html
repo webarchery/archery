@@ -70,11 +70,7 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Map&lt;HttpMethod, List&lt;String&gt;&gt; listRoutes() =&gt; {
-  for (final m in HttpMethod.values)
-    m: [
-      ...(_routes[m]?.keys ?? const []),
-      ...(_dynamicRoutes[m]?.map((cr) =&gt; cr.regex.pattern) ?? const []),
-    ],
+  for (final m in HttpMethod.values) m: [...(_routes[m]?.keys ?? const []), ...(_dynamicRoutes[m]?.map((cr) =&gt; cr.regex.pattern) ?? const [])],
 };</code></pre>
 </section>
 
@@ -103,7 +99,7 @@
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

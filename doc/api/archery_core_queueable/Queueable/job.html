@@ -85,13 +85,7 @@ print(existing?.status.name);
   final modelFields = toJson();
   final jobNameField = {&#39;_name&#39;: runtimeType.toString()};
 
-  &#47;&#47; this line achieves what sorting would:
-  &#47;&#47; consistence data shape for hashing
   final payloadData = {...jobNameField, ...modelFields};
-
-  &#47;&#47; performance hit for sorting maps vs placing _name in-front of toJson
-  &#47;&#47; so far passing equality test for the same job payloads, as hash
-  &#47;&#47; final payload = Helpers.sortRecursive(payloadData);
 
   final payloadString = jsonEncode(payloadData);
 
@@ -130,7 +124,7 @@ print(existing?.status.name);
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>

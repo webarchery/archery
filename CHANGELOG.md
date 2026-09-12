@@ -121,3 +121,8 @@
 ## 1.6.3
 ## 1.6.4
 ## 1.6.5
+## 1.6.6
+- request.param<T>(key) helper as extension on HttpRequest.
+  - Alias for RouteParams.get<T>(key)
+- router.view() helper to alias router.get()
+- router.crud<T>() helper for resourceful controllers

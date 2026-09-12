@@ -619,7 +619,7 @@ extension Redirect on HttpRequest {
 ///
 /// Example:
 /// ```dart
-/// final form = request.form();
+/// final form = request.form;
 /// ```
 final _formRequestCache = Expando<FormRequest>();
 
@@ -630,7 +630,7 @@ final _formRequestCache = Expando<FormRequest>();
 ///
 /// Example:
 /// ```dart
-/// final form = request.form();
+/// final form = request.form;
 /// final email = await form.input('email');
 /// ```
 extension HttpFormRequestExtension on HttpRequest {
@@ -750,11 +750,16 @@ extension BenchView on HttpRequest {
       response.headers.contentType = ContentType.html;
       // _minimalViewHeaders.forEach(response.headers.set);
 
-
-
       return response..write(html)..close();
     } catch (e) {
       return response..write("error: $e")..close();
     }
+  }
+}
+
+
+extension RouteParam on HttpRequest {
+  T? param<T>(String key) {
+    return RouteParams.get<T>(key);
   }
 }

@@ -58,7 +58,7 @@
 <p>Returns a <a href="../archery_core_http_form_request/FormRequest-class.html">FormRequest</a> wrapper. The instance is cached per request using an
 <a href="https://api.flutter.dev/flutter/dart-core/Expando-class.html">Expando</a>, so repeated calls reuse the same parser state.</p>
 <p>Example:</p>
-<pre class="language-dart"><code class="language-dart">final form = request.form();
+<pre class="language-dart"><code class="language-dart">final form = request.form;
 final email = await form.input('email');
 </code></pre>
 </section>
@@ -130,7 +130,7 @@ final email = await form.input('email');
 <footer>
   <span class="no-break">
     archery
-      1.6.11
+      1.6.6
   </span>
   
 </footer>
