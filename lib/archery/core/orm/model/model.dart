@@ -248,7 +248,7 @@ abstract class Model {
   }
 
   /// Updates an [instance] with [withJson] data.
-  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson, DatabaseDisk disk = DatabaseDisk.file}) async {
+  static Future<bool> updateInstance<T extends Model>({required T instance, required Map<String, dynamic> withJson, DatabaseDisk disk = Model.defaultDisk }) async {
     switch (disk) {
       case DatabaseDisk.file:
         try {
@@ -375,7 +375,7 @@ abstract class Model {
   }
 
   /// Finds a record by [id] (UUID or primary key).
-  static Future<dynamic> find<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
+  static Future<T?> find<T extends Model>({required dynamic id, DatabaseDisk disk = Model.defaultDisk}) async {
     switch (disk) {
       case DatabaseDisk.file:
         try {
@@ -733,7 +733,7 @@ abstract class Model {
   }
 
   /// Updates a single field of a record by [id].
-  static Future<bool> patch<T extends Model>({required dynamic id, required String field, required dynamic value, DatabaseDisk disk = DatabaseDisk.file}) async {
+  static Future<bool> patch<T extends Model>({required dynamic id, required String field, required dynamic value, DatabaseDisk disk = Model.defaultDisk }) async {
     switch (disk) {
       case DatabaseDisk.file:
         try {

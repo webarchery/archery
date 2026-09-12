@@ -128,13 +128,7 @@ mixin Queueable {
     final modelFields = toJson();
     final jobNameField = {'_name': runtimeType.toString()};
 
-    // this line achieves what sorting would:
-    // consistence data shape for hashing
     final payloadData = {...jobNameField, ...modelFields};
-
-    // performance hit for sorting maps vs placing _name in-front of toJson
-    // so far passing equality test for the same job payloads, as hash
-    // final payload = Helpers.sortRecursive(payloadData);
 
     final payloadString = jsonEncode(payloadData);
 

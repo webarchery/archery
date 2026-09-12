@@ -103,7 +103,7 @@ Future<void> main(List<String> args) async {
   // --------------
 
   try {
-    return await HttpServer.bind(InternetAddress.loopbackIPv4, port, shared: true).then((server) async {
+    return await HttpServer.bind(InternetAddress.loopbackIPv4, 5502, shared: true).then((server) async {
       server.autoCompress = config.get('server.compress', true);
 
 

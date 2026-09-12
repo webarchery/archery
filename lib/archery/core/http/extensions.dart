@@ -232,10 +232,8 @@ extension View on HttpRequest {
     final container = App().container; // Cache reference
     final engine = container.make<TemplateEngine>();
 
-    // 1. Parallelize data fetching if possible, but definitely cache user
     thisSession?.user = await Auth.user(this);
 
-    // 2. Optimized Cookie Access: Search cookies ONCE
     Cookie? csrfCookie;
     Cookie? guestCookie;
     for (var c in cookies) {
@@ -257,7 +255,6 @@ extension View on HttpRequest {
     }
 
     try {
-      // 3. Merging data: Use a single map spread
       final viewData = {
         ...?data,
         "session": thisSession?.toJson(),
@@ -267,7 +264,6 @@ extension View on HttpRequest {
       final html = await engine.render(template, viewData);
       final bodyBytes = utf8.encode(html);
 
-      // 4. Batch Header Setting
       response.headers.contentLength = bodyBytes.length;
       _viewHeaders.forEach(response.headers.set);
       response.persistentConnection = true;
@@ -280,7 +276,6 @@ extension View on HttpRequest {
         );
       }
 
-      // 5. Direct lookup for sessions list
       final sessions = App().tryMake<List<Session>>();
       if (sessions != null && guestCookie != null) {
         final session = sessions.firstWhereOrNull((s) => s.token == guestCookie!.value);
@@ -288,7 +283,7 @@ extension View on HttpRequest {
       }
 
       return response
-        ..add(bodyBytes) // Use .add() for bytes to bypass re-encoding strings
+        ..add(bodyBytes)
         ..close();
 
     } catch (e, stackTrace) {

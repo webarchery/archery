@@ -7,7 +7,6 @@ import 'package:archery/archery/archery.dart';
 ///
 
 void webRoutes(Router router) {
-
   router.group(
     routes: () {
       router.get('/', (request) async {
