@@ -58,7 +58,7 @@ enum AppStatus {
 /// and configuration management.
 class App {
   /// The current version of the application.
-  static final String version = "1.6.0";
+  static final String version = "1.6.7";
 
   /// Private constructor to enforce singleton pattern.
   App._internal();
