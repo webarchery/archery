@@ -28,9 +28,12 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 // https://webarchery.dev
+
 import 'package:archery/archery/archery.dart';
 import 'package:archery/archery/core/http/middleware/flash_messages_middleware.dart';
+import 'package:archery/src/database/migrations/providers/json_file_models_migrations_provider.dart';
 import 'package:archery/src/database/migrations/providers/pgsql_migrations_provider.dart';
+import 'package:archery/src/database/migrations/providers/s3_migrations_provider.dart';
 import 'package:archery/src/http/routes/api.dart';
 import 'package:archery/src/http/routes/web.dart';
 import 'package:archery/src/database/migrations/providers/sqlite_migrations_provider.dart';
@@ -46,35 +49,18 @@ Future<void> main(List<String> args) async {
   final config = await AppConfig.create();
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
-  app.registerGroup("clients", [
-    // uncomment when you have aws keys in config
-    // uses config.get('env.aws')
-    // S3ClientProvider(),
-    // SesClientProvider(),
-  ]);
-
   app.registerGroup("migrations", [
     ?Model.defaultDisk == .sqlite ? SqliteMigrationsProvider() : null,
     ?Model.defaultDisk == .pgsql ? PgsqlMigrationsProvider() : null,
-    // PgsqlMigrationsProvider(),
-    // JsonFileModelsMigrationsProvider(),
-  ]);
-
-  app.registerGroup("pivots", [
-    // UserRolePivotTableProvider()
-  ]);
-
-  app.registerGroup("seeders", [
-    // RolesTableSeederProvider()
+    ?Model.defaultDisk == .file ? JsonFileModelsMigrationsProvider() : null,
+    ?Model.defaultDisk == .s3 ? S3MigrationsProvider() : null,
   ]);
 
   await app.boot().then((_) async {
 
-    // await Model.truncate<Session>();
-    // await Model.truncate<AuthSession>();
-
     app.container.bindInstance<List<Session>>([]);
     app.container.bindInstance<List<AuthSession>>([]);
+
   });
 
   // -------------------------------------------
@@ -106,9 +92,7 @@ Future<void> main(List<String> args) async {
     return await HttpServer.bind(InternetAddress.loopbackIPv4, port, shared: true).then((server) async {
       server.autoCompress = config.get('server.compress', true);
 
-
-
-      server.defaultResponseHeaders.clear(); // Clear Dart's defaults if needed
+      server.defaultResponseHeaders.clear();
       server.defaultResponseHeaders.add('X-Content-Type-Options', 'nosniff');
       server.defaultResponseHeaders.add('X-Frame-Options', 'SAMEORIGIN');
       server.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');

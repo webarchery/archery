@@ -69,9 +69,7 @@
   <pre class="language-dart"><code class="language-dart">static Future&lt;bool&gt; truncate&lt;T extends Model&gt;() async {
   try {
     final tableName = _getTableName&lt;T&gt;();
-    await _database.execute(
-      Sql.named(&#39;TRUNCATE TABLE &quot;$tableName&quot; RESTART IDENTITY CASCADE&#39;),
-    );
+    await _database.execute(Sql.named(&#39;TRUNCATE TABLE &quot;$tableName&quot; RESTART IDENTITY CASCADE&#39;));
     return true;
   } catch (e) {
     print(&#39;Postgres truncate error: $e&#39;);

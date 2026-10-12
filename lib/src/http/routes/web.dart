@@ -10,12 +10,13 @@ void webRoutes(Router router) {
   router.group(
     routes: () {
 
-      // using the router.view() helper
+      // using router.view() helper
       // router.view(path: "/", view: "welcome");
 
       router.get('/', (request) async {
         return request.view("welcome", {});
       });
+
     },
   );
 }

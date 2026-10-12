@@ -46,35 +46,16 @@ Future<void> main(List<String> args) async {
   final config = await AppConfig.create();
   app.container.singleton<AppConfig>(factory: (_, [_]) => config, eager: true);
 
-  app.registerGroup("clients", [
-    // uncomment when you have aws keys in config
-    // uses config.get('env.aws')
-    // S3ClientProvider(),
-    // SesClientProvider(),
-  ]);
-
   app.registerGroup("migrations", [
     ?Model.defaultDisk == .sqlite ? SqliteMigrationsProvider() : null,
     ?Model.defaultDisk == .pgsql ? PgsqlMigrationsProvider() : null,
-    // PgsqlMigrationsProvider(),
-    // JsonFileModelsMigrationsProvider(),
-  ]);
-
-  app.registerGroup("pivots", [
-    // UserRolePivotTableProvider()
-  ]);
-
-  app.registerGroup("seeders", [
-    // RolesTableSeederProvider()
   ]);
 
   await app.boot().then((_) async {
 
-    // await Model.truncate<Session>();
-    // await Model.truncate<AuthSession>();
-
     app.container.bindInstance<List<Session>>([]);
     app.container.bindInstance<List<AuthSession>>([]);
+
   });
 
   // -------------------------------------------
@@ -103,16 +84,8 @@ Future<void> main(List<String> args) async {
   // --------------
 
   try {
-    return HttpServer.bind(InternetAddress.loopbackIPv4, port, shared: true).then((server) async {
+    return await HttpServer.bind(InternetAddress.loopbackIPv4, port, shared: true).then((server) async {
       server.autoCompress = config.get('server.compress', true);
-
-
-
-      server.defaultResponseHeaders.clear(); // Clear Dart's defaults if needed
-      server.defaultResponseHeaders.add('X-Content-Type-Options', 'nosniff');
-      server.defaultResponseHeaders.add('X-Frame-Options', 'SAMEORIGIN');
-      server.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
-      server.defaultResponseHeaders.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
       AppKernel.server = server;
 

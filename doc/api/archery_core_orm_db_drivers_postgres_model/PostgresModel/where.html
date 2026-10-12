@@ -69,11 +69,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({
-  required String field,
-  String comp = &quot;==&quot;,
-  required dynamic value,
-}) async {
+  <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;T&gt;&gt; where&lt;T extends Model&gt;({required String field, String comp = &quot;==&quot;, required dynamic value}) async {
   try {
     final constructor = _jsonConstructors[T];
     if (constructor == null) return [];
@@ -93,15 +89,10 @@
     }
 
     final tableName = _getTableName&lt;T&gt;();
-    final records = await _database.execute(
-      Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE $field = @$field&#39;),
-      parameters: {field: value},
-    );
+    final records = await _database.execute(Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE $field = @$field&#39;), parameters: {field: value});
 
     if (records.isNotEmpty) {
-      return records
-          .map((record) =&gt; constructor(record.toColumnMap()) as T)
-          .toList();
+      return records.map((record) =&gt; constructor(record.toColumnMap()) as T).toList();
     }
 
     return [];

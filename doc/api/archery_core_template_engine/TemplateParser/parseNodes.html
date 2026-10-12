@@ -75,8 +75,7 @@ parser to handle them.</p>
   <pre class="language-dart"><code class="language-dart">List&lt;Node&gt; parseNodes({required Set&lt;String&gt; stopAt}) {
   final nodes = &lt;Node&gt;[];
   while (_current.type != _TokenType.eof) {
-    if (_current.type == _TokenType.directive &amp;&amp;
-        stopAt.contains(_current.name)) {
+    if (_current.type == _TokenType.directive &amp;&amp; stopAt.contains(_current.name)) {
       break;
     }
     nodes.add(_parseNode());

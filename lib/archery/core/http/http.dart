@@ -36,4 +36,4 @@ export 'form_request.dart';
 export 'middleware/session_middleware.dart';
 export 'middleware/csrf_middleware.dart';
 export 'middleware/cors_middleware.dart';
-export 'model_crud_controller.dart';
+export 'crud_controller.dart';

@@ -101,11 +101,11 @@ class Role extends Model with InstanceDatabaseOps<Role> {
     final user = await request.user;
 
     if (user == null) {
-      return request.forbidden();
+      return await request.forbidden();
     }
 
     if (!await user.hasRole(.admin)) {
-      return request.forbidden();
+      return await request.forbidden();
     }
 
     await next();

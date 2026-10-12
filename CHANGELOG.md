@@ -126,3 +126,9 @@
   - Alias for RouteParams.get<T>(key)
 - router.view() helper to alias router.get()
 - router.crud<T>() helper for resourceful controllers
+## 1.6.7
+- router.crud() API update
+  - passing T to crud is optional
+  - constraining controller to T is optional
+  - accepts middleware applied to route group
+  - crud methods optional when extending CrudController

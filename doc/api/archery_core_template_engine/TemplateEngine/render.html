@@ -73,10 +73,7 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Future&lt;String&gt; render(
-    String templateName, [
-      Map&lt;String, dynamic&gt;? data,
-    ]) async {
+  <pre class="language-dart"><code class="language-dart">Future&lt;String&gt; render(String templateName, [Map&lt;String, dynamic&gt;? data]) async {
   final ast = await _loadAst(templateName);
   return _renderTemplate(ast, data ?? {});
 }</code></pre>

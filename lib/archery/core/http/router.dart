@@ -424,23 +424,37 @@ dynamic _coerce(String raw, String typeName) {
 }
 
 extension RoutingHelpers on Router {
-  void view({required String path, required String view, List<HttpMiddleware> middleware = const [], ViewData data = const {}}) {
+
+  void view({ required String path, required String view, List<HttpMiddleware> middleware = const [], ViewData data = const {}}) {
     get(path, middleware: middleware, (request) async {
       return request.view(view, data);
     });
   }
 
-  void crud<T extends Model>({String prefix = "", required ModelCrudController<T> controller}) {
+  void crud<T extends Model>({String prefix = "", required CrudController controller, List<HttpMiddleware> middleware = const []}) {
+
     String getModelPath() {
       final loweredHyphenate = T.toString().replaceAllMapped(RegExp(r'(?<=[a-z])(?=[A-Z])'), (match) => '-').toLowerCase();
+
+      if(loweredHyphenate == 'model' || loweredHyphenate == 'type') {
+        return "";
+      }
       return loweredHyphenate.endsWith("/") ? loweredHyphenate : "${loweredHyphenate}s";
     }
 
-    if (!prefix.endsWith('/')) prefix = '$prefix/';
+
     final path = getModelPath();
+
+    if(path.isEmpty && prefix.isEmpty) {
+      throw Exception("Prefix or class constraint(T) recommended to generate resourceful routes. Generic crud methods (/index /create /show ... etc) as route paths cannot guarantee uniqueness or prevent overrides.");
+    }
+
+    if (!prefix.endsWith('/')) prefix = '$prefix/';
+
 
     group(
       prefix: "$prefix$path",
+      middleware: middleware,
       routes: () {
         // index
         get("/", controller.index);

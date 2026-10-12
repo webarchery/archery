@@ -56,7 +56,8 @@
       
 <span class="returntype">void</span>
 <span class="name ">crud</span>&lt;<wbr><span class="type-parameter">T extends Model</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="crud-param-prefix"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">prefix</span> = <span class="default-value">&quot;&quot;</span>, </span></li>
-<li><span class="parameter" id="crud-param-controller"><span>required</span> <span class="type-annotation"><a href="../../archery_core_http_model_crud_controller/ModelCrudController-class.html">ModelCrudController</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">controller</span>, </span></li>
+<li><span class="parameter" id="crud-param-controller"><span>required</span> <span class="type-annotation"><a href="../../archery_core_http_crud_controller/CrudController-class.html">CrudController</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../archery_core_orm_model_model/Model-class.html">Model</a></span>&gt;</span></span> <span class="parameter-name">controller</span>, </span></li>
+<li><span class="parameter" id="crud-param-middleware"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../archery_core_http_router/HttpMiddleware.html">HttpMiddleware</a></span>&gt;</span></span> <span class="parameter-name">middleware</span> = <span class="default-value">const []</span>, </span></li>
 </ol>})
 
       
@@ -68,17 +69,30 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void crud&lt;T extends Model&gt;({String prefix = &quot;&quot;, required ModelCrudController&lt;T&gt; controller}) {
+  <pre class="language-dart"><code class="language-dart">void crud&lt;T extends Model&gt;({String prefix = &quot;&quot;, required CrudController controller, List&lt;HttpMiddleware&gt; middleware = const []}) {
+
   String getModelPath() {
     final loweredHyphenate = T.toString().replaceAllMapped(RegExp(r&#39;(?&lt;=[a-z])(?=[A-Z])&#39;), (match) =&gt; &#39;-&#39;).toLowerCase();
+
+    if(loweredHyphenate == &#39;model&#39; || loweredHyphenate == &#39;type&#39;) {
+      return &quot;&quot;;
+    }
     return loweredHyphenate.endsWith(&quot;&#47;&quot;) ? loweredHyphenate : &quot;${loweredHyphenate}s&quot;;
   }
 
-  if (!prefix.endsWith(&#39;&#47;&#39;)) prefix = &#39;$prefix&#47;&#39;;
+
   final path = getModelPath();
+
+  if(path.isEmpty &amp;&amp; prefix.isEmpty) {
+    throw Exception(&quot;Prefix or class constraint(T) recommended to generate resourceful routes. Generic crud methods (&#47;index &#47;create &#47;show ... etc) as route paths cannot guarantee uniqueness or prevent overrides.&quot;);
+  }
+
+  if (!prefix.endsWith(&#39;&#47;&#39;)) prefix = &#39;$prefix&#47;&#39;;
+
 
   group(
     prefix: &quot;$prefix$path&quot;,
+    middleware: middleware,
     routes: () {
       &#47;&#47; index
       get(&quot;&#47;&quot;, controller.index);

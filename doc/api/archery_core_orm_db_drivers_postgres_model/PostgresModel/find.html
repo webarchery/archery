@@ -74,10 +74,7 @@
 
     final tableName = _getTableName&lt;T&gt;();
 
-    final result = await _database.execute(
-      Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE id = @id LIMIT 1&#39;),
-      parameters: {&#39;id&#39;: id},
-    );
+    final result = await _database.execute(Sql.named(&#39;SELECT * FROM &quot;$tableName&quot; WHERE id = @id LIMIT 1&#39;), parameters: {&#39;id&#39;: id});
 
     if (result.isNotEmpty) {
       return constructor(result.first.toColumnMap()) as T;

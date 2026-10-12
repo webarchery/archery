@@ -52,10 +52,10 @@ base class TemplateEngineException implements Exception {
 }
 
 /// Base type for expressions embedded in template output and directives.
-abstract class Expr {}
+abstract class Expression {}
 
 /// An expression containing a constant string, number, boolean, or null value.
-class LiteralExpr extends Expr {
+class LiteralExpr extends Expression {
   /// The constant value represented by this expression.
   final dynamic value;
 
@@ -67,7 +67,7 @@ class LiteralExpr extends Expr {
 ///
 /// Dotted references such as `user.profile.name` are stored as individual
 /// path segments and resolved during rendering.
-class VariableExpr extends Expr {
+class VariableExpr extends Expression {
   /// The ordered segments of the dotted variable path.
   final List<String> path;
 
@@ -76,18 +76,18 @@ class VariableExpr extends Expr {
 }
 
 /// A logical negation expression, such as `!user.isActive`.
-class UnaryNotExpr extends Expr {
+class UnaryNotExpr extends Expression {
   /// The expression whose truthiness is negated.
-  final Expr operand;
+  final Expression operand;
 
   /// Creates a logical negation of [operand].
   UnaryNotExpr(this.operand);
 }
 
 /// An expression that applies a binary operator to two operands.
-class BinaryExpr extends Expr {
+class BinaryExpr extends Expression {
   /// The expression evaluated on the left of [op].
-  final Expr left;
+  final Expression left;
 
   /// The arithmetic, equality, or comparison operator.
   ///
@@ -96,7 +96,7 @@ class BinaryExpr extends Expr {
   final String op;
 
   /// The expression evaluated on the right of [op].
-  final Expr right;
+  final Expression right;
 
   /// Creates a binary expression from [left], [op], and [right].
   BinaryExpr(this.left, this.op, this.right);
@@ -107,6 +107,7 @@ enum _ExprTokenType { number, string, ident, op, lparen, rparen, eof }
 class _ExprToken {
   final _ExprTokenType type;
   final dynamic value;
+
   _ExprToken(this.type, this.value);
 }
 
@@ -153,10 +154,7 @@ List<_ExprToken> _lexExpr(String src) {
         sb.write(src[i]);
         i++;
       }
-      while (i < src.length &&
-          src[i] == '.' &&
-          i + 1 < src.length &&
-          isIdentStart(src[i + 1])) {
+      while (i < src.length && src[i] == '.' && i + 1 < src.length && isIdentStart(src[i + 1])) {
         sb.write('.');
         i++;
         while (i < src.length && isIdentPart(src[i])) {
@@ -196,9 +194,7 @@ List<_ExprToken> _lexExpr(String src) {
       continue;
     }
 
-    throw TemplateEngineException.parseError(
-      "Unexpected character '$c' in expression: $src",
-    );
+    throw TemplateEngineException.parseError("Unexpected character '$c' in expression: $src");
   }
 
   tokens.add(_ExprToken(_ExprTokenType.eof, null));
@@ -221,15 +217,14 @@ class ExprParser {
   /// Parses [source] and returns its expression tree.
   ///
   /// Throws [TemplateEngineException] when the expression is malformed.
-  Expr parse() {
+  Expression parse() {
     final e = _equality();
     return e;
   }
 
-  Expr _equality() {
+  Expression _equality() {
     var left = _comparison();
-    while (_cur.type == _ExprTokenType.op &&
-        (_cur.value == '==' || _cur.value == '!=')) {
+    while (_cur.type == _ExprTokenType.op && (_cur.value == '==' || _cur.value == '!=')) {
       final op = _cur.value as String;
       _pos++;
       left = BinaryExpr(left, op, _comparison());
@@ -237,10 +232,9 @@ class ExprParser {
     return left;
   }
 
-  Expr _comparison() {
+  Expression _comparison() {
     var left = _additive();
-    while (_cur.type == _ExprTokenType.op &&
-        ['<', '<=', '>', '>='].contains(_cur.value)) {
+    while (_cur.type == _ExprTokenType.op && ['<', '<=', '>', '>='].contains(_cur.value)) {
       final op = _cur.value as String;
       _pos++;
       left = BinaryExpr(left, op, _additive());
@@ -248,10 +242,9 @@ class ExprParser {
     return left;
   }
 
-  Expr _additive() {
+  Expression _additive() {
     var left = _multiplicative();
-    while (_cur.type == _ExprTokenType.op &&
-        (_cur.value == '+' || _cur.value == '-')) {
+    while (_cur.type == _ExprTokenType.op && (_cur.value == '+' || _cur.value == '-')) {
       final op = _cur.value as String;
       _pos++;
       left = BinaryExpr(left, op, _multiplicative());
@@ -259,10 +252,9 @@ class ExprParser {
     return left;
   }
 
-  Expr _multiplicative() {
+  Expression _multiplicative() {
     var left = _unary();
-    while (_cur.type == _ExprTokenType.op &&
-        (_cur.value == '*' || _cur.value == '/')) {
+    while (_cur.type == _ExprTokenType.op && (_cur.value == '*' || _cur.value == '/')) {
       final op = _cur.value as String;
       _pos++;
       left = BinaryExpr(left, op, _unary());
@@ -270,7 +262,7 @@ class ExprParser {
     return left;
   }
 
-  Expr _unary() {
+  Expression _unary() {
     if (_cur.type == _ExprTokenType.op && _cur.value == '!') {
       _pos++;
       return UnaryNotExpr(_unary());
@@ -278,7 +270,7 @@ class ExprParser {
     return _primary();
   }
 
-  Expr _primary() {
+  Expression _primary() {
     final t = _cur;
     switch (t.type) {
       case _ExprTokenType.number:
@@ -302,7 +294,7 @@ class ExprParser {
         _pos++;
         return inner;
       default:
-      // Empty expression, e.g. {{ }} — treat as empty string literal.
+        // Empty expression, e.g. {{ }} — treat as empty string literal.
         return LiteralExpr('');
     }
   }
@@ -323,7 +315,7 @@ class TextNode extends Node {
 /// An expression whose result is written to the rendered output.
 class OutputNode extends Node {
   /// The expression evaluated when this node is rendered.
-  final Expr expression;
+  final Expression expression;
 
   /// Whether HTML-sensitive characters in the result are escaped.
   final bool escaped;
@@ -335,7 +327,7 @@ class OutputNode extends Node {
 /// A conditional block created from an `@if` directive.
 class IfNode extends Node {
   /// The expression used to select a branch.
-  final Expr condition;
+  final Expression condition;
 
   /// Nodes rendered when [condition] is truthy.
   final List<Node> thenBranch;
@@ -353,7 +345,7 @@ class ForeachNode extends Node {
   final String itemName;
 
   /// The expression that resolves to the collection being iterated.
-  final Expr collection;
+  final Expression collection;
 
   /// The nodes rendered once for each collection element.
   final List<Node> body;
@@ -423,32 +415,17 @@ class _Token {
   final bool escaped;
   final String? name;
   final String? args;
-  _Token.text(this.text)
-      : type = _TokenType.text,
-        escaped = false,
-        name = null,
-        args = null;
 
-  _Token.output(this.text, this.escaped)
-      : type = _TokenType.output,
-        name = null,
-        args = null;
+  _Token.text(this.text) : type = _TokenType.text, escaped = false, name = null, args = null;
 
-  _Token.directive(this.name, this.args)
-      : type = _TokenType.directive,
-        text = null,
-        escaped = false;
+  _Token.output(this.text, this.escaped) : type = _TokenType.output, name = null, args = null;
 
-  _Token.eof()
-      : type = _TokenType.eof,
-        text = null,
-        escaped = false,
-        name = null,
-        args = null;
+  _Token.directive(this.name, this.args) : type = _TokenType.directive, text = null, escaped = false;
+
+  _Token.eof() : type = _TokenType.eof, text = null, escaped = false, name = null, args = null;
 }
 
-const _directiveNames =
-    'if|else|endif|foreach|endforeach|section|endsection|yield|include|csrf|layout|unless|endunless';
+const _directiveNames = 'if|else|endif|foreach|endforeach|section|endsection|yield|include|csrf|layout|unless|endunless';
 final RegExp _tokenPattern = RegExp(
   r'\{!!\s*(.*?)\s*!!\}'
   r'|\{\{\s*(.*?)\s*\}\}'
@@ -485,9 +462,7 @@ List<_Token> _tokenizeTemplate(String source) {
 
 String _stripQuotes(String s) {
   s = s.trim();
-  if (s.length >= 2 &&
-      ((s.startsWith("'") && s.endsWith("'")) ||
-          (s.startsWith('"') && s.endsWith('"')))) {
+  if (s.length >= 2 && ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"')))) {
     return s.substring(1, s.length - 1);
   }
   return s;
@@ -527,8 +502,7 @@ class TemplateParser {
   List<Node> parseNodes({required Set<String> stopAt}) {
     final nodes = <Node>[];
     while (_current.type != _TokenType.eof) {
-      if (_current.type == _TokenType.directive &&
-          stopAt.contains(_current.name)) {
+      if (_current.type == _TokenType.directive && stopAt.contains(_current.name)) {
         break;
       }
       nodes.add(_parseNode());
@@ -570,9 +544,7 @@ class TemplateParser {
         _position++;
         return CsrfNode();
       default:
-        throw TemplateEngineException.parseError(
-          'Unexpected @${_current.name}',
-        );
+        throw TemplateEngineException.parseError('Unexpected @${_current.name}');
     }
   }
 
@@ -657,19 +629,13 @@ base class TemplateEngine {
   ///
   /// Values in [data] are available to expressions by key. Throws
   /// [TemplateEngineException] if the template cannot be found or parsed.
-  Future<String> render(
-      String templateName, [
-        Map<String, dynamic>? data,
-      ]) async {
+  Future<String> render(String templateName, [Map<String, dynamic>? data]) async {
     final ast = await _loadAst(templateName);
     return _renderTemplate(ast, data ?? {});
   }
 
   /// Parses and renders template [source] without using the AST cache.
-  Future<String> renderString(
-      String source, [
-        Map<String, dynamic>? data,
-      ]) async {
+  Future<String> renderString(String source, [Map<String, dynamic>? data]) async {
     final ast = TemplateParser(source).parseTemplate();
     return _renderTemplate(ast, data ?? {});
   }
@@ -684,9 +650,7 @@ base class TemplateEngine {
         '${templateName.replaceAll('.', '/')}.html';
     final file = File(templatePath);
     if (!await file.exists()) {
-      throw TemplateEngineException.templateNotFound(
-        "HTML view for '$templateName' was not found at path: $templatePath",
-      );
+      throw TemplateEngineException.templateNotFound("HTML view for '$templateName' was not found at path: $templatePath");
     }
 
     final source = await file.readAsString();
@@ -696,10 +660,7 @@ base class TemplateEngine {
     return ast;
   }
 
-  Future<String> _renderTemplate(
-      TemplateNode ast,
-      Map<String, dynamic> data,
-      ) async {
+  Future<String> _renderTemplate(TemplateNode ast, Map<String, dynamic> data) async {
     if (ast.layoutName != null) {
       final sections = <String, List<Node>>{
         for (final n in ast.children)
@@ -711,11 +672,7 @@ base class TemplateEngine {
     return _renderNodes(ast.children, data, const {});
   }
 
-  Future<String> _renderNodes(
-      List<Node> nodes,
-      Map<String, dynamic> data,
-      Map<String, List<Node>> sections,
-      ) async {
+  Future<String> _renderNodes(List<Node> nodes, Map<String, dynamic> data, Map<String, List<Node>> sections) async {
     final buffer = StringBuffer();
     for (final node in nodes) {
       buffer.write(await _renderNode(node, data, sections));
@@ -723,11 +680,7 @@ base class TemplateEngine {
     return buffer.toString();
   }
 
-  Future<String> _renderNode(
-      Node node,
-      Map<String, dynamic> data,
-      Map<String, List<Node>> sections,
-      ) async {
+  Future<String> _renderNode(Node node, Map<String, dynamic> data, Map<String, List<Node>> sections) async {
     switch (node) {
       case TextNode n:
         return n.text;
@@ -738,9 +691,7 @@ base class TemplateEngine {
         return n.escaped ? _escapeHtml(str) : str;
 
       case IfNode n:
-        final branch = _truthy(_evaluate(n.condition, data))
-            ? n.thenBranch
-            : n.elseBranch;
+        final branch = _truthy(_evaluate(n.condition, data)) ? n.thenBranch : n.elseBranch;
         return _renderNodes(branch, data, sections);
 
       case ForeachNode n:
@@ -775,7 +726,7 @@ base class TemplateEngine {
     }
   }
 
-  dynamic _evaluate(Expr expr, Map<String, dynamic> data) {
+  dynamic _evaluate(Expression expr, Map<String, dynamic> data) {
     switch (expr) {
       case LiteralExpr e:
         return e.value;
@@ -855,13 +806,8 @@ base class TemplateEngine {
     return current ?? '';
   }
 
-  String _escapeHtml(String text) => text
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#x27;')
-      .replaceAll('/', '&#x2F;');
+  String _escapeHtml(String text) =>
+      text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;').replaceAll('/', '&#x2F;');
 
   /// Removes all parsed templates from the in-memory AST cache.
   void clearCache() => _astCache.clear();

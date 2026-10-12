@@ -69,9 +69,7 @@
   <pre class="language-dart"><code class="language-dart">static Future&lt;List&lt;Map&lt;String, dynamic&gt;&gt;&gt; jsonIndex&lt;T extends Model&gt;() async {
   try {
     final tableName = _getTableName&lt;T&gt;();
-    final results = await _database.execute(
-      Sql(&#39;SELECT * FROM &quot;$tableName&quot; ORDER BY id DESC&#39;),
-    );
+    final results = await _database.execute(Sql(&#39;SELECT * FROM &quot;$tableName&quot; ORDER BY id DESC&#39;));
 
     List&lt;Map&lt;String, dynamic&gt;&gt; records = [];
 

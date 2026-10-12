@@ -69,9 +69,7 @@
   <pre class="language-dart"><code class="language-dart">static Future&lt;int&gt; count&lt;T extends Model&gt;() async {
   try {
     final tableName = _getTableName&lt;T&gt;();
-    final result = await _database.execute(
-      &#39;SELECT COUNT(*) FROM &quot;$tableName&quot;&#39;,
-    );
+    final result = await _database.execute(&#39;SELECT COUNT(*) FROM &quot;$tableName&quot;&#39;);
     return result.first[0] as int? ?? 0;
   } catch (e) {
     return 0;
